@@ -17,6 +17,11 @@ That's pretty much it.
 
 ## UI
 
+Use flat design for the design system.
+Create a design system.
+
+![inspiration from google](inspiration.png)
+
 Four? page app.
 
 Page 1: config page
