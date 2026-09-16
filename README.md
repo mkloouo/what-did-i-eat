@@ -22,6 +22,8 @@ Create a design system.
 
 ![inspiration from google](inspiration.png)
 
+![color palette](palette.png)
+
 Four? page app.
 
 Page 1: config page
