@@ -20,6 +20,21 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "What Did I Eat uses your photo library to attach food photos to entries.",
+          "cameraPermission": "What Did I Eat uses your camera to take food photos for entries."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "What Did I Eat uses your location to note where each food photo was taken."
+        }
+      ]
+    ]
   }
 }
