@@ -1,10 +1,176 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  Pressable,
+  StyleSheet,
+  Alert,
+} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/types';
+import { useAppDispatch } from '../store/hooks';
+import { addEntry } from '../store/entriesSlice';
+import { generateId } from '../utils/id';
+import { savePickedPhoto } from '../storage/photoStorage';
+import { captureCurrentLocation } from '../location/locationService';
+import { Photo } from '../types/models';
+import { Button } from '../components/Button';
+import { PhotoThumbnail } from '../components/PhotoThumbnail';
+import { theme } from '../theme/theme';
+
+type Nav = NativeStackNavigationProp<RootStackParamList, 'NewEntry'>;
 
 export function NewEntryScreen() {
+  const navigation = useNavigation<Nav>();
+  const dispatch = useAppDispatch();
+
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [comment, setComment] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  async function addPickedAssets(assetUris: string[]) {
+    try {
+      const saved = await Promise.all(
+        assetUris.map(async (uri) => {
+          const id = generateId();
+          const destUri = await savePickedPhoto(uri, id);
+          return { id, uri: destUri };
+        })
+      );
+      setPhotos((current) => [...current, ...saved]);
+    } catch {
+      Alert.alert('Could not save photo', 'Something went wrong saving that photo. Please try again.');
+    }
+  }
+
+  async function handleTakePhoto() {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert('Camera unavailable', 'Camera permission was denied.');
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({ quality: 0.8 });
+    if (!result.canceled) {
+      await addPickedAssets(result.assets.map((a) => a.uri));
+    }
+  }
+
+  async function handlePickFromLibrary() {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert('Photo library unavailable', 'Photo library permission was denied.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsMultipleSelection: true,
+      quality: 0.8,
+    });
+    if (!result.canceled) {
+      await addPickedAssets(result.assets.map((a) => a.uri));
+    }
+  }
+
+  function removePhoto(id: string) {
+    setPhotos((current) => current.filter((p) => p.id !== id));
+  }
+
+  async function handleAdd() {
+    if (photos.length === 0) return;
+    setSaving(true);
+    try {
+      const location = await captureCurrentLocation();
+      dispatch(
+        addEntry({
+          id: generateId(),
+          createdAt: new Date().toISOString(),
+          comment,
+          location,
+          photos,
+        })
+      );
+      navigation.goBack();
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
-    <View>
-      <Text>New Entry</Text>
-    </View>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <View style={styles.pickerRow}>
+        <Button label="Take photo" onPress={handleTakePhoto} style={styles.pickerButton} />
+        <Button label="Choose from library" onPress={handlePickFromLibrary} style={styles.pickerButton} />
+      </View>
+
+      {photos.length > 0 ? (
+        <View style={styles.thumbnailRow}>
+          {photos.map((photo) => (
+            <Pressable key={photo.id} onLongPress={() => removePhoto(photo.id)} style={styles.thumbnailWrapper}>
+              <PhotoThumbnail uri={photo.uri} size={80} />
+            </Pressable>
+          ))}
+        </View>
+      ) : (
+        <Text style={styles.hint}>Add at least one photo. Long-press a thumbnail to remove it.</Text>
+      )}
+
+      <TextInput
+        style={styles.commentInput}
+        placeholder="What did you eat?"
+        placeholderTextColor={theme.colors.muted}
+        value={comment}
+        onChangeText={setComment}
+        multiline
+      />
+
+      <Button
+        label={saving ? 'Adding…' : 'Add'}
+        onPress={handleAdd}
+        disabled={photos.length === 0 || saving}
+      />
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  content: {
+    padding: theme.spacing.md,
+  },
+  pickerRow: {
+    flexDirection: 'row',
+    gap: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
+  },
+  pickerButton: {
+    flex: 1,
+  },
+  thumbnailRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
+  },
+  thumbnailWrapper: {},
+  hint: {
+    ...theme.typography.caption,
+    color: theme.colors.muted,
+    marginBottom: theme.spacing.md,
+  },
+  commentInput: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radii.md,
+    padding: theme.spacing.md,
+    minHeight: 96,
+    textAlignVertical: 'top',
+    ...theme.typography.body,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.md,
+  },
+});
