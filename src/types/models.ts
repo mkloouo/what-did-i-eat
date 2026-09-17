@@ -30,7 +30,7 @@ export type Settings = {
   photoLayoutAlgorithm: PhotoLayoutAlgorithm;
 };
 
-export const TAG_ICON_OPTIONS: (keyof typeof Ionicons.glyphMap)[] = [
+export const TAG_ICON_OPTIONS = [
   'restaurant-outline',
   'cafe-outline',
   'pizza-outline',
@@ -41,7 +41,7 @@ export const TAG_ICON_OPTIONS: (keyof typeof Ionicons.glyphMap)[] = [
   'time-outline',
   'walk-outline',
   'moon-outline',
-];
+] as const;
 
 export type TagIcon = (typeof TAG_ICON_OPTIONS)[number];
 
