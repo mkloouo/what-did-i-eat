@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Modal, Pressable, View, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { setBundleByDay } from '../store/settingsSlice';
 import { theme } from '../theme/theme';
 import { Card } from './Card';
+import { IconButton } from './IconButton';
 
 export function GroupingMenu() {
   const [open, setOpen] = useState(false);
@@ -20,9 +20,7 @@ export function GroupingMenu() {
 
   return (
     <>
-      <Pressable onPress={() => setOpen(true)} style={styles.trigger}>
-        <Ionicons name="ellipsis-horizontal" size={24} color={theme.colors.textOnDark} />
-      </Pressable>
+      <IconButton name="ellipsis-horizontal" onPress={() => setOpen(true)} />
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
           <Card style={[styles.popover, { top: insets.top + 48 }]}>
@@ -49,9 +47,6 @@ export function GroupingMenu() {
 }
 
 const styles = StyleSheet.create({
-  trigger: {
-    padding: theme.spacing.sm,
-  },
   backdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.15)',

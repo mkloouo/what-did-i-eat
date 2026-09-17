@@ -37,7 +37,8 @@ describe('selectFeedSections', () => {
     expect(sections).toHaveLength(1);
     expect(sections[0].groups).toHaveLength(1);
     expect(sections[0].groups[0].entries.map((e) => e.id)).toEqual(['a', 'b']);
-    expect(sections[0].groups[0].groupTime).toBe(e2.createdAt);
+    expect(sections[0].groups[0].timeFrom).toBe(e1.createdAt);
+    expect(sections[0].groups[0].timeTo).toBe(e2.createdAt);
     expect(sections[0].groups[0].photos).toEqual([
       resolvePhotoUri(e1.photos[0].uri),
       resolvePhotoUri(e2.photos[0].uri),
@@ -88,7 +89,8 @@ describe('selectFeedSections', () => {
 
     expect(sections[0].groups).toHaveLength(1);
     expect(sections[0].groups[0].entries.map((e) => e.id)).toEqual(['a', 'b', 'c']);
-    expect(sections[0].groups[0].groupTime).toBe(e3.createdAt);
+    expect(sections[0].groups[0].timeFrom).toBe(e1.createdAt);
+    expect(sections[0].groups[0].timeTo).toBe(e3.createdAt);
   });
 
   it('bundles the whole day into one group when bundleByDay is true, regardless of gaps', () => {
@@ -100,7 +102,8 @@ describe('selectFeedSections', () => {
 
     expect(sections[0].groups).toHaveLength(1);
     expect(sections[0].groups[0].entries.map((e) => e.id)).toEqual(['a', 'b']);
-    expect(sections[0].groups[0].groupTime).toBe(e2.createdAt);
+    expect(sections[0].groups[0].timeFrom).toBe(e1.createdAt);
+    expect(sections[0].groups[0].timeTo).toBe(e2.createdAt);
   });
 
   it('creates separate day sections, newest day first', () => {

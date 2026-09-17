@@ -1,20 +1,21 @@
-import React from 'react';
-import { SectionList, View, Text, Pressable, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/types';
-import { useAppSelector } from '../store/hooks';
-import { selectFeedSections, EntryGroup } from '../store/selectors/groupSelectors';
-import { dayLabel, formatTime } from '../utils/dateFormat';
-import { Card } from '../components/Card';
-import { PhotoGrid } from '../components/PhotoGrid';
-import { Fab } from '../components/Fab';
-import { DayDivider } from '../components/DayDivider';
-import { theme } from '../theme/theme';
+import React from "react";
+import { SectionList, View, Text, Pressable, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/types";
+import { useAppSelector } from "../store/hooks";
+import {
+  selectFeedSections,
+  EntryGroup,
+} from "../store/selectors/groupSelectors";
+import { dayLabel, formatTime } from "../utils/dateFormat";
+import { Card } from "../components/Card";
+import { PhotoStack } from "../components/PhotoStack";
+import { Fab } from "../components/Fab";
+import { DayDivider } from "../components/DayDivider";
+import { theme } from "../theme/theme";
 
-type Nav = NativeStackNavigationProp<RootStackParamList, 'Feed'>;
-
-const GRID_SIZE = 72;
+type Nav = NativeStackNavigationProp<RootStackParamList, "Feed">;
 
 export function FeedScreen() {
   const navigation = useNavigation<Nav>();
@@ -22,9 +23,14 @@ export function FeedScreen() {
 
   function openGroup(group: EntryGroup) {
     if (group.entries.length === 1) {
-      navigation.navigate('PhotoDetails', { entryId: group.entries[0].id, photoIndex: 0 });
+      navigation.navigate("PhotoDetails", {
+        entryId: group.entries[0].id,
+        photoIndex: 0,
+      });
     } else {
-      navigation.navigate('GroupDetails', { entryIds: group.entries.map((e) => e.id) });
+      navigation.navigate("GroupDetails", {
+        entryIds: group.entries.map((e) => e.id),
+      });
     }
   }
 
@@ -33,43 +39,67 @@ export function FeedScreen() {
       {sections.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyTitle}>Nothing logged yet</Text>
-          <Text style={styles.emptyBody}>Tap the + to log your first photo.</Text>
+          <Text style={styles.emptyBody}>
+            Tap the + to log your first photo.
+          </Text>
         </View>
       ) : (
         <SectionList
           style={styles.list}
+          contentContainerStyle={styles.listContent}
           sections={sections.map((section) => ({
             title: dayLabel(section.dayKey),
             data: section.groups,
             key: section.dayKey,
           }))}
           keyExtractor={(group) => group.id}
-          renderSectionHeader={({ section }) => <DayDivider label={section.title} />}
-          renderItem={({ item }) => (
-            <Pressable onPress={() => openGroup(item)} style={styles.itemWrapper}>
-              <Card style={styles.card}>
-                <View style={styles.cardRow}>
-                  <View style={styles.photoWrapper}>
-                    <PhotoGrid photos={item.photos} size={GRID_SIZE} />
+          renderSectionHeader={({ section }) => (
+            <DayDivider label={section.title} />
+          )}
+          renderItem={({ item }) => {
+            const timeFrom = formatTime(item.timeFrom);
+            const timeTo = formatTime(item.timeTo);
+            const isRange = timeFrom !== timeTo;
+
+            return (
+              <Pressable
+                onPress={() => openGroup(item)}
+                style={styles.itemWrapper}
+              >
+                <Card style={[styles.card]}>
+                  <View style={[styles.cardRow, styles.horizontalMdSpacer]}>
                     {item.entries.length > 1 ? (
                       <View style={styles.entryBadge}>
-                        <Text style={styles.entryBadgeText}>{item.entries.length}</Text>
+                        <Text style={styles.entryBadgeText}>
+                          {item.entries.length}
+                        </Text>
                       </View>
                     ) : null}
-                  </View>
-                  <View style={styles.cardText}>
-                    <Text style={styles.cardTime}>{formatTime(item.groupTime)}</Text>
                     <Text style={styles.cardComment} numberOfLines={2}>
-                      {item.entries[item.entries.length - 1].comment || 'No comment'}
+                      {item.entries[0].comment || "No comment"}
                     </Text>
                   </View>
-                </View>
-              </Card>
-            </Pressable>
-          )}
+                  <View style={styles.bodyRow}>
+                    <View style={styles.timelineRail}>
+                      <Text style={styles.timeLabel}>{timeFrom}</Text>
+                      {isRange ? (
+                        <>
+                          <View style={styles.timelineDash} />
+                          <Text style={styles.timeLabel}>{timeTo}</Text>
+                        </>
+                      ) : null}
+                    </View>
+                    <View style={styles.photoStackWrapper}>
+                      <PhotoStack photos={item.photos} />
+                    </View>
+                  </View>
+                </Card>
+              </Pressable>
+            );
+          }}
         />
       )}
-      <Fab onPress={() => navigation.navigate('NewEntry')} />
+      <Fab onPress={() => navigation.navigate("NewEntry")} />
     </View>
   );
 }
@@ -82,23 +112,43 @@ const styles = StyleSheet.create({
   list: {
     flex: 1,
   },
+  listContent: {
+    paddingBottom: 56 + theme.spacing.lg + theme.spacing.md,
+  },
   itemWrapper: {
     paddingHorizontal: theme.spacing.md,
     paddingBottom: theme.spacing.sm,
   },
   card: {},
   cardRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
-  photoWrapper: {
-    width: GRID_SIZE,
-    height: GRID_SIZE,
+  bodyRow: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    marginTop: theme.spacing.md,
+  },
+  timelineRail: {
+    width: 40,
+    alignItems: "center",
+    marginRight: theme.spacing.sm,
+  },
+  timelineDash: {
+    flex: 1,
+    borderLeftWidth: 1,
+    borderLeftColor: theme.colors.muted,
+    borderStyle: "dashed",
+    marginVertical: theme.spacing.xs,
+  },
+  timeLabel: {
+    ...theme.typography.caption,
+    color: theme.colors.muted,
+  },
+  photoStackWrapper: {
+    flex: 1,
   },
   entryBadge: {
-    position: 'absolute',
-    bottom: theme.spacing.xs,
-    right: theme.spacing.xs,
     backgroundColor: theme.colors.secondary,
     borderRadius: theme.radii.pill,
     paddingHorizontal: theme.spacing.xs + 2,
@@ -107,15 +157,10 @@ const styles = StyleSheet.create({
   entryBadgeText: {
     ...theme.typography.caption,
     color: theme.colors.text,
-    fontWeight: '700',
+    fontWeight: "700",
   },
-  cardText: {
-    flex: 1,
-    marginLeft: theme.spacing.md,
-  },
-  cardTime: {
-    ...theme.typography.caption,
-    color: theme.colors.muted,
+  horizontalMdSpacer: {
+    columnGap: theme.spacing.md,
   },
   cardComment: {
     ...theme.typography.body,
@@ -124,8 +169,8 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: theme.spacing.xl,
   },
   emptyTitle: {
@@ -136,6 +181,6 @@ const styles = StyleSheet.create({
   emptyBody: {
     ...theme.typography.body,
     color: theme.colors.muted,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

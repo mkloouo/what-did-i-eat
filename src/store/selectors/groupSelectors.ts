@@ -10,7 +10,8 @@ export type EntryGroup = {
   id: string;
   dayKey: string;
   entries: Entry[];
-  groupTime: string;
+  timeFrom: string;
+  timeTo: string;
   photos: string[];
 };
 
@@ -29,12 +30,15 @@ export const selectEntriesSortedByDate = createSelector([selectEntriesById], (en
 );
 
 function finalizeGroup(entries: Entry[], dayKey: string): EntryGroup {
-  const latest = entries[entries.length - 1];
+  const first = entries[0];
+  const last = entries[entries.length - 1];
+
   return {
     id: `${dayKey}-${entries[0].id}`,
     dayKey,
     entries,
-    groupTime: latest.createdAt,
+    timeFrom: first.createdAt,
+    timeTo: last.createdAt,
     photos: entries.flatMap((entry) => entry.photos.map((photo) => resolvePhotoUri(photo.uri))),
   };
 }
