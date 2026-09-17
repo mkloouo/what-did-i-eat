@@ -19,7 +19,7 @@ function entry(id: string, iso: string, photoUri = `${id}.jpg`): Entry {
 
 function stateFrom(entries: Entry[], bundleByDay = false): RootState {
   const entriesById = Object.fromEntries(entries.map((e) => [e.id, e]));
-  return { entries: entriesById, settings: { bundleByDay } };
+  return { entries: entriesById, settings: { bundleByDay, photoLayoutAlgorithm: 'treemap' } };
 }
 
 describe('selectFeedSections', () => {
@@ -39,13 +39,13 @@ describe('selectFeedSections', () => {
     expect(sections[0].groups[0].entries.map((e) => e.id)).toEqual(['a', 'b']);
     expect(sections[0].groups[0].timeFrom).toBe(e1.createdAt);
     expect(sections[0].groups[0].timeTo).toBe(e2.createdAt);
-    expect(sections[0].groups[0].photos).toEqual([
-      resolvePhotoUri(e1.photos[0].uri),
-      resolvePhotoUri(e2.photos[0].uri),
+    expect(sections[0].groups[0].photosByEntry).toEqual([
+      [resolvePhotoUri(e1.photos[0].uri)],
+      [resolvePhotoUri(e2.photos[0].uri)],
     ]);
   });
 
-  it('flattens photos across every entry in the group, in entry then photo order', () => {
+  it('keeps each entry\'s photos in their own sub-array, in entry then photo order', () => {
     const e1: Entry = {
       id: 'a',
       createdAt: '2026-03-05T12:00:00.000Z',
@@ -61,10 +61,9 @@ describe('selectFeedSections', () => {
 
     const sections = selectFeedSections(state);
 
-    expect(sections[0].groups[0].photos).toEqual([
-      resolvePhotoUri('a-1.jpg'),
-      resolvePhotoUri('a-2.jpg'),
-      resolvePhotoUri(e2.photos[0].uri),
+    expect(sections[0].groups[0].photosByEntry).toEqual([
+      [resolvePhotoUri('a-1.jpg'), resolvePhotoUri('a-2.jpg')],
+      [resolvePhotoUri(e2.photos[0].uri)],
     ]);
   });
 

@@ -17,6 +17,9 @@ export type Entry = {
   photos: Photo[];
 };
 
+export type PhotoLayoutAlgorithm = 'masonry' | 'treemap';
+
 export type Settings = {
   bundleByDay: boolean;
+  photoLayoutAlgorithm: PhotoLayoutAlgorithm;
 };

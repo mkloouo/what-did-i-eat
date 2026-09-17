@@ -20,6 +20,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList, "Feed">;
 export function FeedScreen() {
   const navigation = useNavigation<Nav>();
   const sections = useAppSelector(selectFeedSections);
+  const photoLayoutAlgorithm = useAppSelector((state) => state.settings.photoLayoutAlgorithm);
 
   function openGroup(group: EntryGroup) {
     if (group.entries.length === 1) {
@@ -90,7 +91,10 @@ export function FeedScreen() {
                       ) : null}
                     </View>
                     <View style={styles.photoStackWrapper}>
-                      <PhotoStack photos={item.photos} />
+                      <PhotoStack
+                        photosByEntry={item.photosByEntry}
+                        algorithm={photoLayoutAlgorithm}
+                      />
                     </View>
                   </View>
                 </Card>

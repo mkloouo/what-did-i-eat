@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Settings } from '../types/models';
+import { PhotoLayoutAlgorithm, Settings } from '../types/models';
 
 const initialState: Settings = {
   bundleByDay: false,
+  photoLayoutAlgorithm: 'treemap',
 };
 
 const settingsSlice = createSlice({
@@ -12,8 +13,11 @@ const settingsSlice = createSlice({
     setBundleByDay(state, action: PayloadAction<boolean>) {
       state.bundleByDay = action.payload;
     },
+    setPhotoLayoutAlgorithm(state, action: PayloadAction<PhotoLayoutAlgorithm>) {
+      state.photoLayoutAlgorithm = action.payload;
+    },
   },
 });
 
-export const { setBundleByDay } = settingsSlice.actions;
+export const { setBundleByDay, setPhotoLayoutAlgorithm } = settingsSlice.actions;
 export default settingsSlice.reducer;

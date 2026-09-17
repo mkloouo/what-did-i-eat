@@ -30,13 +30,15 @@ export function Button({ label, onPress, disabled, variant = 'primary', style }:
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: theme.spacing.sm + 4,
+    paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.lg,
     borderRadius: theme.radii.md,
     alignItems: 'center',
+    justifyContent: 'center'
   },
   label: {
     color: theme.colors.textOnDark,
     ...theme.typography.subtitle,
+    textAlign: 'center'
   },
 });
