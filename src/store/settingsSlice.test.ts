@@ -1,24 +1,37 @@
-import reducer, { setBundleByDay, setPhotoLayoutAlgorithm } from './settingsSlice';
+import reducer, {
+  setGroupingMode,
+  setRollingWindowMinutes,
+  setPhotoLayoutAlgorithm,
+} from './settingsSlice';
 
 describe('settingsSlice', () => {
-  it('defaults bundleByDay to false and photoLayoutAlgorithm to treemap', () => {
+  it('defaults to a 60-minute rolling window and treemap layout', () => {
     expect(reducer(undefined, { type: '@@INIT' })).toEqual({
-      bundleByDay: false,
+      groupingMode: 'rolling',
+      rollingWindowMinutes: 60,
       photoLayoutAlgorithm: 'treemap',
     });
   });
 
-  it('setBundleByDay toggles the flag', () => {
+  it('setGroupingMode switches mode', () => {
     const state = reducer(
-      { bundleByDay: false, photoLayoutAlgorithm: 'treemap' },
-      setBundleByDay(true)
+      { groupingMode: 'rolling', rollingWindowMinutes: 60, photoLayoutAlgorithm: 'treemap' },
+      setGroupingMode('day')
     );
-    expect(state.bundleByDay).toBe(true);
+    expect(state.groupingMode).toBe('day');
+  });
+
+  it('setRollingWindowMinutes updates the window', () => {
+    const state = reducer(
+      { groupingMode: 'rolling', rollingWindowMinutes: 60, photoLayoutAlgorithm: 'treemap' },
+      setRollingWindowMinutes(120)
+    );
+    expect(state.rollingWindowMinutes).toBe(120);
   });
 
   it('setPhotoLayoutAlgorithm switches the algorithm', () => {
     const state = reducer(
-      { bundleByDay: false, photoLayoutAlgorithm: 'treemap' },
+      { groupingMode: 'rolling', rollingWindowMinutes: 60, photoLayoutAlgorithm: 'treemap' },
       setPhotoLayoutAlgorithm('masonry')
     );
     expect(state.photoLayoutAlgorithm).toBe('masonry');

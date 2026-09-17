@@ -1,6 +1,6 @@
 import { selectFeedSections } from './groupSelectors';
 import { RootState } from '../rootState';
-import { Entry } from '../../types/models';
+import { Entry, GroupingMode } from '../../types/models';
 import { resolvePhotoUri } from '../../storage/photoStorage';
 
 jest.mock('expo-file-system/legacy', () => ({
@@ -17,9 +17,16 @@ function entry(id: string, iso: string, photoUri = `${id}.jpg`): Entry {
   };
 }
 
-function stateFrom(entries: Entry[], bundleByDay = false): RootState {
+function stateFrom(
+  entries: Entry[],
+  groupingMode: GroupingMode = 'rolling',
+  rollingWindowMinutes = 60
+): RootState {
   const entriesById = Object.fromEntries(entries.map((e) => [e.id, e]));
-  return { entries: entriesById, settings: { bundleByDay, photoLayoutAlgorithm: 'treemap' } };
+  return {
+    entries: entriesById,
+    settings: { groupingMode, rollingWindowMinutes, photoLayoutAlgorithm: 'treemap' },
+  };
 }
 
 describe('selectFeedSections', () => {
@@ -27,7 +34,7 @@ describe('selectFeedSections', () => {
     expect(selectFeedSections(stateFrom([]))).toEqual([]);
   });
 
-  it('puts entries within 1 hour of each other into one group', () => {
+  it('puts entries within the rolling window of each other into one group', () => {
     const e1 = entry('a', '2026-03-05T12:00:00.000Z');
     const e2 = entry('b', '2026-03-05T12:45:00.000Z');
     const state = stateFrom([e1, e2]);
@@ -67,7 +74,7 @@ describe('selectFeedSections', () => {
     ]);
   });
 
-  it('splits entries into separate groups when the gap exceeds 1 hour', () => {
+  it('splits entries into separate groups when the gap exceeds the rolling window', () => {
     const e1 = entry('a', '2026-03-05T12:00:00.000Z');
     const e2 = entry('b', '2026-03-05T13:01:00.000Z');
     const state = stateFrom([e1, e2]);
@@ -92,10 +99,18 @@ describe('selectFeedSections', () => {
     expect(sections[0].groups[0].timeTo).toBe(e3.createdAt);
   });
 
-  it('bundles the whole day into one group when bundleByDay is true, regardless of gaps', () => {
+  it('uses a configurable window instead of a fixed hour', () => {
+    const e1 = entry('a', '2026-03-05T12:00:00.000Z');
+    const e2 = entry('b', '2026-03-05T12:40:00.000Z'); // 40 min gap
+
+    expect(selectFeedSections(stateFrom([e1, e2], 'rolling', 30))[0].groups).toHaveLength(2);
+    expect(selectFeedSections(stateFrom([e1, e2], 'rolling', 60))[0].groups).toHaveLength(1);
+  });
+
+  it('bundles the whole day into one group when groupingMode is "day", regardless of gaps', () => {
     const e1 = entry('a', '2026-03-05T08:00:00.000Z');
     const e2 = entry('b', '2026-03-05T20:00:00.000Z');
-    const state = stateFrom([e1, e2], true);
+    const state = stateFrom([e1, e2], 'day');
 
     const sections = selectFeedSections(state);
 

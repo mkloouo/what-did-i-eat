@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PhotoLayoutAlgorithm, Settings } from '../types/models';
+import { GroupingMode, PhotoLayoutAlgorithm, Settings } from '../types/models';
 
 const initialState: Settings = {
-  bundleByDay: false,
+  groupingMode: 'rolling',
+  rollingWindowMinutes: 60,
   photoLayoutAlgorithm: 'treemap',
 };
 
@@ -10,8 +11,11 @@ const settingsSlice = createSlice({
   name: 'settings',
   initialState,
   reducers: {
-    setBundleByDay(state, action: PayloadAction<boolean>) {
-      state.bundleByDay = action.payload;
+    setGroupingMode(state, action: PayloadAction<GroupingMode>) {
+      state.groupingMode = action.payload;
+    },
+    setRollingWindowMinutes(state, action: PayloadAction<number>) {
+      state.rollingWindowMinutes = action.payload;
     },
     setPhotoLayoutAlgorithm(state, action: PayloadAction<PhotoLayoutAlgorithm>) {
       state.photoLayoutAlgorithm = action.payload;
@@ -19,5 +23,6 @@ const settingsSlice = createSlice({
   },
 });
 
-export const { setBundleByDay, setPhotoLayoutAlgorithm } = settingsSlice.actions;
+export const { setGroupingMode, setRollingWindowMinutes, setPhotoLayoutAlgorithm } =
+  settingsSlice.actions;
 export default settingsSlice.reducer;

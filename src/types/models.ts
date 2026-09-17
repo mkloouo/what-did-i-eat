@@ -19,7 +19,10 @@ export type Entry = {
 
 export type PhotoLayoutAlgorithm = 'masonry' | 'treemap';
 
+export type GroupingMode = 'rolling' | 'day';
+
 export type Settings = {
-  bundleByDay: boolean;
+  groupingMode: GroupingMode;
+  rollingWindowMinutes: number;
   photoLayoutAlgorithm: PhotoLayoutAlgorithm;
 };
