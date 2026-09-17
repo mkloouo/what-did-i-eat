@@ -7,11 +7,14 @@ import { useAppSelector } from '../store/hooks';
 import { selectFeedSections, EntryGroup } from '../store/selectors/groupSelectors';
 import { dayLabel, formatTime } from '../utils/dateFormat';
 import { Card } from '../components/Card';
-import { PhotoThumbnail } from '../components/PhotoThumbnail';
+import { PhotoGrid } from '../components/PhotoGrid';
+import { Fab } from '../components/Fab';
 import { DayDivider } from '../components/DayDivider';
 import { theme } from '../theme/theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'Feed'>;
+
+const GRID_SIZE = 72;
 
 export function FeedScreen() {
   const navigation = useNavigation<Nav>();
@@ -25,48 +28,59 @@ export function FeedScreen() {
     }
   }
 
-  if (sections.length === 0) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyTitle}>Nothing logged yet</Text>
-        <Text style={styles.emptyBody}>Tap the + above to log your first photo.</Text>
-      </View>
-    );
-  }
-
   return (
-    <SectionList
-      style={styles.list}
-      sections={sections.map((section) => ({
-        title: dayLabel(section.dayKey),
-        data: section.groups,
-        key: section.dayKey,
-      }))}
-      keyExtractor={(group) => group.id}
-      renderSectionHeader={({ section }) => <DayDivider label={section.title} />}
-      renderItem={({ item }) => (
-        <Pressable onPress={() => openGroup(item)} style={styles.itemWrapper}>
-          <Card style={styles.card}>
-            <View style={styles.cardRow}>
-              <PhotoThumbnail uri={item.coverPhotoUri} size={72} badgeCount={item.entries.length} />
-              <View style={styles.cardText}>
-                <Text style={styles.cardTime}>{formatTime(item.groupTime)}</Text>
-                <Text style={styles.cardComment} numberOfLines={2}>
-                  {item.entries[item.entries.length - 1].comment || 'No comment'}
-                </Text>
-              </View>
-            </View>
-          </Card>
-        </Pressable>
+    <View style={styles.container}>
+      {sections.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyTitle}>Nothing logged yet</Text>
+          <Text style={styles.emptyBody}>Tap the + to log your first photo.</Text>
+        </View>
+      ) : (
+        <SectionList
+          style={styles.list}
+          sections={sections.map((section) => ({
+            title: dayLabel(section.dayKey),
+            data: section.groups,
+            key: section.dayKey,
+          }))}
+          keyExtractor={(group) => group.id}
+          renderSectionHeader={({ section }) => <DayDivider label={section.title} />}
+          renderItem={({ item }) => (
+            <Pressable onPress={() => openGroup(item)} style={styles.itemWrapper}>
+              <Card style={styles.card}>
+                <View style={styles.cardRow}>
+                  <View style={styles.photoWrapper}>
+                    <PhotoGrid photos={item.photos} size={GRID_SIZE} />
+                    {item.entries.length > 1 ? (
+                      <View style={styles.entryBadge}>
+                        <Text style={styles.entryBadgeText}>{item.entries.length}</Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  <View style={styles.cardText}>
+                    <Text style={styles.cardTime}>{formatTime(item.groupTime)}</Text>
+                    <Text style={styles.cardComment} numberOfLines={2}>
+                      {item.entries[item.entries.length - 1].comment || 'No comment'}
+                    </Text>
+                  </View>
+                </View>
+              </Card>
+            </Pressable>
+          )}
+        />
       )}
-    />
+      <Fab onPress={() => navigation.navigate('NewEntry')} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  list: {
+  container: {
     flex: 1,
     backgroundColor: theme.colors.background,
+  },
+  list: {
+    flex: 1,
   },
   itemWrapper: {
     paddingHorizontal: theme.spacing.md,
@@ -76,6 +90,24 @@ const styles = StyleSheet.create({
   cardRow: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  photoWrapper: {
+    width: GRID_SIZE,
+    height: GRID_SIZE,
+  },
+  entryBadge: {
+    position: 'absolute',
+    bottom: theme.spacing.xs,
+    right: theme.spacing.xs,
+    backgroundColor: theme.colors.secondary,
+    borderRadius: theme.radii.pill,
+    paddingHorizontal: theme.spacing.xs + 2,
+    paddingVertical: 2,
+  },
+  entryBadgeText: {
+    ...theme.typography.caption,
+    color: theme.colors.text,
+    fontWeight: '700',
   },
   cardText: {
     flex: 1,
@@ -92,7 +124,6 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    backgroundColor: theme.colors.background,
     alignItems: 'center',
     justifyContent: 'center',
     padding: theme.spacing.xl,
