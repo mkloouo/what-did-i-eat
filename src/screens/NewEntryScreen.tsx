@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import { RootStackParamList } from '../navigation/types';
 import { useAppDispatch } from '../store/hooks';
 import { addEntry } from '../store/entriesSlice';
 import { generateId } from '../utils/id';
-import { savePickedPhoto } from '../storage/photoStorage';
+import { savePickedPhoto, deletePhotoFile, resolvePhotoUri } from '../storage/photoStorage';
 import { captureCurrentLocation } from '../location/locationService';
 import { Photo } from '../types/models';
 import { Button } from '../components/Button';
@@ -31,6 +31,28 @@ export function NewEntryScreen() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [comment, setComment] = useState('');
   const [saving, setSaving] = useState(false);
+
+  // Tracks whether the entry was actually saved, so the unmount cleanup below
+  // knows whether the picked-and-copied photo files are now legitimately
+  // referenced by a saved entry (skip cleanup) or were orphaned by backing
+  // out of this screen (delete them).
+  const savedRef = useRef(false);
+  const photosRef = useRef(photos);
+  useEffect(() => {
+    photosRef.current = photos;
+  }, [photos]);
+
+  useEffect(() => {
+    return () => {
+      if (!savedRef.current) {
+        photosRef.current.forEach((photo) => {
+          deletePhotoFile(photo.uri).catch(() => {
+            // Best-effort cleanup of an orphaned photo file; nothing to do if it fails.
+          });
+        });
+      }
+    };
+  }, []);
 
   async function addPickedAssets(assetUris: string[]) {
     try {
@@ -86,6 +108,12 @@ export function NewEntryScreen() {
   }
 
   function removePhoto(id: string) {
+    const photo = photos.find((p) => p.id === id);
+    if (photo) {
+      deletePhotoFile(photo.uri).catch(() => {
+        // Best-effort cleanup of an orphaned photo file; nothing to do if it fails.
+      });
+    }
     setPhotos((current) => current.filter((p) => p.id !== id));
   }
 
@@ -103,6 +131,7 @@ export function NewEntryScreen() {
           photos,
         })
       );
+      savedRef.current = true;
       navigation.goBack();
     } finally {
       setSaving(false);
@@ -120,7 +149,7 @@ export function NewEntryScreen() {
         <View style={styles.thumbnailRow}>
           {photos.map((photo) => (
             <Pressable key={photo.id} onLongPress={() => removePhoto(photo.id)} style={styles.thumbnailWrapper}>
-              <PhotoThumbnail uri={photo.uri} size={80} />
+              <PhotoThumbnail uri={resolvePhotoUri(photo.uri)} size={80} />
             </Pressable>
           ))}
         </View>
