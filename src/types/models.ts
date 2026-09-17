@@ -26,6 +26,7 @@ export type Settings = {
   groupingMode: GroupingMode;
   rollingWindowMinutes: number;
   photoLayoutAlgorithm: PhotoLayoutAlgorithm;
+  inferDateFromFirstImportedPhoto: boolean;
 };
 
 export const TAG_ICON_OPTIONS = [

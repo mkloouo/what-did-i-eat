@@ -25,8 +25,14 @@ function stateFrom(
   const entriesById = Object.fromEntries(entries.map((e) => [e.id, e]));
   return {
     entries: entriesById,
-    settings: { groupingMode, rollingWindowMinutes, photoLayoutAlgorithm: 'treemap' },
+    settings: {
+      groupingMode,
+      rollingWindowMinutes,
+      photoLayoutAlgorithm: 'treemap',
+      inferDateFromFirstImportedPhoto: false,
+    },
     tags: {},
+    appMeta: { hasSeededDefaultTags: true },
   };
 }
 

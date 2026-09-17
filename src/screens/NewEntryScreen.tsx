@@ -13,6 +13,8 @@ import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ImageViewing from 'react-native-image-viewing';
 import { RootStackParamList } from '../navigation/types';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { TagChip } from '../components/TagChip';
@@ -20,11 +22,102 @@ import { addEntry } from '../store/entriesSlice';
 import { generateId } from '../utils/id';
 import { savePickedPhoto, deletePhotoFile, resolvePhotoUri } from '../storage/photoStorage';
 import { captureCurrentLocation } from '../location/locationService';
-import { Photo } from '../types/models';
+import { Photo, Tag } from '../types/models';
 import { Button } from '../components/photoLayouts/Button';
 import { PhotoThumbnail } from '../components/PhotoThumbnail';
 import { formatFullDateTime } from '../utils/dateFormat';
+import { parseExifDateTime } from '../utils/exifDate';
 import { theme } from '../theme/theme';
+
+type ViewerState = {
+  photos: Photo[];
+  comment: string;
+  setComment: (comment: string) => void;
+  selectedTagIds: string[];
+  toggleTag: (id: string) => void;
+  tags: Tag[];
+  removePhoto: (id: string) => void;
+  closeViewer: () => void;
+};
+
+// Read via a ref instead of props/closures so the component reference handed
+// to ImageViewing's HeaderComponent/FooterComponent never changes identity —
+// a new reference each render would make ImageViewing remount the subtree,
+// dropping the comment TextInput's focus on every keystroke.
+function ViewerHeader({
+  imageIndex,
+  viewerStateRef,
+}: {
+  imageIndex: number;
+  viewerStateRef: React.MutableRefObject<ViewerState>;
+}) {
+  const insets = useSafeAreaInsets();
+  const { photos, removePhoto, closeViewer } = viewerStateRef.current;
+  const photo = photos[imageIndex];
+
+  return (
+    <View style={[styles.viewerTopBar, { paddingTop: insets.top }]}>
+      <Pressable onPress={closeViewer} style={styles.viewerTopBarButton}>
+        <Text style={styles.viewerTopBarButtonText}>Close</Text>
+      </Pressable>
+      {photo ? (
+        <Pressable
+          onPress={() => {
+            removePhoto(photo.id);
+            closeViewer();
+          }}
+          style={styles.viewerTopBarButton}
+        >
+          <Text style={[styles.viewerTopBarButtonText, styles.viewerRemoveText]}>Remove</Text>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+}
+
+function ViewerFooter({
+  imageIndex,
+  viewerStateRef,
+}: {
+  imageIndex: number;
+  viewerStateRef: React.MutableRefObject<ViewerState>;
+}) {
+  const insets = useSafeAreaInsets();
+  const { photos, comment, setComment, selectedTagIds, toggleTag, tags } = viewerStateRef.current;
+
+  return (
+    <View style={[styles.viewerFooter, { paddingBottom: insets.bottom + theme.spacing.md }]}>
+      {photos.length > 1 ? (
+        <View style={styles.dots}>
+          {photos.map((photo, index) => (
+            <View key={photo.id} style={[styles.dot, index === imageIndex && styles.dotActive]} />
+          ))}
+        </View>
+      ) : null}
+      {tags.length > 0 ? (
+        <View style={styles.tagRow}>
+          {tags.map((tag) => (
+            <TagChip
+              key={tag.id}
+              icon={tag.icon}
+              label={tag.label}
+              selected={selectedTagIds.includes(tag.id)}
+              onPress={() => toggleTag(tag.id)}
+            />
+          ))}
+        </View>
+      ) : null}
+      <TextInput
+        style={styles.viewerCommentInput}
+        placeholder="What did you eat?"
+        placeholderTextColor={theme.colors.muted}
+        value={comment}
+        onChangeText={setComment}
+        multiline
+      />
+    </View>
+  );
+}
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'NewEntry'>;
 
@@ -41,6 +134,9 @@ export function NewEntryScreen() {
   const [androidTempDate, setAndroidTempDate] = useState<Date | null>(null);
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const tags = useAppSelector((state) => Object.values(state.tags));
+  const inferDateFromFirstImportedPhoto = useAppSelector(
+    (state) => state.settings.inferDateFromFirstImportedPhoto
+  );
 
   function toggleTag(id: string) {
     setSelectedTagIds((current) =>
@@ -114,11 +210,23 @@ export function NewEntryScreen() {
       Alert.alert('Photo library unavailable', 'Photo library permission was denied.');
       return;
     }
+    const shouldInferDate = inferDateFromFirstImportedPhoto && photos.length === 0;
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsMultipleSelection: true,
       quality: 0.8,
+      exif: shouldInferDate,
     });
     if (!result.canceled) {
+      if (shouldInferDate) {
+        const inferredDate = parseExifDateTime(
+          result.assets[0]?.exif?.DateTimeOriginal ??
+            result.assets[0]?.exif?.DateTimeDigitized ??
+            result.assets[0]?.exif?.DateTime
+        );
+        if (inferredDate) {
+          setCreatedAt(clampToNow(inferredDate));
+        }
+      }
       await addPickedAssets(result.assets.map((a) => a.uri));
     }
   }
@@ -171,6 +279,37 @@ export function NewEntryScreen() {
     setPhotos((current) => current.filter((p) => p.id !== id));
   }
 
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const closeViewer = () => setViewerIndex(null);
+
+  const viewerStateRef = useRef<ViewerState>({
+    photos,
+    comment,
+    setComment,
+    selectedTagIds,
+    toggleTag,
+    tags,
+    removePhoto,
+    closeViewer,
+  });
+  viewerStateRef.current = {
+    photos,
+    comment,
+    setComment,
+    selectedTagIds,
+    toggleTag,
+    tags,
+    removePhoto,
+    closeViewer,
+  };
+
+  const BoundViewerHeader = useRef((props: { imageIndex: number }) => (
+    <ViewerHeader {...props} viewerStateRef={viewerStateRef} />
+  )).current;
+  const BoundViewerFooter = useRef((props: { imageIndex: number }) => (
+    <ViewerFooter {...props} viewerStateRef={viewerStateRef} />
+  )).current;
+
   async function handleAdd() {
     if (photos.length === 0) return;
     setSaving(true);
@@ -202,14 +341,19 @@ export function NewEntryScreen() {
 
       {photos.length > 0 ? (
         <View style={styles.thumbnailRow}>
-          {photos.map((photo) => (
-            <Pressable key={photo.id} onLongPress={() => removePhoto(photo.id)} style={styles.thumbnailWrapper}>
+          {photos.map((photo, index) => (
+            <Pressable
+              key={photo.id}
+              onPress={() => setViewerIndex(index)}
+              onLongPress={() => removePhoto(photo.id)}
+              style={styles.thumbnailWrapper}
+            >
               <PhotoThumbnail uri={resolvePhotoUri(photo.uri)} size={80} />
             </Pressable>
           ))}
         </View>
       ) : (
-        <Text style={styles.hint}>Add at least one photo. Long-press a thumbnail to remove it.</Text>
+        <Text style={styles.hint}>Add at least one photo. Tap a thumbnail to preview it, long-press to remove it.</Text>
       )}
 
       <Pressable onPress={handleOpenDateTimePicker} style={styles.dateTimeRow}>
@@ -266,6 +410,18 @@ export function NewEntryScreen() {
         disabled={photos.length === 0 || saving}
         loading={saving}
       />
+
+      {viewerIndex !== null ? (
+        <ImageViewing
+          images={photos.map((photo) => ({ uri: resolvePhotoUri(photo.uri) }))}
+          imageIndex={viewerIndex}
+          visible
+          onRequestClose={closeViewer}
+          onImageIndexChange={setViewerIndex}
+          HeaderComponent={BoundViewerHeader}
+          FooterComponent={BoundViewerFooter}
+        />
+      ) : null}
     </ScrollView>
   );
 }
@@ -326,5 +482,48 @@ const styles = StyleSheet.create({
     ...theme.typography.body,
     color: theme.colors.text,
     marginBottom: theme.spacing.md,
+  },
+  viewerTopBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: theme.spacing.md,
+  },
+  viewerTopBarButton: {
+    padding: theme.spacing.sm,
+  },
+  viewerTopBarButtonText: {
+    color: theme.colors.textOnDark,
+    ...theme.typography.subtitle,
+  },
+  viewerRemoveText: {
+    color: theme.colors.danger,
+  },
+  viewerFooter: {
+    backgroundColor: theme.colors.accentDark,
+    padding: theme.spacing.md,
+  },
+  dots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: theme.spacing.xs,
+    marginBottom: theme.spacing.sm,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: theme.colors.muted,
+  },
+  dotActive: {
+    backgroundColor: theme.colors.textOnDark,
+  },
+  viewerCommentInput: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radii.md,
+    padding: theme.spacing.sm,
+    minHeight: 64,
+    textAlignVertical: 'top',
+    ...theme.typography.body,
+    color: theme.colors.text,
   },
 });
