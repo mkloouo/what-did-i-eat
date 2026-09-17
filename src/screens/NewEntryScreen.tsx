@@ -14,7 +14,8 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { TagChip } from '../components/TagChip';
 import { addEntry } from '../store/entriesSlice';
 import { generateId } from '../utils/id';
 import { savePickedPhoto, deletePhotoFile, resolvePhotoUri } from '../storage/photoStorage';
@@ -38,6 +39,14 @@ export function NewEntryScreen() {
   const [showIOSPicker, setShowIOSPicker] = useState(false);
   const [androidStep, setAndroidStep] = useState<'date' | 'time' | null>(null);
   const [androidTempDate, setAndroidTempDate] = useState<Date | null>(null);
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const tags = useAppSelector((state) => Object.values(state.tags));
+
+  function toggleTag(id: string) {
+    setSelectedTagIds((current) =>
+      current.includes(id) ? current.filter((tagId) => tagId !== id) : [...current, id]
+    );
+  }
 
   // Tracks whether the entry was actually saved, so the unmount cleanup below
   // knows whether the picked-and-copied photo files are now legitimately
@@ -174,6 +183,7 @@ export function NewEntryScreen() {
           comment,
           location,
           photos,
+          tagIds: selectedTagIds,
         })
       );
       savedRef.current = true;
@@ -225,6 +235,20 @@ export function NewEntryScreen() {
           onChange={handleIOSDateTimeChange}
           style={styles.iosPicker}
         />
+      ) : null}
+
+      {tags.length > 0 ? (
+        <View style={styles.tagRow}>
+          {tags.map((tag) => (
+            <TagChip
+              key={tag.id}
+              icon={tag.icon}
+              label={tag.label}
+              selected={selectedTagIds.includes(tag.id)}
+              onPress={() => toggleTag(tag.id)}
+            />
+          ))}
+        </View>
       ) : null}
 
       <TextInput
@@ -285,6 +309,12 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   iosPicker: {
+    marginBottom: theme.spacing.md,
+  },
+  tagRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.sm,
     marginBottom: theme.spacing.md,
   },
   commentInput: {
