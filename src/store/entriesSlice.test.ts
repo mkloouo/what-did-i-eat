@@ -1,4 +1,4 @@
-import reducer, { addEntry, updateEntryComment, deleteEntry } from './entriesSlice';
+import reducer, { addEntry, updateEntryComment, updateEntryTags, deleteEntry } from './entriesSlice';
 import { Entry } from '../types/models';
 
 const sampleEntry: Entry = {
@@ -29,6 +29,19 @@ describe('entriesSlice', () => {
   it('updateEntryComment is a no-op for an unknown id', () => {
     const initial = { e1: sampleEntry };
     const state = reducer(initial, updateEntryComment({ id: 'missing', comment: 'x' }));
+    expect(state).toEqual(initial);
+  });
+
+  it('updateEntryTags updates only the tag ids', () => {
+    const initial = { e1: sampleEntry };
+    const state = reducer(initial, updateEntryTags({ id: 'e1', tagIds: ['t1', 't2'] }));
+    expect(state.e1.tagIds).toEqual(['t1', 't2']);
+    expect(state.e1.comment).toBe(sampleEntry.comment);
+  });
+
+  it('updateEntryTags is a no-op for an unknown id', () => {
+    const initial = { e1: sampleEntry };
+    const state = reducer(initial, updateEntryTags({ id: 'missing', tagIds: ['t1'] }));
     expect(state).toEqual(initial);
   });
 
