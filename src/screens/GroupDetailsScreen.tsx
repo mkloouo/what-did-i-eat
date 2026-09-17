@@ -7,6 +7,7 @@ import { useAppSelector } from '../store/hooks';
 import { formatTime } from '../utils/dateFormat';
 import { Card } from '../components/Card';
 import { PhotoThumbnail } from '../components/PhotoThumbnail';
+import { resolvePhotoUri } from '../storage/photoStorage';
 import { theme } from '../theme/theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'GroupDetails'>;
@@ -32,7 +33,7 @@ export function GroupDetailsScreen() {
           onPress={() => navigation.navigate('PhotoDetails', { entryId: item.id, photoIndex: 0 })}
         >
           <Card style={styles.card}>
-            <PhotoThumbnail uri={item.photos[0].uri} size={220} badgeCount={item.photos.length} />
+            <PhotoThumbnail uri={resolvePhotoUri(item.photos[0].uri)} size={220} badgeCount={item.photos.length} />
             <Text style={styles.time}>{formatTime(item.createdAt)}</Text>
             <Text style={styles.comment}>{item.comment || 'No comment'}</Text>
           </Card>

@@ -1,6 +1,11 @@
 import { selectFeedSections } from './groupSelectors';
 import { RootState } from '../rootState';
 import { Entry } from '../../types/models';
+import { resolvePhotoUri } from '../../storage/photoStorage';
+
+jest.mock('expo-file-system/legacy', () => ({
+  documentDirectory: 'file:///doc/',
+}));
 
 function entry(id: string, iso: string, photoUri = `${id}.jpg`): Entry {
   return {
@@ -33,7 +38,7 @@ describe('selectFeedSections', () => {
     expect(sections[0].groups).toHaveLength(1);
     expect(sections[0].groups[0].entries.map((e) => e.id)).toEqual(['a', 'b']);
     expect(sections[0].groups[0].groupTime).toBe(e2.createdAt);
-    expect(sections[0].groups[0].coverPhotoUri).toBe(e2.photos[0].uri);
+    expect(sections[0].groups[0].coverPhotoUri).toBe(resolvePhotoUri(e2.photos[0].uri));
   });
 
   it('splits entries into separate groups when the gap exceeds 1 hour', () => {
