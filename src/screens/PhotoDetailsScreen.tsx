@@ -158,10 +158,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   topBar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: theme.spacing.md,
