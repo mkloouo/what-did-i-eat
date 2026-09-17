@@ -1,5 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
-
 export type Photo = {
   id: string;
   uri: string;
