@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Modal, Pressable, View, Text, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { setBundleByDay } from '../store/settingsSlice';
+import { setBundleByDay, setPhotoLayoutAlgorithm } from '../store/settingsSlice';
+import { PhotoLayoutAlgorithm } from '../types/models';
 import { theme } from '../theme/theme';
 import { Card } from './Card';
 import { IconButton } from './IconButton';
@@ -11,10 +12,16 @@ export function GroupingMenu() {
   const [open, setOpen] = useState(false);
   const insets = useSafeAreaInsets();
   const bundleByDay = useAppSelector((state) => state.settings.bundleByDay);
+  const photoLayoutAlgorithm = useAppSelector((state) => state.settings.photoLayoutAlgorithm);
   const dispatch = useAppDispatch();
 
-  function select(value: boolean) {
+  function selectBundleByDay(value: boolean) {
     dispatch(setBundleByDay(value));
+    setOpen(false);
+  }
+
+  function selectPhotoLayout(value: PhotoLayoutAlgorithm) {
+    dispatch(setPhotoLayoutAlgorithm(value));
     setOpen(false);
   }
 
@@ -25,24 +32,53 @@ export function GroupingMenu() {
         <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
           <Card style={[styles.popover, { top: insets.top + 48 }]}>
             <Text style={styles.label}>Group by</Text>
-            <View style={styles.segmented}>
-              <Pressable
-                onPress={() => select(false)}
-                style={[styles.segment, !bundleByDay && styles.segmentActive]}
-              >
-                <Text style={[styles.segmentText, !bundleByDay && styles.segmentTextActive]}>Hour</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => select(true)}
-                style={[styles.segment, bundleByDay && styles.segmentActive]}
-              >
-                <Text style={[styles.segmentText, bundleByDay && styles.segmentTextActive]}>Day</Text>
-              </Pressable>
-            </View>
+            <SegmentedControl
+              value={bundleByDay}
+              options={[
+                { value: false, label: 'Hour' },
+                { value: true, label: 'Day' },
+              ]}
+              onChange={selectBundleByDay}
+            />
+            <Text style={[styles.label, styles.secondLabel]}>Photo layout</Text>
+            <SegmentedControl
+              value={photoLayoutAlgorithm}
+              options={[
+                { value: 'masonry', label: 'Columns' },
+                { value: 'treemap', label: 'Mosaic' },
+              ]}
+              onChange={selectPhotoLayout}
+            />
           </Card>
         </Pressable>
       </Modal>
     </>
+  );
+}
+
+function SegmentedControl<T>({
+  value,
+  options,
+  onChange,
+}: {
+  value: T;
+  options: { value: T; label: string }[];
+  onChange: (value: T) => void;
+}) {
+  return (
+    <View style={styles.segmented}>
+      {options.map((option) => (
+        <Pressable
+          key={option.label}
+          onPress={() => onChange(option.value)}
+          style={[styles.segment, value === option.value && styles.segmentActive]}
+        >
+          <Text style={[styles.segmentText, value === option.value && styles.segmentTextActive]}>
+            {option.label}
+          </Text>
+        </Pressable>
+      ))}
+    </View>
   );
 }
 
@@ -59,6 +95,9 @@ const styles = StyleSheet.create({
     ...theme.typography.caption,
     color: theme.colors.muted,
     marginBottom: theme.spacing.sm,
+  },
+  secondLabel: {
+    marginTop: theme.spacing.md,
   },
   segmented: {
     flexDirection: 'row',
