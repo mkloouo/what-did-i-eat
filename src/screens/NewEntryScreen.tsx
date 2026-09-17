@@ -7,8 +7,10 @@ import {
   Pressable,
   StyleSheet,
   Alert,
+  Platform,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
@@ -20,6 +22,7 @@ import { captureCurrentLocation } from '../location/locationService';
 import { Photo } from '../types/models';
 import { Button } from '../components/photoLayouts/Button';
 import { PhotoThumbnail } from '../components/PhotoThumbnail';
+import { formatFullDateTime } from '../utils/dateFormat';
 import { theme } from '../theme/theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'NewEntry'>;
@@ -31,6 +34,10 @@ export function NewEntryScreen() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [comment, setComment] = useState('');
   const [saving, setSaving] = useState(false);
+  const [createdAt, setCreatedAt] = useState(() => new Date());
+  const [showIOSPicker, setShowIOSPicker] = useState(false);
+  const [androidStep, setAndroidStep] = useState<'date' | 'time' | null>(null);
+  const [androidTempDate, setAndroidTempDate] = useState<Date | null>(null);
 
   // Tracks whether the entry was actually saved, so the unmount cleanup below
   // knows whether the picked-and-copied photo files are now legitimately
@@ -107,6 +114,44 @@ export function NewEntryScreen() {
     }
   }
 
+  function clampToNow(date: Date): Date {
+    const now = new Date();
+    return date > now ? now : date;
+  }
+
+  function handleOpenDateTimePicker() {
+    if (Platform.OS === 'android') {
+      setAndroidStep('date');
+    } else {
+      setShowIOSPicker((visible) => !visible);
+    }
+  }
+
+  function handleAndroidDateTimeChange(event: DateTimePickerEvent, selected?: Date) {
+    if (androidStep === 'date') {
+      if (event.type === 'set' && selected) {
+        setAndroidTempDate(selected);
+        setAndroidStep('time');
+      } else {
+        setAndroidStep(null);
+      }
+    } else if (androidStep === 'time') {
+      if (event.type === 'set' && selected && androidTempDate) {
+        const combined = new Date(androidTempDate);
+        combined.setHours(selected.getHours(), selected.getMinutes(), 0, 0);
+        setCreatedAt(clampToNow(combined));
+      }
+      setAndroidStep(null);
+      setAndroidTempDate(null);
+    }
+  }
+
+  function handleIOSDateTimeChange(event: DateTimePickerEvent, selected?: Date) {
+    if (selected) {
+      setCreatedAt(clampToNow(selected));
+    }
+  }
+
   function removePhoto(id: string) {
     const photo = photos.find((p) => p.id === id);
     if (photo) {
@@ -125,7 +170,7 @@ export function NewEntryScreen() {
       dispatch(
         addEntry({
           id: generateId(),
-          createdAt: new Date().toISOString(),
+          createdAt: createdAt.toISOString(),
           comment,
           location,
           photos,
@@ -156,6 +201,31 @@ export function NewEntryScreen() {
       ) : (
         <Text style={styles.hint}>Add at least one photo. Long-press a thumbnail to remove it.</Text>
       )}
+
+      <Pressable onPress={handleOpenDateTimePicker} style={styles.dateTimeRow}>
+        <Text style={styles.dateTimeLabel}>{formatFullDateTime(createdAt.toISOString())}</Text>
+      </Pressable>
+
+      {Platform.OS === 'android' && androidStep ? (
+        <DateTimePicker
+          value={androidStep === 'date' ? createdAt : (androidTempDate ?? createdAt)}
+          mode={androidStep}
+          display="default"
+          maximumDate={new Date()}
+          onChange={handleAndroidDateTimeChange}
+        />
+      ) : null}
+
+      {Platform.OS === 'ios' && showIOSPicker ? (
+        <DateTimePicker
+          value={createdAt}
+          mode="datetime"
+          display="inline"
+          maximumDate={new Date()}
+          onChange={handleIOSDateTimeChange}
+          style={styles.iosPicker}
+        />
+      ) : null}
 
       <TextInput
         style={styles.commentInput}
@@ -202,6 +272,19 @@ const styles = StyleSheet.create({
   hint: {
     ...theme.typography.caption,
     color: theme.colors.muted,
+    marginBottom: theme.spacing.md,
+  },
+  dateTimeRow: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radii.md,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+  },
+  dateTimeLabel: {
+    ...theme.typography.body,
+    color: theme.colors.text,
+  },
+  iosPicker: {
     marginBottom: theme.spacing.md,
   },
   commentInput: {
