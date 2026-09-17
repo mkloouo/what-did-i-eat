@@ -87,16 +87,16 @@ export function FeedScreen() {
                       </View>
                     ) : null}
                     <Text style={styles.cardComment} numberOfLines={2}>
-                      {item.entries[0].comment || "No comment"}
+                      {item.title}
                     </Text>
                   </View>
                   <View style={styles.bodyRow}>
                     <View style={styles.timelineRail}>
-                      <Text style={styles.timeLabel}>{timeFrom}</Text>
+                      <Text style={styles.timeLabel}>{timeTo}</Text>
                       {isRange ? (
                         <>
                           <View style={styles.timelineDash} />
-                          <Text style={styles.timeLabel}>{timeTo}</Text>
+                          <Text style={styles.timeLabel}>{timeFrom}</Text>
                         </>
                       ) : null}
                     </View>

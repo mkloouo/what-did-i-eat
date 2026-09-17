@@ -3,10 +3,12 @@ import { RootState } from '../rootState';
 import { Entry, GroupingMode } from '../../types/models';
 import { dayKeyOf } from '../../utils/dateFormat';
 import { resolvePhotoUri } from '../../storage/photoStorage';
+import { computeWindowTitle } from '../../utils/windowTitle';
 
 export type EntryGroup = {
   id: string;
   dayKey: string;
+  title: string;
   entries: Entry[];
   timeFrom: string;
   timeTo: string;
@@ -35,10 +37,17 @@ function finalizeGroup(entries: Entry[], dayKey: string): EntryGroup {
   return {
     id: `${dayKey}-${entries[0].id}`,
     dayKey,
-    entries,
+    title: computeWindowTitle({
+      entryCount: entries.length,
+      timeFromIso: first.createdAt,
+      timeToIso: last.createdAt,
+    }),
+    entries: [...entries].reverse(),
     timeFrom: first.createdAt,
     timeTo: last.createdAt,
-    photosByEntry: entries.map((entry) => entry.photos.map((photo) => resolvePhotoUri(photo.uri))),
+    photosByEntry: [...entries]
+      .reverse()
+      .map((entry) => entry.photos.map((photo) => resolvePhotoUri(photo.uri))),
   };
 }
 
