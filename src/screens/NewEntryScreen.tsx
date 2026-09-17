@@ -34,14 +34,25 @@ export function NewEntryScreen() {
 
   async function addPickedAssets(assetUris: string[]) {
     try {
-      const saved = await Promise.all(
+      const results = await Promise.allSettled(
         assetUris.map(async (uri) => {
           const id = generateId();
           const destUri = await savePickedPhoto(uri, id);
           return { id, uri: destUri };
         })
       );
-      setPhotos((current) => [...current, ...saved]);
+
+      const saved = results
+        .filter((result) => result.status === 'fulfilled')
+        .map((result) => (result as PromiseFulfilledResult<{ id: string; uri: string }>).value);
+
+      if (saved.length > 0) {
+        setPhotos((current) => [...current, ...saved]);
+      }
+
+      if (results.some((result) => result.status === 'rejected')) {
+        Alert.alert('Some photos could not be saved', 'Some photos failed to save, but the successful ones have been added.');
+      }
     } catch {
       Alert.alert('Could not save photo', 'Something went wrong saving that photo. Please try again.');
     }
