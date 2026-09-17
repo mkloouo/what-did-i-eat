@@ -40,7 +40,7 @@ function PhotoDetailsHeader({ entryId, navigation }: PhotoDetailsHeaderProps) {
           // removing the entry itself.
           await Promise.allSettled(entry.photos.map((photo) => deletePhotoFile(photo.uri)));
           dispatch(deleteEntry({ id: entry.id }));
-          navigation.navigate('Feed');
+          navigation.navigate('Tabs');
         },
       },
     ]);
@@ -150,7 +150,7 @@ export function PhotoDetailsScreen() {
     return (
       <View style={[styles.missing, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
         <Text style={styles.missingText}>This entry no longer exists.</Text>
-        <Button label="Back" onPress={() => navigation.navigate('Feed')} />
+        <Button label="Back" onPress={() => navigation.navigate('Tabs')} />
       </View>
     );
   }
