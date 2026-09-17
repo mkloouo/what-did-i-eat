@@ -2,9 +2,8 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
 import { theme } from '../theme/theme';
-import { IconButton } from '../components/IconButton';
+import { GroupingMenu } from '../components/GroupingMenu';
 import { FeedScreen } from '../screens/FeedScreen';
-import { ConfigScreen } from '../screens/ConfigScreen';
 import { NewEntryScreen } from '../screens/NewEntryScreen';
 import { GroupDetailsScreen } from '../screens/GroupDetailsScreen';
 import { PhotoDetailsScreen } from '../screens/PhotoDetailsScreen';
@@ -23,17 +22,11 @@ export function RootNavigator() {
       <Stack.Screen
         name="Feed"
         component={FeedScreen}
-        options={({ navigation }) => ({
+        options={{
           title: 'What Did I Eat',
-          headerLeft: () => (
-            <IconButton name="settings-outline" onPress={() => navigation.navigate('Config')} />
-          ),
-          headerRight: () => (
-            <IconButton name="add-circle-outline" onPress={() => navigation.navigate('NewEntry')} />
-          ),
-        })}
+          headerRight: () => <GroupingMenu />,
+        }}
       />
-      <Stack.Screen name="Config" component={ConfigScreen} options={{ title: 'Config' }} />
       <Stack.Screen name="NewEntry" component={NewEntryScreen} options={{ title: 'New Entry' }} />
       <Stack.Screen
         name="GroupDetails"
