@@ -2,6 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../rootState';
 import { Entry } from '../../types/models';
 import { dayKeyOf } from '../../utils/dateFormat';
+import { resolvePhotoUri } from '../../storage/photoStorage';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
@@ -34,7 +35,7 @@ function finalizeGroup(entries: Entry[], dayKey: string): EntryGroup {
     dayKey,
     entries,
     groupTime: latest.createdAt,
-    coverPhotoUri: latest.photos[0].uri,
+    coverPhotoUri: resolvePhotoUri(latest.photos[0].uri),
   };
 }
 
