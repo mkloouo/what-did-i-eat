@@ -2,7 +2,6 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './types';
 import { theme } from '../theme/theme';
-import { GroupingMenu } from '../components/GroupingMenu';
 import { FeedScreen } from '../screens/FeedScreen';
 import { NewEntryScreen } from '../screens/NewEntryScreen';
 import { GroupDetailsScreen } from '../screens/GroupDetailsScreen';
@@ -22,10 +21,7 @@ export function RootNavigator() {
       <Stack.Screen
         name="Feed"
         component={FeedScreen}
-        options={{
-          title: 'What Did I Eat',
-          headerRight: () => <GroupingMenu />,
-        }}
+        options={{ title: 'What Did I Eat' }}
       />
       <Stack.Screen name="NewEntry" component={NewEntryScreen} options={{ title: 'New Entry' }} />
       <Stack.Screen

@@ -1,10 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../rootState';
-import { Entry } from '../../types/models';
+import { Entry, GroupingMode } from '../../types/models';
 import { dayKeyOf } from '../../utils/dateFormat';
 import { resolvePhotoUri } from '../../storage/photoStorage';
-
-const ONE_HOUR_MS = 60 * 60 * 1000;
 
 export type EntryGroup = {
   id: string;
@@ -21,7 +19,8 @@ export type DaySection = {
 };
 
 const selectEntriesById = (state: RootState) => state.entries;
-const selectBundleByDay = (state: RootState) => state.settings.bundleByDay;
+const selectGroupingMode = (state: RootState) => state.settings.groupingMode;
+const selectRollingWindowMinutes = (state: RootState) => state.settings.rollingWindowMinutes;
 
 export const selectEntriesSortedByDate = createSelector([selectEntriesById], (entriesById): Entry[] =>
   Object.values(entriesById).sort(
@@ -43,10 +42,15 @@ function finalizeGroup(entries: Entry[], dayKey: string): EntryGroup {
   };
 }
 
-function groupEntriesWithinDay(entries: Entry[], bundleByDay: boolean, dayKey: string): EntryGroup[] {
+function groupEntriesWithinDay(
+  entries: Entry[],
+  groupingMode: GroupingMode,
+  windowMs: number,
+  dayKey: string
+): EntryGroup[] {
   if (entries.length === 0) return [];
 
-  if (bundleByDay) {
+  if (groupingMode === 'day') {
     return [finalizeGroup(entries, dayKey)];
   }
 
@@ -58,7 +62,7 @@ function groupEntriesWithinDay(entries: Entry[], bundleByDay: boolean, dayKey: s
     const candidate = entries[i];
     const gap = new Date(candidate.createdAt).getTime() - new Date(prev.createdAt).getTime();
 
-    if (gap <= ONE_HOUR_MS) {
+    if (gap <= windowMs) {
       current.push(candidate);
     } else {
       groups.push(finalizeGroup(current, dayKey));
@@ -70,8 +74,9 @@ function groupEntriesWithinDay(entries: Entry[], bundleByDay: boolean, dayKey: s
 }
 
 export const selectFeedSections = createSelector(
-  [selectEntriesSortedByDate, selectBundleByDay],
-  (sortedEntries, bundleByDay): DaySection[] => {
+  [selectEntriesSortedByDate, selectGroupingMode, selectRollingWindowMinutes],
+  (sortedEntries, groupingMode, rollingWindowMinutes): DaySection[] => {
+    const windowMs = rollingWindowMinutes * 60_000;
     const byDay = new Map<string, Entry[]>();
     for (const entry of sortedEntries) {
       const key = dayKeyOf(entry.createdAt);
@@ -84,7 +89,7 @@ export const selectFeedSections = createSelector(
 
     return dayKeys.map((dayKey) => {
       const dayEntries = byDay.get(dayKey)!;
-      const groups = groupEntriesWithinDay(dayEntries, bundleByDay, dayKey).reverse();
+      const groups = groupEntriesWithinDay(dayEntries, groupingMode, windowMs, dayKey).reverse();
       return { dayKey, groups };
     });
   }
