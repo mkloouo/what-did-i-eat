@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "what-did-i-eat",
+    "name": "What Did I Eat",
     "slug": "what-did-i-eat",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,8 +14,9 @@
       }
     },
     "android": {
+      "package": "com.mkloouo.whatdidieat",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#C9E6EE",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
