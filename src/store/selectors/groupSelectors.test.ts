@@ -38,7 +38,33 @@ describe('selectFeedSections', () => {
     expect(sections[0].groups).toHaveLength(1);
     expect(sections[0].groups[0].entries.map((e) => e.id)).toEqual(['a', 'b']);
     expect(sections[0].groups[0].groupTime).toBe(e2.createdAt);
-    expect(sections[0].groups[0].coverPhotoUri).toBe(resolvePhotoUri(e2.photos[0].uri));
+    expect(sections[0].groups[0].photos).toEqual([
+      resolvePhotoUri(e1.photos[0].uri),
+      resolvePhotoUri(e2.photos[0].uri),
+    ]);
+  });
+
+  it('flattens photos across every entry in the group, in entry then photo order', () => {
+    const e1: Entry = {
+      id: 'a',
+      createdAt: '2026-03-05T12:00:00.000Z',
+      comment: 'comment-a',
+      location: null,
+      photos: [
+        { id: 'a-1', uri: 'a-1.jpg' },
+        { id: 'a-2', uri: 'a-2.jpg' },
+      ],
+    };
+    const e2 = entry('b', '2026-03-05T12:30:00.000Z');
+    const state = stateFrom([e1, e2]);
+
+    const sections = selectFeedSections(state);
+
+    expect(sections[0].groups[0].photos).toEqual([
+      resolvePhotoUri('a-1.jpg'),
+      resolvePhotoUri('a-2.jpg'),
+      resolvePhotoUri(e2.photos[0].uri),
+    ]);
   });
 
   it('splits entries into separate groups when the gap exceeds 1 hour', () => {
