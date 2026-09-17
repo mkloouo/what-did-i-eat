@@ -8,6 +8,7 @@ import { formatTime } from '../utils/dateFormat';
 import { Card } from '../components/Card';
 import { PhotoThumbnail } from '../components/PhotoThumbnail';
 import { resolvePhotoUri } from '../storage/photoStorage';
+import { useScrollTapGuard } from '../hooks/useScrollTapGuard';
 import { theme } from '../theme/theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'GroupDetails'>;
@@ -21,6 +22,7 @@ export function GroupDetailsScreen() {
   const entries = useAppSelector((state) =>
     entryIds.map((id) => state.entries[id]).filter((entry) => entry !== undefined)
   );
+  const { onScrollBeginDrag, onScrollEndDrag, guardedPress } = useScrollTapGuard();
 
   return (
     <FlatList
@@ -28,9 +30,14 @@ export function GroupDetailsScreen() {
       data={entries}
       keyExtractor={(entry) => entry.id}
       contentContainerStyle={styles.content}
+      overScrollMode="always"
+      onScrollBeginDrag={onScrollBeginDrag}
+      onScrollEndDrag={onScrollEndDrag}
       renderItem={({ item }) => (
         <Pressable
-          onPress={() => navigation.navigate('PhotoDetails', { entryId: item.id, photoIndex: 0 })}
+          onPress={() =>
+            guardedPress(() => navigation.navigate('PhotoDetails', { entryId: item.id, photoIndex: 0 }))
+          }
         >
           <Card style={styles.card}>
             <PhotoThumbnail uri={resolvePhotoUri(item.photos[0].uri)} size={220} badgeCount={item.photos.length} />
