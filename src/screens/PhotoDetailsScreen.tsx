@@ -1,21 +1,32 @@
-import React, { useCallback, useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ImageViewing from 'react-native-image-viewing';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/types';
-import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { updateEntryComment, updateEntryTags, deleteEntry } from '../store/entriesSlice';
-import { deletePhotoFile, resolvePhotoUri } from '../storage/photoStorage';
-import { formatFullDateTime } from '../utils/dateFormat';
-import { Button } from '../components/photoLayouts/Button';
-import { theme } from '../theme/theme';
-import { Tag } from '../types/models';
-import { TagChip } from '../components/TagChip';
+import React, { useCallback, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  Alert,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ImageViewing from "react-native-image-viewing";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/types";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
+import {
+  updateEntryComment,
+  updateEntryTags,
+  deleteEntry,
+} from "../store/entriesSlice";
+import { deletePhotoFile, resolvePhotoUri } from "../storage/photoStorage";
+import { formatFullDateTime } from "../utils/dateFormat";
+import { Button } from "../components/photoLayouts/Button";
+import { theme } from "../theme/theme";
+import { Tag } from "../types/models";
+import { TagChip } from "../components/TagChip";
 
-type Nav = NativeStackNavigationProp<RootStackParamList, 'PhotoDetails'>;
-type Route = RouteProp<RootStackParamList, 'PhotoDetails'>;
+type Nav = NativeStackNavigationProp<RootStackParamList, "PhotoDetails">;
+type Route = RouteProp<RootStackParamList, "PhotoDetails">;
 
 type PhotoDetailsHeaderProps = {
   entryId: string;
@@ -32,25 +43,34 @@ function PhotoDetailsHeader({ entryId, navigation }: PhotoDetailsHeaderProps) {
 
   function confirmDelete() {
     if (!entry) return;
-    Alert.alert('Delete entry?', 'This removes the photo(s) and comment permanently.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          // Use allSettled so a single failed file delete never blocks
-          // removing the entry itself.
-          await Promise.allSettled(entry.photos.map((photo) => deletePhotoFile(photo.uri)));
-          dispatch(deleteEntry({ id: entry.id }));
-          navigation.navigate('Tabs');
+    Alert.alert(
+      "Delete entry?",
+      "This removes the photo(s) and comment permanently.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            // Use allSettled so a single failed file delete never blocks
+            // removing the entry itself.
+            await Promise.allSettled(
+              entry.photos.map((photo) => deletePhotoFile(photo.uri)),
+            );
+            dispatch(deleteEntry({ id: entry.id }));
+            navigation.navigate("Tabs");
+          },
         },
-      },
-    ]);
+      ],
+    );
   }
 
   return (
     <View style={[styles.topBar, { paddingTop: insets.top }]}>
-      <Pressable onPress={() => navigation.goBack()} style={styles.topBarButton}>
+      <Pressable
+        onPress={() => navigation.goBack()}
+        style={styles.topBarButton}
+      >
         <Text style={styles.topBarButtonText}>Close</Text>
       </Pressable>
       <Pressable onPress={confirmDelete} style={styles.topBarButton}>
@@ -75,7 +95,7 @@ function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
   const allTags = useAppSelector((state) => state.tags);
   const insets = useSafeAreaInsets();
   const [isEditing, setIsEditing] = useState(false);
-  const [draftComment, setDraftComment] = useState(entry?.comment ?? '');
+  const [draftComment, setDraftComment] = useState(entry?.comment ?? "");
   const [draftTagIds, setDraftTagIds] = useState<string[]>(entry?.tagIds ?? []);
 
   if (!entry) {
@@ -88,7 +108,9 @@ function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
 
   function toggleDraftTag(id: string) {
     setDraftTagIds((current) =>
-      current.includes(id) ? current.filter((tagId) => tagId !== id) : [...current, id]
+      current.includes(id)
+        ? current.filter((tagId) => tagId !== id)
+        : [...current, id],
     );
   }
 
@@ -99,7 +121,12 @@ function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
   }
 
   return (
-    <View style={[styles.footer, { paddingBottom: insets.bottom + theme.spacing.md }]}>
+    <View
+      style={[
+        styles.footer,
+        { paddingBottom: insets.bottom + theme.spacing.md },
+      ]}
+    >
       {entry.photos.length > 1 ? (
         <View style={styles.dots}>
           {entry.photos.map((photo, index) => (
@@ -110,7 +137,9 @@ function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
           ))}
         </View>
       ) : null}
-      <Text style={styles.footerMeta}>{formatFullDateTime(entry.createdAt)}</Text>
+      <Text style={styles.footerMeta}>
+        {formatFullDateTime(entry.createdAt)}
+      </Text>
       {entry.location?.placeName ? (
         <Text style={styles.footerMeta}>{entry.location.placeName}</Text>
       ) : null}
@@ -146,13 +175,19 @@ function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
             placeholderTextColor={theme.colors.muted}
           />
           <View style={styles.editButtons}>
-            <Button label="Cancel" variant="danger" onPress={() => setIsEditing(false)} />
+            <Button
+              label="Cancel"
+              variant="danger"
+              onPress={() => setIsEditing(false)}
+            />
             <Button label="Save" onPress={saveEdits} />
           </View>
         </View>
       ) : (
         <Pressable onPress={() => setIsEditing(true)}>
-          <Text style={styles.comment}>{entry.comment || 'No comment — tap to add one'}</Text>
+          <Text style={styles.comment}>
+            {entry.comment || "No comment — tap to add one"}
+          </Text>
         </Pressable>
       )}
     </View>
@@ -172,20 +207,25 @@ export function PhotoDetailsScreen() {
   // entirely inside PhotoDetailsFooter's own state).
   const HeaderComponent = useCallback(
     () => <PhotoDetailsHeader entryId={entryId} navigation={navigation} />,
-    [entryId, navigation]
+    [entryId, navigation],
   );
   const FooterComponent = useCallback(
     ({ imageIndex }: { imageIndex: number }) => (
       <PhotoDetailsFooter entryId={entryId} imageIndex={imageIndex} />
     ),
-    [entryId]
+    [entryId],
   );
 
   if (!entry) {
     return (
-      <View style={[styles.missing, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+      <View
+        style={[
+          styles.missing,
+          { paddingTop: insets.top, paddingBottom: insets.bottom },
+        ]}
+      >
         <Text style={styles.missingText}>This entry no longer exists.</Text>
-        <Button label="Back" onPress={() => navigation.navigate('Tabs')} />
+        <Button label="Back" onPress={() => navigation.navigate("Tabs")} />
       </View>
     );
   }
@@ -193,7 +233,9 @@ export function PhotoDetailsScreen() {
   return (
     <View style={styles.container}>
       <ImageViewing
-        images={entry.photos.map((photo) => ({ uri: resolvePhotoUri(photo.uri) }))}
+        images={entry.photos.map((photo) => ({
+          uri: resolvePhotoUri(photo.uri),
+        }))}
         imageIndex={photoIndex}
         visible
         onRequestClose={() => navigation.goBack()}
@@ -207,11 +249,11 @@ export function PhotoDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
   topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: theme.spacing.md,
   },
   topBarButton: {
@@ -229,8 +271,8 @@ const styles = StyleSheet.create({
     padding: theme.spacing.md,
   },
   dots: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: theme.spacing.xs,
     marginBottom: theme.spacing.sm,
   },
@@ -248,8 +290,8 @@ const styles = StyleSheet.create({
     color: theme.colors.textOnDark,
   },
   tagDisplayRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: theme.spacing.xs,
     marginTop: theme.spacing.sm,
   },
@@ -260,26 +302,27 @@ const styles = StyleSheet.create({
   },
   editRow: {
     marginTop: theme.spacing.sm,
+    rowGap: theme.spacing.sm,
   },
   editInput: {
     backgroundColor: theme.colors.surface,
     borderRadius: theme.radii.md,
     padding: theme.spacing.sm,
     minHeight: 64,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
     color: theme.colors.text,
   },
   editButtons: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     gap: theme.spacing.sm,
     marginTop: theme.spacing.sm,
   },
   missing: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: theme.spacing.md,
   },
   missingText: {
