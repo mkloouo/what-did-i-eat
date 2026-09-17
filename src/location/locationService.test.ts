@@ -59,4 +59,21 @@ describe('captureCurrentLocation', () => {
 
     expect(result).toBeNull();
   });
+
+  it('returns null when getting the position takes too long', async () => {
+    jest.useFakeTimers();
+    try {
+      (Location.requestForegroundPermissionsAsync as jest.Mock).mockResolvedValue({ status: 'granted' });
+      // Never resolves, simulating a hanging cold GPS fix.
+      (Location.getCurrentPositionAsync as jest.Mock).mockReturnValue(new Promise(() => {}));
+
+      const resultPromise = captureCurrentLocation();
+      await jest.advanceTimersByTimeAsync(8000);
+      const result = await resultPromise;
+
+      expect(result).toBeNull();
+    } finally {
+      jest.useRealTimers();
+    }
+  });
 });
