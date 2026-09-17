@@ -44,7 +44,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "What Did I Eat uses your location to note where each food photo was taken."
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "extra": {
       "eas": {
