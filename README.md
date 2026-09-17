@@ -4,7 +4,7 @@
 
 The purpose of this project is to shift my mind off of unnecessary things, like calories and weight tracking and just add some conscious thought to the food tracking. What food do I eat?
 
-While I am working on making this more of a natural process (eating) instead of a addictive disease like state (emotional over-eating), I don't want to:
+While I am working on making this more of a natural process (eating) instead of an addictive, disease-like state (emotional over-eating), I don't want to:
 - guilt-trip myself which happens when you go over your desired calorie goals
 - overcomplicate things with precise calculations
 
@@ -33,7 +33,7 @@ Bundling: is when we group all 1-day photos together instead of the default beha
 
 Page 2: endfull (xD) scroll with my days and what I ate with comments
 
-By default, the photos should stack in a groups of 1 hour interval. We don't need to see the exact interval details, just see that when you've added another photo with comment, then it will join the group that was present for the last hour. The group time will update to the latest added photo time.
+By default, the photos should stack in groups of 1 hour interval. We don't need to see the exact interval details, just see that when you've added another photo with comment, then it will join the group that was present for the last hour. The group time will update to the latest added photo time.
 
 If day bundling option is selected, the photos should stack in groups of day.
 
@@ -58,3 +58,7 @@ Should have information where the photo was taken, when, comment and photo. Phot
 ## Tech side
 
 Should be done with react native + react navigation + redux toolkit (if needed) + any other lib
+
+## License
+
+[PolyForm Noncommercial License 1.0.0](LICENSE) — free to use, modify, and share for noncommercial purposes.
