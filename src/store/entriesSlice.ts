@@ -18,11 +18,17 @@ const entriesSlice = createSlice({
         entry.comment = action.payload.comment;
       }
     },
+    updateEntryTags(state, action: PayloadAction<{ id: string; tagIds: string[] }>) {
+      const entry = state[action.payload.id];
+      if (entry) {
+        entry.tagIds = action.payload.tagIds;
+      }
+    },
     deleteEntry(state, action: PayloadAction<{ id: string }>) {
       delete state[action.payload.id];
     },
   },
 });
 
-export const { addEntry, updateEntryComment, deleteEntry } = entriesSlice.actions;
+export const { addEntry, updateEntryComment, updateEntryTags, deleteEntry } = entriesSlice.actions;
 export default entriesSlice.reducer;

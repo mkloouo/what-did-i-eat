@@ -17,6 +17,7 @@ export type Entry = {
   comment: string;
   location: EntryLocation | null;
   photos: Photo[];
+  tagIds?: string[];
 };
 
 export type PhotoLayoutAlgorithm = 'masonry' | 'treemap';
