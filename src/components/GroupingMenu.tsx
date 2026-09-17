@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
   popover: {
     position: 'absolute',
     right: theme.spacing.md,
+    width: 240,
   },
   label: {
     ...theme.typography.caption,
@@ -107,8 +108,11 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.muted,
   },
   segment: {
+    flex: 1,
     paddingVertical: theme.spacing.xs,
     paddingHorizontal: theme.spacing.md,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   segmentActive: {
     backgroundColor: theme.colors.primary,
