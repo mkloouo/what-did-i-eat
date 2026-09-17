@@ -4,7 +4,7 @@ import { theme } from '../theme/theme';
 
 type Props = {
   children: ReactNode;
-  style?: ViewStyle;
+  style?: ViewStyle | ViewStyle[];
 };
 
 export function Card({ children, style }: Props) {
