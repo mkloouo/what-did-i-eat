@@ -18,7 +18,7 @@ import { generateId } from '../utils/id';
 import { savePickedPhoto, deletePhotoFile, resolvePhotoUri } from '../storage/photoStorage';
 import { captureCurrentLocation } from '../location/locationService';
 import { Photo } from '../types/models';
-import { Button } from '../components/Button';
+import { Button } from '../components/photoLayouts/Button';
 import { PhotoThumbnail } from '../components/PhotoThumbnail';
 import { theme } from '../theme/theme';
 
@@ -167,9 +167,10 @@ export function NewEntryScreen() {
       />
 
       <Button
-        label={saving ? 'Adding…' : 'Add'}
+        label="Add"
         onPress={handleAdd}
         disabled={photos.length === 0 || saving}
+        loading={saving}
       />
     </ScrollView>
   );
