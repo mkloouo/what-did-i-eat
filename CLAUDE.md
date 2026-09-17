@@ -29,3 +29,34 @@ Specific pitfalls seen repeatedly in this project's history:
 - Watch subcommand spelling: `rtk discover` (not `discovery`), `rtk gain` (not `gian`),
   `rtk git status` (not bare `rtk status`) — a typo'd subcommand errors, it doesn't fall
   back to anything.
+
+## Android release process
+
+When the user asks to "release" a new Android version (or says "release vX.Y.Z"), do this
+without asking them to re-explain it:
+
+1. Implement and commit the feature work first, as its own commit(s) — never bundled with
+   the version bump.
+2. Bump the version string in both `package.json` and `app.json` (`expo.version`) to the
+   new `X.Y.Z`. Commit these two files together, alone, with message `release vX.Y.Z`.
+3. Build the APK locally: `npx eas-cli build --platform android --profile production-apk
+   --local --non-interactive`. This takes several minutes (native Gradle build) — run it
+   with `run_in_background: true` on the Bash tool rather than blocking or polling. It
+   writes `build-<timestamp>.apk` into the repo root; note the exact filename from the
+   build's final "You can find the build artifacts in ..." line — don't guess it.
+4. `git tag vX.Y.Z` on the release commit, then `git push origin vX.Y.Z`.
+5. `gh release create vX.Y.Z build-<timestamp>.apk --title "vX.Y.Z" --notes "<1-2 sentence
+   summary of what shipped>"` — short and casual, matching the style of past releases
+   (check `gh release view v<previous> --json body -q .body` for tone if unsure).
+6. `git push origin main` last, pushing both the feature commit(s) and the release commit.
+
+Notes:
+
+- `eas.json`'s `production-apk` profile (not `production`) is the one that emits an APK
+  (`android.buildType: apk`); `production` alone builds an AAB.
+- The built `build-*.apk` files are never committed to git — they're only ever attached as
+  GitHub release assets. Leftover ones in the working tree from past releases are harmless
+  clutter, not something to clean up unprompted.
+- `appVersionSource` is `"remote"` in `eas.json`, so EAS manages the Android `versionCode`
+  itself (`production.autoIncrement: true`); the `app.json`/`package.json` version bump is
+  just the human-readable version string, not what EAS uses for versionCode.
