@@ -26,6 +26,7 @@ function stateFrom(
   return {
     entries: entriesById,
     settings: { groupingMode, rollingWindowMinutes, photoLayoutAlgorithm: 'treemap' },
+    tags: {},
   };
 }
 

@@ -12,10 +12,12 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import entriesReducer from './entriesSlice';
 import settingsReducer from './settingsSlice';
+import tagsReducer from './tagsSlice';
 
 const rootReducer = combineReducers({
   entries: entriesReducer,
   settings: settingsReducer,
+  tags: tagsReducer,
 });
 
 const persistConfig = {
