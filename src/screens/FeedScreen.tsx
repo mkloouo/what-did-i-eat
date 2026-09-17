@@ -13,6 +13,7 @@ import { Card } from "../components/Card";
 import { PhotoStack } from "../components/PhotoStack";
 import { Fab } from "../components/Fab";
 import { DayDivider } from "../components/DayDivider";
+import { useScrollTapGuard } from "../hooks/useScrollTapGuard";
 import { theme } from "../theme/theme";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "Feed">;
@@ -21,6 +22,7 @@ export function FeedScreen() {
   const navigation = useNavigation<Nav>();
   const sections = useAppSelector(selectFeedSections);
   const photoLayoutAlgorithm = useAppSelector((state) => state.settings.photoLayoutAlgorithm);
+  const { onScrollBeginDrag, onScrollEndDrag, guardedPress } = useScrollTapGuard();
 
   function openGroup(group: EntryGroup) {
     if (group.entries.length === 1) {
@@ -48,6 +50,9 @@ export function FeedScreen() {
         <SectionList
           style={styles.list}
           contentContainerStyle={styles.listContent}
+          overScrollMode="always"
+          onScrollBeginDrag={onScrollBeginDrag}
+          onScrollEndDrag={onScrollEndDrag}
           sections={sections.map((section) => ({
             title: dayLabel(section.dayKey),
             data: section.groups,
@@ -64,7 +69,7 @@ export function FeedScreen() {
 
             return (
               <Pressable
-                onPress={() => openGroup(item)}
+                onPress={() => guardedPress(() => openGroup(item))}
                 style={styles.itemWrapper}
               >
                 <Card style={[styles.card]}>
