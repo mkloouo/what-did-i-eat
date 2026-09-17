@@ -6,11 +6,13 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { updateEntryComment, deleteEntry } from '../store/entriesSlice';
+import { updateEntryComment, updateEntryTags, deleteEntry } from '../store/entriesSlice';
 import { deletePhotoFile, resolvePhotoUri } from '../storage/photoStorage';
 import { formatFullDateTime } from '../utils/dateFormat';
 import { Button } from '../components/photoLayouts/Button';
 import { theme } from '../theme/theme';
+import { Tag } from '../types/models';
+import { TagChip } from '../components/TagChip';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'PhotoDetails'>;
 type Route = RouteProp<RootStackParamList, 'PhotoDetails'>;
@@ -70,16 +72,29 @@ type PhotoDetailsFooterProps = {
 function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
   const dispatch = useAppDispatch();
   const entry = useAppSelector((state) => state.entries[entryId]);
+  const allTags = useAppSelector((state) => state.tags);
   const insets = useSafeAreaInsets();
   const [isEditing, setIsEditing] = useState(false);
   const [draftComment, setDraftComment] = useState(entry?.comment ?? '');
+  const [draftTagIds, setDraftTagIds] = useState<string[]>(entry?.tagIds ?? []);
 
   if (!entry) {
     return null;
   }
 
-  function saveComment() {
+  const resolvedTags = (entry.tagIds ?? [])
+    .map((id) => allTags[id])
+    .filter((tag): tag is Tag => Boolean(tag));
+
+  function toggleDraftTag(id: string) {
+    setDraftTagIds((current) =>
+      current.includes(id) ? current.filter((tagId) => tagId !== id) : [...current, id]
+    );
+  }
+
+  function saveEdits() {
     dispatch(updateEntryComment({ id: entry.id, comment: draftComment }));
+    dispatch(updateEntryTags({ id: entry.id, tagIds: draftTagIds }));
     setIsEditing(false);
   }
 
@@ -99,9 +114,29 @@ function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
       {entry.location?.placeName ? (
         <Text style={styles.footerMeta}>{entry.location.placeName}</Text>
       ) : null}
+      {resolvedTags.length > 0 ? (
+        <View style={styles.tagDisplayRow}>
+          {resolvedTags.map((tag) => (
+            <TagChip key={tag.id} icon={tag.icon} label={tag.label} />
+          ))}
+        </View>
+      ) : null}
 
       {isEditing ? (
         <View style={styles.editRow}>
+          {Object.values(allTags).length > 0 ? (
+            <View style={styles.tagDisplayRow}>
+              {Object.values(allTags).map((tag) => (
+                <TagChip
+                  key={tag.id}
+                  icon={tag.icon}
+                  label={tag.label}
+                  selected={draftTagIds.includes(tag.id)}
+                  onPress={() => toggleDraftTag(tag.id)}
+                />
+              ))}
+            </View>
+          ) : null}
           <TextInput
             style={styles.editInput}
             value={draftComment}
@@ -112,7 +147,7 @@ function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
           />
           <View style={styles.editButtons}>
             <Button label="Cancel" variant="danger" onPress={() => setIsEditing(false)} />
-            <Button label="Save" onPress={saveComment} />
+            <Button label="Save" onPress={saveEdits} />
           </View>
         </View>
       ) : (
@@ -211,6 +246,12 @@ const styles = StyleSheet.create({
   footerMeta: {
     ...theme.typography.caption,
     color: theme.colors.textOnDark,
+  },
+  tagDisplayRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.xs,
+    marginTop: theme.spacing.sm,
   },
   comment: {
     ...theme.typography.body,
