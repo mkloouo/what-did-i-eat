@@ -170,6 +170,8 @@ const styles = StyleSheet.create({
     ...theme.typography.body,
     color: theme.colors.text,
     marginTop: theme.spacing.xs,
+    flex: 1,
+    flexShrink: 1,
   },
   emptyContainer: {
     flex: 1,
