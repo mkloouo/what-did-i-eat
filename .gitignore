@@ -35,3 +35,4 @@ yarn-error.*
 
 # subagent-driven-development scratch workspace (see docs/superpowers/plans)
 .superpowers/
+.vscode
