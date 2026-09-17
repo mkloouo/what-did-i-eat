@@ -5,6 +5,7 @@ const initialState: Settings = {
   groupingMode: 'rolling',
   rollingWindowMinutes: 60,
   photoLayoutAlgorithm: 'treemap',
+  inferDateFromFirstImportedPhoto: false,
 };
 
 const settingsSlice = createSlice({
@@ -20,9 +21,16 @@ const settingsSlice = createSlice({
     setPhotoLayoutAlgorithm(state, action: PayloadAction<PhotoLayoutAlgorithm>) {
       state.photoLayoutAlgorithm = action.payload;
     },
+    setInferDateFromFirstImportedPhoto(state, action: PayloadAction<boolean>) {
+      state.inferDateFromFirstImportedPhoto = action.payload;
+    },
   },
 });
 
-export const { setGroupingMode, setRollingWindowMinutes, setPhotoLayoutAlgorithm } =
-  settingsSlice.actions;
+export const {
+  setGroupingMode,
+  setRollingWindowMinutes,
+  setPhotoLayoutAlgorithm,
+  setInferDateFromFirstImportedPhoto,
+} = settingsSlice.actions;
 export default settingsSlice.reducer;
