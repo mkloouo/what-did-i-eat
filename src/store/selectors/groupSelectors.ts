@@ -11,7 +11,7 @@ export type EntryGroup = {
   dayKey: string;
   entries: Entry[];
   groupTime: string;
-  coverPhotoUri: string;
+  photos: string[];
 };
 
 export type DaySection = {
@@ -35,7 +35,7 @@ function finalizeGroup(entries: Entry[], dayKey: string): EntryGroup {
     dayKey,
     entries,
     groupTime: latest.createdAt,
-    coverPhotoUri: resolvePhotoUri(latest.photos[0].uri),
+    photos: entries.flatMap((entry) => entry.photos.map((photo) => resolvePhotoUri(photo.uri))),
   };
 }
 
