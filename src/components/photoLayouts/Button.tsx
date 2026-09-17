@@ -1,16 +1,17 @@
 import React from 'react';
-import { Pressable, Text, StyleSheet, ViewStyle } from 'react-native';
-import { theme } from '../theme/theme';
+import { ActivityIndicator, Pressable, Text, StyleSheet, ViewStyle } from 'react-native';
+import { theme } from '../../theme/theme';
 
 type Props = {
   label: string;
   onPress: () => void;
   disabled?: boolean;
+  loading?: boolean;
   variant?: 'primary' | 'danger';
   style?: ViewStyle;
 };
 
-export function Button({ label, onPress, disabled, variant = 'primary', style }: Props) {
+export function Button({ label, onPress, disabled, loading, variant = 'primary', style }: Props) {
   const backgroundColor = disabled
     ? theme.colors.muted
     : variant === 'danger'
@@ -23,7 +24,11 @@ export function Button({ label, onPress, disabled, variant = 'primary', style }:
       disabled={disabled}
       style={[styles.button, { backgroundColor }, style]}
     >
-      <Text style={styles.label}>{label}</Text>
+      {loading ? (
+        <ActivityIndicator color={theme.colors.textOnDark} />
+      ) : (
+        <Text style={styles.label}>{label}</Text>
+      )}
     </Pressable>
   );
 }
