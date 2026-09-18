@@ -6,13 +6,40 @@ import { RootStackParamList } from '../navigation/types';
 import { useAppSelector } from '../store/hooks';
 import { formatTime } from '../utils/dateFormat';
 import { Card } from '../components/Card';
-import { PhotoThumbnail } from '../components/PhotoThumbnail';
+import { PhotoCarousel } from '../components/PhotoCarousel';
+import { TagChip } from '../components/TagChip';
 import { resolvePhotoUri } from '../storage/photoStorage';
 import { useScrollTapGuard } from '../hooks/useScrollTapGuard';
+import { Entry, Tag } from '../types/models';
 import { theme } from '../theme/theme';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'GroupDetails'>;
 type Route = RouteProp<RootStackParamList, 'GroupDetails'>;
+
+type EntryCardProps = {
+  entry: Entry;
+  tags: Tag[];
+  onPress: () => void;
+};
+
+function EntryCard({ entry, tags, onPress }: EntryCardProps) {
+  return (
+    <Pressable onPress={onPress}>
+      <Card style={styles.card}>
+        <PhotoCarousel photoUris={entry.photos.map((photo) => resolvePhotoUri(photo.uri))} />
+        <Text style={styles.time}>{formatTime(entry.createdAt)}</Text>
+        {entry.comment ? <Text style={styles.comment}>{entry.comment}</Text> : null}
+        {tags.length > 0 ? (
+          <View style={styles.tagRow}>
+            {tags.map((tag) => (
+              <TagChip key={tag.id} icon={tag.icon} label={tag.label} />
+            ))}
+          </View>
+        ) : null}
+      </Card>
+    </Pressable>
+  );
+}
 
 export function GroupDetailsScreen() {
   const navigation = useNavigation<Nav>();
@@ -22,6 +49,7 @@ export function GroupDetailsScreen() {
   const entries = useAppSelector((state) =>
     entryIds.map((id) => state.entries[id]).filter((entry) => entry !== undefined)
   );
+  const allTags = useAppSelector((state) => state.tags);
   const { onScrollBeginDrag, onScrollEndDrag, guardedPress } = useScrollTapGuard();
 
   return (
@@ -33,19 +61,21 @@ export function GroupDetailsScreen() {
       overScrollMode="always"
       onScrollBeginDrag={onScrollBeginDrag}
       onScrollEndDrag={onScrollEndDrag}
-      renderItem={({ item }) => (
-        <Pressable
-          onPress={() =>
-            guardedPress(() => navigation.navigate('EntryDetails', { entryId: item.id }))
-          }
-        >
-          <Card style={styles.card}>
-            <PhotoThumbnail uri={resolvePhotoUri(item.photos[0].uri)} size={220} badgeCount={item.photos.length} />
-            <Text style={styles.time}>{formatTime(item.createdAt)}</Text>
-            <Text style={styles.comment}>{item.comment || 'No comment'}</Text>
-          </Card>
-        </Pressable>
-      )}
+      renderItem={({ item }) => {
+        const tags = (item.tagIds ?? [])
+          .map((id) => allTags[id])
+          .filter((tag): tag is Tag => Boolean(tag));
+
+        return (
+          <EntryCard
+            entry={item}
+            tags={tags}
+            onPress={() =>
+              guardedPress(() => navigation.navigate('EntryDetails', { entryId: item.id }))
+            }
+          />
+        );
+      }}
     />
   );
 }
@@ -60,17 +90,24 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   card: {
-    alignItems: 'center',
+    padding: theme.spacing.sm,
+    ...theme.shadows.card,
   },
   time: {
-    ...theme.typography.caption,
-    color: theme.colors.muted,
+    ...theme.typography.body,
+    fontWeight: '700',
+    color: theme.colors.text,
     marginTop: theme.spacing.sm,
   },
   comment: {
     ...theme.typography.body,
     color: theme.colors.text,
     marginTop: theme.spacing.xs,
-    textAlign: 'center',
+  },
+  tagRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.xs,
+    marginTop: theme.spacing.sm,
   },
 });

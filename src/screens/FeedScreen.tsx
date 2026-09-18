@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { SectionList, View, Text, Pressable, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -17,12 +17,71 @@ import { PhotoStack } from "../components/PhotoStack";
 import { Fab } from "../components/Fab";
 import { DayDivider } from "../components/DayDivider";
 import { useScrollTapGuard } from "../hooks/useScrollTapGuard";
+import { PhotoLayoutAlgorithm } from "../types/models";
 import { theme } from "../theme/theme";
 
 type Nav = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList, "Feed">,
   NativeStackNavigationProp<RootStackParamList>
 >;
+
+type FeedCardProps = {
+  item: EntryGroup;
+  photoLayoutAlgorithm: PhotoLayoutAlgorithm;
+  onPress: () => void;
+};
+
+// The timeline rail's dashed line needs to span exactly as tall as the
+// photo stack beside it. Flexbox's alignItems:'stretch' doesn't reliably
+// resolve that against a sibling sized by PhotoStack's aspectRatio (the
+// dash was observed stopping partway down), so the photo stack's height is
+// measured directly and applied to the rail explicitly instead.
+function FeedCard({ item, photoLayoutAlgorithm, onPress }: FeedCardProps) {
+  const [photoStackHeight, setPhotoStackHeight] = useState<number | null>(null);
+  const timeFrom = formatTime(item.timeFrom);
+  const timeTo = formatTime(item.timeTo);
+  const isRange = timeFrom !== timeTo;
+
+  return (
+    <Pressable onPress={onPress} style={styles.itemWrapper}>
+      <Card style={[styles.card]}>
+        <View style={[styles.cardRow, styles.horizontalMdSpacer]}>
+          {item.entries.length > 1 ? (
+            <CountBadge label={String(item.entries.length)} />
+          ) : null}
+          <Text style={styles.cardComment} numberOfLines={2}>
+            {item.title}
+          </Text>
+        </View>
+        <View style={styles.bodyRow}>
+          <View
+            style={[
+              styles.timelineRail,
+              photoStackHeight !== null ? { height: photoStackHeight } : null,
+            ]}
+          >
+            <Text style={styles.timeLabel}>{timeTo}</Text>
+            {isRange ? (
+              <>
+                <View style={styles.timelineDash} />
+                <Text style={styles.timeLabel}>{timeFrom}</Text>
+              </>
+            ) : null}
+          </View>
+          <View
+            style={styles.photoStackWrapper}
+            onLayout={(event) => setPhotoStackHeight(event.nativeEvent.layout.height)}
+          >
+            <PhotoStack
+              photosByEntry={item.photosByEntry}
+              algorithm={photoLayoutAlgorithm}
+            />
+          </View>
+        </View>
+      </Card>
+    </Pressable>
+  );
+}
 
 export function FeedScreen() {
   const navigation = useNavigation<Nav>();
@@ -67,46 +126,13 @@ export function FeedScreen() {
           renderSectionHeader={({ section }) => (
             <DayDivider label={section.title} />
           )}
-          renderItem={({ item }) => {
-            const timeFrom = formatTime(item.timeFrom);
-            const timeTo = formatTime(item.timeTo);
-            const isRange = timeFrom !== timeTo;
-
-            return (
-              <Pressable
-                onPress={() => guardedPress(() => openGroup(item))}
-                style={styles.itemWrapper}
-              >
-                <Card style={[styles.card]}>
-                  <View style={[styles.cardRow, styles.horizontalMdSpacer]}>
-                    {item.entries.length > 1 ? (
-                      <CountBadge label={String(item.entries.length)} />
-                    ) : null}
-                    <Text style={styles.cardComment} numberOfLines={2}>
-                      {item.title}
-                    </Text>
-                  </View>
-                  <View style={styles.bodyRow}>
-                    <View style={styles.timelineRail}>
-                      <Text style={styles.timeLabel}>{timeTo}</Text>
-                      {isRange ? (
-                        <>
-                          <View style={styles.timelineDash} />
-                          <Text style={styles.timeLabel}>{timeFrom}</Text>
-                        </>
-                      ) : null}
-                    </View>
-                    <View style={styles.photoStackWrapper}>
-                      <PhotoStack
-                        photosByEntry={item.photosByEntry}
-                        algorithm={photoLayoutAlgorithm}
-                      />
-                    </View>
-                  </View>
-                </Card>
-              </Pressable>
-            );
-          }}
+          renderItem={({ item }) => (
+            <FeedCard
+              item={item}
+              photoLayoutAlgorithm={photoLayoutAlgorithm}
+              onPress={() => guardedPress(() => openGroup(item))}
+            />
+          )}
         />
       )}
       <Fab onPress={() => navigation.navigate("NewEntry")} />
