@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, Pressable, StyleSheet } from 'react-native';
 import { theme } from '../theme/theme';
 import { PhotoLayoutAlgorithm } from '../types/models';
 import { masonryLayout } from './photoLayouts/masonryLayout';
@@ -10,9 +10,10 @@ const TILE_INSET = 2;
 type Props = {
   photosByEntry: string[][];
   algorithm: PhotoLayoutAlgorithm;
+  onPhotoPress?: (index: number) => void;
 };
 
-export function PhotoStack({ photosByEntry, algorithm }: Props) {
+export function PhotoStack({ photosByEntry, algorithm, onPhotoPress }: Props) {
   const photos = photosByEntry.flat();
   if (photos.length === 0) {
     return null;
@@ -25,8 +26,10 @@ export function PhotoStack({ photosByEntry, algorithm }: Props) {
       {photos.map((uri, index) => {
         const rect = layout.rects[index];
         return (
-          <View
+          <Pressable
             key={uri + index}
+            disabled={!onPhotoPress}
+            onPress={onPhotoPress ? () => onPhotoPress(index) : undefined}
             style={{
               position: 'absolute',
               left: `${(rect.x / layout.unitWidth) * 100}%`,
@@ -37,7 +40,7 @@ export function PhotoStack({ photosByEntry, algorithm }: Props) {
             }}
           >
             <Image source={{ uri }} style={styles.image} resizeMode="cover" />
-          </View>
+          </Pressable>
         );
       })}
     </View>
