@@ -2,14 +2,18 @@ import reducer, {
   setGroupingMode,
   setRollingWindowMinutes,
   setPhotoLayoutAlgorithm,
+  setEntryPhotoLayoutAlgorithm,
   setInferDateFromFirstImportedPhoto,
+  setCaptureLocation,
 } from './settingsSlice';
 
 const baseState = {
   groupingMode: 'rolling' as const,
   rollingWindowMinutes: 60,
   photoLayoutAlgorithm: 'treemap' as const,
+  entryPhotoLayoutAlgorithm: 'treemap' as const,
   inferDateFromFirstImportedPhoto: false,
+  captureLocation: true,
 };
 
 describe('settingsSlice', () => {
@@ -30,6 +34,17 @@ describe('settingsSlice', () => {
   it('setPhotoLayoutAlgorithm switches the algorithm', () => {
     const state = reducer(baseState, setPhotoLayoutAlgorithm('masonry'));
     expect(state.photoLayoutAlgorithm).toBe('masonry');
+  });
+
+  it('setEntryPhotoLayoutAlgorithm switches the entry page algorithm independently', () => {
+    const state = reducer(baseState, setEntryPhotoLayoutAlgorithm('masonry'));
+    expect(state.entryPhotoLayoutAlgorithm).toBe('masonry');
+    expect(state.photoLayoutAlgorithm).toBe('treemap');
+  });
+
+  it('setCaptureLocation toggles the flag', () => {
+    const state = reducer(baseState, setCaptureLocation(false));
+    expect(state.captureLocation).toBe(false);
   });
 
   it('setInferDateFromFirstImportedPhoto toggles the flag', () => {

@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
-import { View, Image, ScrollView, NativeSyntheticEvent, NativeScrollEvent, StyleSheet } from 'react-native';
+import {
+  View,
+  Image,
+  Pressable,
+  ScrollView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  StyleSheet,
+} from 'react-native';
 import { theme } from '../theme/theme';
 import { PaginationDots } from './PaginationDots';
 
 type Props = {
   photoUris: string[];
+  onPress?: () => void;
 };
 
-export function PhotoCarousel({ photoUris }: Props) {
+export function PhotoCarousel({ photoUris, onPress }: Props) {
   const [width, setWidth] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  const height = (width * 3) / 4;
 
   function handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
     if (width === 0) return;
@@ -24,21 +34,22 @@ export function PhotoCarousel({ photoUris }: Props) {
     >
       {width > 0 ? (
         <ScrollView
-          style={{ width, height: width }}
+          style={{ width, height }}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           onScroll={handleScroll}
           scrollEventThrottle={16}
         >
-          {photoUris.map((uri) => (
-            <Image
-              key={uri}
-              source={{ uri }}
-              style={{ width, height: width }}
-              resizeMode="cover"
-            />
-          ))}
+          {photoUris.map((uri) => {
+            const Tile = onPress ? Pressable : View;
+            const tileProps = onPress ? { onPress } : {};
+            return (
+              <Tile key={uri} {...tileProps} style={{ width, height }}>
+                <Image source={{ uri }} style={styles.image} resizeMode="cover" />
+              </Tile>
+            );
+          })}
         </ScrollView>
       ) : null}
       <View style={styles.dotsOverlay}>
@@ -56,7 +67,7 @@ export function PhotoCarousel({ photoUris }: Props) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    aspectRatio: 1,
+    aspectRatio: 4 / 3,
     borderRadius: theme.radii.md,
     overflow: 'hidden',
     backgroundColor: theme.colors.muted,
@@ -66,5 +77,9 @@ const styles = StyleSheet.create({
     bottom: theme.spacing.sm,
     left: 0,
     right: 0,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
 });

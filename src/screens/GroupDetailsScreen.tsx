@@ -24,23 +24,35 @@ type EntryCardProps = {
 
 // The carousel is deliberately NOT inside the Pressable below — a nested
 // horizontal ScrollView inside a Pressable can lose the swipe gesture to
-// the Pressable's own touch handling. Tapping the photo browses; tapping
-// the text below navigates to Entry Details.
+// the Pressable's own touch handling. Instead each photo gets its own
+// Pressable (via PhotoCarousel's onPress), which coexists with the
+// ScrollView's pan responder fine since a tap-without-drag still fires.
 function EntryCard({ entry, tags, onPress }: EntryCardProps) {
   return (
     <Card style={styles.card}>
-      <PhotoCarousel photoUris={entry.photos.map((photo) => resolvePhotoUri(photo.uri))} />
-      <Pressable onPress={onPress}>
-        <Text style={styles.time}>{formatTime(entry.createdAt)}</Text>
-        {entry.comment ? <Text style={styles.comment}>{entry.comment}</Text> : null}
-        {tags.length > 0 ? (
-          <View style={styles.tagRow}>
-            {tags.map((tag) => (
-              <TagChip key={tag.id} icon={tag.icon} label={tag.label} />
-            ))}
-          </View>
-        ) : null}
-      </Pressable>
+      <View style={styles.row}>
+        <View style={styles.photoColumn}>
+          <PhotoCarousel
+            photoUris={entry.photos.map((photo) => resolvePhotoUri(photo.uri))}
+            onPress={onPress}
+          />
+        </View>
+        <Pressable onPress={onPress} style={styles.infoColumn}>
+          <Text style={styles.time}>{formatTime(entry.createdAt)} Record</Text>
+          {tags.length > 0 ? (
+            <View style={styles.tagRow}>
+              {tags.map((tag) => (
+                <TagChip key={tag.id} icon={tag.icon} label={tag.label} />
+              ))}
+            </View>
+          ) : null}
+        </Pressable>
+      </View>
+      {entry.comment ? (
+        <Pressable onPress={onPress}>
+          <Text style={styles.comment}>{entry.comment}</Text>
+        </Pressable>
+      ) : null}
     </Card>
   );
 }
@@ -97,16 +109,26 @@ const styles = StyleSheet.create({
     padding: theme.spacing.sm,
     ...theme.shadows.card,
   },
+  row: {
+    flexDirection: 'row',
+    gap: theme.spacing.md,
+  },
+  photoColumn: {
+    width: 120,
+  },
+  infoColumn: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   time: {
-    ...theme.typography.body,
+    ...theme.typography.subtitle,
     fontWeight: '700',
     color: theme.colors.text,
-    marginTop: theme.spacing.sm,
   },
   comment: {
     ...theme.typography.body,
     color: theme.colors.text,
-    marginTop: theme.spacing.xs,
+    marginTop: theme.spacing.sm,
   },
   tagRow: {
     flexDirection: 'row',
