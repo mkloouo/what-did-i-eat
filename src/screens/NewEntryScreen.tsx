@@ -139,6 +139,7 @@ export function NewEntryScreen() {
   const inferDateFromFirstImportedPhoto = useAppSelector(
     (state) => state.settings.inferDateFromFirstImportedPhoto
   );
+  const captureLocation = useAppSelector((state) => state.settings.captureLocation);
 
   function toggleTag(id: string) {
     setSelectedTagIds((current) =>
@@ -323,7 +324,7 @@ export function NewEntryScreen() {
     if (photos.length === 0) return;
     setSaving(true);
     try {
-      const location = await captureCurrentLocation();
+      const location = captureLocation ? await captureCurrentLocation() : null;
       dispatch(
         addEntry({
           id: generateId(),

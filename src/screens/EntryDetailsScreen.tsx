@@ -17,7 +17,7 @@ import { RootStackParamList } from '../navigation/types';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { updateEntryComment, updateEntryTags, deleteEntry } from '../store/entriesSlice';
 import { deletePhotoFile, resolvePhotoUri } from '../storage/photoStorage';
-import { formatFullDateTime } from '../utils/dateFormat';
+import { formatFullDateTime, formatTime } from '../utils/dateFormat';
 import { PhotoStack } from '../components/PhotoStack';
 import { TagChip } from '../components/TagChip';
 import { IconButton } from '../components/IconButton';
@@ -36,7 +36,9 @@ export function EntryDetailsScreen() {
   const dispatch = useAppDispatch();
   const entry = useAppSelector((state) => state.entries[entryId]);
   const allTags = useAppSelector((state) => state.tags);
-  const photoLayoutAlgorithm = useAppSelector((state) => state.settings.photoLayoutAlgorithm);
+  const photoLayoutAlgorithm = useAppSelector(
+    (state) => state.settings.entryPhotoLayoutAlgorithm
+  );
 
   const [isEditing, setIsEditing] = useState(false);
   const [draftComment, setDraftComment] = useState(entry?.comment ?? '');
@@ -98,6 +100,7 @@ export function EntryDetailsScreen() {
 
   useEffect(() => {
     navigation.setOptions({
+      title: entry ? `${formatTime(entry.createdAt)} Record` : 'Entry',
       headerRight: !entry
         ? undefined
         : isEditing

@@ -6,7 +6,9 @@ import {
   setGroupingMode,
   setRollingWindowMinutes,
   setPhotoLayoutAlgorithm,
+  setEntryPhotoLayoutAlgorithm,
   setInferDateFromFirstImportedPhoto,
+  setCaptureLocation,
 } from '../store/settingsSlice';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { theme } from '../theme/theme';
@@ -17,9 +19,13 @@ export function SettingsScreen() {
   const groupingMode = useAppSelector((state) => state.settings.groupingMode);
   const rollingWindowMinutes = useAppSelector((state) => state.settings.rollingWindowMinutes);
   const photoLayoutAlgorithm = useAppSelector((state) => state.settings.photoLayoutAlgorithm);
+  const entryPhotoLayoutAlgorithm = useAppSelector(
+    (state) => state.settings.entryPhotoLayoutAlgorithm
+  );
   const inferDateFromFirstImportedPhoto = useAppSelector(
     (state) => state.settings.inferDateFromFirstImportedPhoto
   );
+  const captureLocation = useAppSelector((state) => state.settings.captureLocation);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -58,6 +64,18 @@ export function SettingsScreen() {
         onChange={(value) => dispatch(setPhotoLayoutAlgorithm(value as PhotoLayoutAlgorithm))}
       />
 
+      <Text style={[styles.label, styles.secondLabel]}>Entry page photo layout</Text>
+      <SegmentedControl
+        value={entryPhotoLayoutAlgorithm}
+        options={[
+          { value: 'masonry', label: 'Columns' },
+          { value: 'treemap', label: 'Mosaic' },
+        ]}
+        onChange={(value) =>
+          dispatch(setEntryPhotoLayoutAlgorithm(value as PhotoLayoutAlgorithm))
+        }
+      />
+
       <View style={styles.toggleRow}>
         <View style={styles.toggleTextGroup}>
           <Text style={styles.label}>Infer date from imported photo</Text>
@@ -70,6 +88,22 @@ export function SettingsScreen() {
           value={inferDateFromFirstImportedPhoto}
           onValueChange={(value) => {
             dispatch(setInferDateFromFirstImportedPhoto(value));
+          }}
+          trackColor={{ true: theme.colors.primary }}
+        />
+      </View>
+
+      <View style={styles.toggleRow}>
+        <View style={styles.toggleTextGroup}>
+          <Text style={styles.label}>Save location with photos</Text>
+          <Text style={styles.toggleHint}>
+            When off, new entries are saved without capturing your current location.
+          </Text>
+        </View>
+        <Switch
+          value={captureLocation}
+          onValueChange={(value) => {
+            dispatch(setCaptureLocation(value));
           }}
           trackColor={{ true: theme.colors.primary }}
         />
