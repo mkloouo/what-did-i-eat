@@ -22,11 +22,15 @@ type EntryCardProps = {
   onPress: () => void;
 };
 
+// The carousel is deliberately NOT inside the Pressable below — a nested
+// horizontal ScrollView inside a Pressable can lose the swipe gesture to
+// the Pressable's own touch handling. Tapping the photo browses; tapping
+// the text below navigates to Entry Details.
 function EntryCard({ entry, tags, onPress }: EntryCardProps) {
   return (
-    <Pressable onPress={onPress}>
-      <Card style={styles.card}>
-        <PhotoCarousel photoUris={entry.photos.map((photo) => resolvePhotoUri(photo.uri))} />
+    <Card style={styles.card}>
+      <PhotoCarousel photoUris={entry.photos.map((photo) => resolvePhotoUri(photo.uri))} />
+      <Pressable onPress={onPress}>
         <Text style={styles.time}>{formatTime(entry.createdAt)}</Text>
         {entry.comment ? <Text style={styles.comment}>{entry.comment}</Text> : null}
         {tags.length > 0 ? (
@@ -36,8 +40,8 @@ function EntryCard({ entry, tags, onPress }: EntryCardProps) {
             ))}
           </View>
         ) : null}
-      </Card>
-    </Pressable>
+      </Pressable>
+    </Card>
   );
 }
 

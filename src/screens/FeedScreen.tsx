@@ -118,6 +118,7 @@ export function FeedScreen() {
     } else {
       navigation.navigate("GroupDetails", {
         entryIds: group.entries.map((e) => e.id),
+        title: group.title,
       });
     }
   }
@@ -155,7 +156,7 @@ export function FeedScreen() {
                     onPress={() => guardedPress(() => openGroup(group))}
                   />
                 ))}
-                {sectionIndex === 0 && sections.length > 1 ? <NoticeBanner /> : null}
+                {sectionIndex === 0 ? <NoticeBanner /> : null}
               </View>
             ))}
           </View>

@@ -42,7 +42,7 @@ export function RootNavigator() {
       <Stack.Screen
         name="GroupDetails"
         component={GroupDetailsScreen}
-        options={{ title: 'Entries' }}
+        options={({ route }) => ({ title: route.params.title })}
       />
       <Stack.Screen
         name="EntryDetails"

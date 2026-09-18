@@ -1,7 +1,7 @@
 export type RootStackParamList = {
   Tabs: undefined;
   NewEntry: undefined;
-  GroupDetails: { entryIds: string[] };
+  GroupDetails: { entryIds: string[]; title: string };
   EntryDetails: { entryId: string };
   PhotoDetails: { entryId: string; photoIndex: number };
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -41,6 +41,16 @@ export function EntryDetailsScreen() {
   const [isEditing, setIsEditing] = useState(false);
   const [draftComment, setDraftComment] = useState(entry?.comment ?? '');
   const [draftTagIds, setDraftTagIds] = useState<string[]>(entry?.tagIds ?? []);
+  const scrollRef = useRef<ScrollView>(null);
+
+  // The built-in "scroll focused input into view" behavior doesn't
+  // reliably reveal this input (last in a long, variable-height scroll
+  // above it: photos + tags). It's the last thing in the content, so
+  // scrolling all the way to the end always reveals it regardless of what
+  // sits above. The delay lets KeyboardAvoidingView's resize settle first.
+  function handleCommentFocus() {
+    setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
+  }
 
   function startEdit() {
     if (!entry) return;
@@ -128,7 +138,7 @@ export function EntryDetailsScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.content}>
       <PhotoStack
         photosByEntry={[entry.photos.map((photo) => resolvePhotoUri(photo.uri))]}
         algorithm={photoLayoutAlgorithm}
@@ -168,6 +178,7 @@ export function EntryDetailsScreen() {
             style={styles.commentInput}
             value={draftComment}
             onChangeText={setDraftComment}
+            onFocus={handleCommentFocus}
             multiline
             placeholder="Comment"
             placeholderTextColor={theme.colors.muted}
