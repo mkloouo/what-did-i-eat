@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
@@ -135,8 +136,18 @@ export function EntryDetailsScreen() {
           navigation.navigate('PhotoDetails', { entryId: entry.id, photoIndex: index })
         }
       />
-      <Text style={styles.meta}>{formatFullDateTime(entry.createdAt)}</Text>
-      {entry.location?.placeName ? <Text style={styles.meta}>{entry.location.placeName}</Text> : null}
+      <View style={styles.metaRow}>
+        <View style={styles.metaItem}>
+          <Ionicons name="time-outline" size={14} color={theme.colors.muted} />
+          <Text style={styles.meta}>{formatFullDateTime(entry.createdAt)}</Text>
+        </View>
+        {entry.location?.placeName ? (
+          <View style={styles.metaItem}>
+            <Ionicons name="location-outline" size={14} color={theme.colors.muted} />
+            <Text style={styles.meta}>{entry.location.placeName}</Text>
+          </View>
+        ) : null}
+      </View>
 
       {isEditing ? (
         <>
@@ -202,6 +213,16 @@ const styles = StyleSheet.create({
   headerButtonText: {
     color: theme.colors.textOnDark,
     ...theme.typography.subtitle,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.md,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
   },
   meta: {
     ...theme.typography.caption,

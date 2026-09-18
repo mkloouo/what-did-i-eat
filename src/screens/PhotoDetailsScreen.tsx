@@ -9,6 +9,7 @@ import { useAppSelector } from "../store/hooks";
 import { resolvePhotoUri } from "../storage/photoStorage";
 import { formatFullDateTime } from "../utils/dateFormat";
 import { Button } from "../components/photoLayouts/Button";
+import { PaginationDots } from "../components/PaginationDots";
 import { theme } from "../theme/theme";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "PhotoDetails">;
@@ -59,13 +60,8 @@ function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
       ]}
     >
       {entry.photos.length > 1 ? (
-        <View style={styles.dots}>
-          {entry.photos.map((photo, index) => (
-            <View
-              key={photo.id}
-              style={[styles.dot, index === imageIndex && styles.dotActive]}
-            />
-          ))}
+        <View style={styles.dotsWrapper}>
+          <PaginationDots count={entry.photos.length} activeIndex={imageIndex} />
         </View>
       ) : null}
       <Text style={styles.footerMeta}>
@@ -148,20 +144,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.accentDark,
     padding: theme.spacing.md,
   },
-  dots: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: theme.spacing.xs,
+  dotsWrapper: {
     marginBottom: theme.spacing.sm,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: theme.colors.muted,
-  },
-  dotActive: {
-    backgroundColor: theme.colors.textOnDark,
   },
   footerMeta: {
     ...theme.typography.caption,

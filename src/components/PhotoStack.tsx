@@ -4,6 +4,7 @@ import { theme } from '../theme/theme';
 import { PhotoLayoutAlgorithm } from '../types/models';
 import { masonryLayout } from './photoLayouts/masonryLayout';
 import { squarifiedLayout } from './photoLayouts/squarifiedLayout';
+import { tileCornerRadius } from './photoLayouts/tileCornerRadius';
 
 const TILE_INSET = 2;
 
@@ -27,6 +28,13 @@ export function PhotoStack({ photosByEntry, algorithm, onPhotoPress }: Props) {
         const rect = layout.rects[index];
         const Tile = onPhotoPress ? Pressable : View;
         const tileProps = onPhotoPress ? { onPress: () => onPhotoPress(index) } : {};
+        const corners = tileCornerRadius(
+          rect,
+          layout.unitWidth,
+          layout.unitHeight,
+          theme.radii.lg,
+          theme.radii.md
+        );
         return (
           <Tile
             key={uri + index}
@@ -40,7 +48,7 @@ export function PhotoStack({ photosByEntry, algorithm, onPhotoPress }: Props) {
               padding: TILE_INSET,
             }}
           >
-            <Image source={{ uri }} style={styles.image} resizeMode="cover" />
+            <Image source={{ uri }} style={[styles.image, corners]} resizeMode="cover" />
           </Tile>
         );
       })}
@@ -55,7 +63,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    borderRadius: theme.radii.md,
     backgroundColor: theme.colors.muted,
   },
 });

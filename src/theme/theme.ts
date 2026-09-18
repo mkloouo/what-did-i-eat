@@ -32,5 +32,15 @@ export const typography = {
   caption: { fontSize: 13, fontWeight: '400' as const },
 } as const;
 
-export const theme = { colors, spacing, radii, typography };
+export const shadows = {
+  card: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+} as const;
+
+export const theme = { colors, spacing, radii, typography, shadows };
 export type Theme = typeof theme;

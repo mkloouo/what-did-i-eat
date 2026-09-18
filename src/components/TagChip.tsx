@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.surface,
+    backgroundColor: `${theme.colors.primary}1A`,
     borderRadius: theme.radii.pill,
     paddingVertical: theme.spacing.xs,
     paddingHorizontal: theme.spacing.sm,
