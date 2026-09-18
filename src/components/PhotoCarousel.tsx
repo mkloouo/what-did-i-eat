@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Image,
@@ -7,9 +7,9 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   StyleSheet,
-} from 'react-native';
-import { theme } from '../theme/theme';
-import { PaginationDots } from './PaginationDots';
+} from "react-native";
+import { theme } from "../theme/theme";
+import { PaginationDots } from "./PaginationDots";
 
 type Props = {
   photoUris: string[];
@@ -46,7 +46,11 @@ export function PhotoCarousel({ photoUris, onPress }: Props) {
             const tileProps = onPress ? { onPress } : {};
             return (
               <Tile key={uri} {...tileProps} style={{ width, height }}>
-                <Image source={{ uri }} style={styles.image} resizeMode="cover" />
+                <Image
+                  source={{ uri }}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
               </Tile>
             );
           })}
@@ -66,20 +70,20 @@ export function PhotoCarousel({ photoUris, onPress }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
     aspectRatio: 4 / 3,
     borderRadius: theme.radii.md,
-    overflow: 'hidden',
+    overflow: "hidden",
     backgroundColor: theme.colors.muted,
   },
   dotsOverlay: {
-    position: 'absolute',
+    position: "absolute",
     bottom: theme.spacing.sm,
     left: 0,
     right: 0,
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 });

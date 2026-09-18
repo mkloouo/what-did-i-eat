@@ -1,21 +1,24 @@
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import { TabParamList } from './types';
-import { theme } from '../theme/theme';
-import { FeedScreen } from '../screens/FeedScreen';
-import { TagsScreen } from '../screens/TagsScreen';
-import { SettingsScreen } from '../screens/SettingsScreen';
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+import { TabParamList } from "./types";
+import { theme } from "../theme/theme";
+import { FeedScreen } from "../screens/FeedScreen";
+import { TagsScreen } from "../screens/TagsScreen";
+import { SettingsScreen } from "../screens/SettingsScreen";
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const TAB_ICONS: Record<
   keyof TabParamList,
-  { active: keyof typeof Ionicons.glyphMap; inactive: keyof typeof Ionicons.glyphMap }
+  {
+    active: keyof typeof Ionicons.glyphMap;
+    inactive: keyof typeof Ionicons.glyphMap;
+  }
 > = {
-  Feed: { active: 'list', inactive: 'list-outline' },
-  Tags: { active: 'pricetag', inactive: 'pricetag-outline' },
-  Settings: { active: 'settings', inactive: 'settings-outline' },
+  Feed: { active: "list", inactive: "list-outline" },
+  Tags: { active: "pricetag", inactive: "pricetag-outline" },
+  Settings: { active: "settings", inactive: "settings-outline" },
 };
 
 export function TabNavigator() {
@@ -28,16 +31,35 @@ export function TabNavigator() {
         tabBarInactiveTintColor: theme.colors.muted,
         tabBarIcon: ({ focused, color, size }) => (
           <Ionicons
-            name={focused ? TAB_ICONS[route.name].active : TAB_ICONS[route.name].inactive}
+            name={
+              focused
+                ? TAB_ICONS[route.name].active
+                : TAB_ICONS[route.name].inactive
+            }
             color={color}
             size={size}
           />
         ),
+        tabBarLabelStyle: { display: "none" },
       })}
     >
-      <Tab.Screen name="Feed" component={FeedScreen} options={{ title: 'What Did I Eat' }} />
-      <Tab.Screen name="Tags" component={TagsScreen} options={{ title: 'Tags' }} />
-      <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
+      <Tab.Screen
+        name="Feed"
+        component={FeedScreen}
+        options={{
+          title: "Feed",
+        }}
+      />
+      <Tab.Screen
+        name="Tags"
+        component={TagsScreen}
+        options={{ title: "Tags" }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{ title: "Settings" }}
+      />
     </Tab.Navigator>
   );
 }

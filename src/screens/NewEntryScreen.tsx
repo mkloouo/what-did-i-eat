@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -9,26 +9,32 @@ import {
   Alert,
   Platform,
   KeyboardAvoidingView,
-} from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ImageViewing from 'react-native-image-viewing';
-import { RootStackParamList } from '../navigation/types';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { TagChip } from '../components/TagChip';
-import { addEntry } from '../store/entriesSlice';
-import { generateId } from '../utils/id';
-import { savePickedPhoto, deletePhotoFile, resolvePhotoUri } from '../storage/photoStorage';
-import { captureCurrentLocation } from '../location/locationService';
-import { Photo, Tag } from '../types/models';
-import { Button } from '../components/photoLayouts/Button';
-import { PhotoThumbnail } from '../components/PhotoThumbnail';
-import { formatFullDateTime } from '../utils/dateFormat';
-import { parseExifDateTime } from '../utils/exifDate';
-import { theme } from '../theme/theme';
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ImageViewing from "react-native-image-viewing";
+import { RootStackParamList } from "../navigation/types";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { TagChip } from "../components/TagChip";
+import { addEntry } from "../store/entriesSlice";
+import { generateId } from "../utils/id";
+import {
+  savePickedPhoto,
+  deletePhotoFile,
+  resolvePhotoUri,
+} from "../storage/photoStorage";
+import { captureCurrentLocation } from "../location/locationService";
+import { Photo, Tag } from "../types/models";
+import { Button } from "../components/photoLayouts/Button";
+import { PhotoThumbnail } from "../components/PhotoThumbnail";
+import { formatFullDateTime } from "../utils/dateFormat";
+import { parseExifDateTime } from "../utils/exifDate";
+import { theme } from "../theme/theme";
 
 type ViewerState = {
   photos: Photo[];
@@ -69,7 +75,11 @@ function ViewerHeader({
           }}
           style={styles.viewerTopBarButton}
         >
-          <Text style={[styles.viewerTopBarButtonText, styles.viewerRemoveText]}>Remove</Text>
+          <Text
+            style={[styles.viewerTopBarButtonText, styles.viewerRemoveText]}
+          >
+            Remove
+          </Text>
         </Pressable>
       ) : null}
     </View>
@@ -84,14 +94,23 @@ function ViewerFooter({
   viewerStateRef: React.MutableRefObject<ViewerState>;
 }) {
   const insets = useSafeAreaInsets();
-  const { photos, comment, setComment, selectedTagIds, toggleTag, tags } = viewerStateRef.current;
+  const { photos, comment, setComment, selectedTagIds, toggleTag, tags } =
+    viewerStateRef.current;
 
   return (
-    <View style={[styles.viewerFooter, { paddingBottom: insets.bottom + theme.spacing.md }]}>
+    <View
+      style={[
+        styles.viewerFooter,
+        { paddingBottom: insets.bottom + theme.spacing.md },
+      ]}
+    >
       {photos.length > 1 ? (
         <View style={styles.dots}>
           {photos.map((photo, index) => (
-            <View key={photo.id} style={[styles.dot, index === imageIndex && styles.dotActive]} />
+            <View
+              key={photo.id}
+              style={[styles.dot, index === imageIndex && styles.dotActive]}
+            />
           ))}
         </View>
       ) : null}
@@ -120,30 +139,34 @@ function ViewerFooter({
   );
 }
 
-type Nav = NativeStackNavigationProp<RootStackParamList, 'NewEntry'>;
+type Nav = NativeStackNavigationProp<RootStackParamList, "NewEntry">;
 
 export function NewEntryScreen() {
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
 
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [saving, setSaving] = useState(false);
   const [createdAt, setCreatedAt] = useState(() => new Date());
   const [showIOSPicker, setShowIOSPicker] = useState(false);
-  const [androidStep, setAndroidStep] = useState<'date' | 'time' | null>(null);
+  const [androidStep, setAndroidStep] = useState<"date" | "time" | null>(null);
   const [androidTempDate, setAndroidTempDate] = useState<Date | null>(null);
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const scrollRef = useRef<ScrollView>(null);
   const tags = useAppSelector((state) => Object.values(state.tags));
   const inferDateFromFirstImportedPhoto = useAppSelector(
-    (state) => state.settings.inferDateFromFirstImportedPhoto
+    (state) => state.settings.inferDateFromFirstImportedPhoto,
   );
-  const captureLocation = useAppSelector((state) => state.settings.captureLocation);
+  const captureLocation = useAppSelector(
+    (state) => state.settings.captureLocation,
+  );
 
   function toggleTag(id: string) {
     setSelectedTagIds((current) =>
-      current.includes(id) ? current.filter((tagId) => tagId !== id) : [...current, id]
+      current.includes(id)
+        ? current.filter((tagId) => tagId !== id)
+        : [...current, id],
     );
   }
 
@@ -176,22 +199,32 @@ export function NewEntryScreen() {
           const id = generateId();
           const destUri = await savePickedPhoto(uri, id);
           return { id, uri: destUri };
-        })
+        }),
       );
 
       const saved = results
-        .filter((result) => result.status === 'fulfilled')
-        .map((result) => (result as PromiseFulfilledResult<{ id: string; uri: string }>).value);
+        .filter((result) => result.status === "fulfilled")
+        .map(
+          (result) =>
+            (result as PromiseFulfilledResult<{ id: string; uri: string }>)
+              .value,
+        );
 
       if (saved.length > 0) {
         setPhotos((current) => [...current, ...saved]);
       }
 
-      if (results.some((result) => result.status === 'rejected')) {
-        Alert.alert('Some photos could not be saved', 'Some photos failed to save, but the successful ones have been added.');
+      if (results.some((result) => result.status === "rejected")) {
+        Alert.alert(
+          "Some photos could not be saved",
+          "Some photos failed to save, but the successful ones have been added.",
+        );
       }
     } catch {
-      Alert.alert('Could not save photo', 'Something went wrong saving that photo. Please try again.');
+      Alert.alert(
+        "Could not save photo",
+        "Something went wrong saving that photo. Please try again.",
+      );
     }
   }
 
@@ -205,7 +238,7 @@ export function NewEntryScreen() {
   async function handleTakePhoto() {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Camera unavailable', 'Camera permission was denied.');
+      Alert.alert("Camera unavailable", "Camera permission was denied.");
       return;
     }
     const result = await ImagePicker.launchCameraAsync({ quality: 0.8 });
@@ -217,10 +250,14 @@ export function NewEntryScreen() {
   async function handlePickFromLibrary() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Photo library unavailable', 'Photo library permission was denied.');
+      Alert.alert(
+        "Photo library unavailable",
+        "Photo library permission was denied.",
+      );
       return;
     }
-    const shouldInferDate = inferDateFromFirstImportedPhoto && photos.length === 0;
+    const shouldInferDate =
+      inferDateFromFirstImportedPhoto && photos.length === 0;
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsMultipleSelection: true,
       quality: 0.8,
@@ -231,7 +268,7 @@ export function NewEntryScreen() {
         const inferredDate = parseExifDateTime(
           result.assets[0]?.exif?.DateTimeOriginal ??
             result.assets[0]?.exif?.DateTimeDigitized ??
-            result.assets[0]?.exif?.DateTime
+            result.assets[0]?.exif?.DateTime,
         );
         if (inferredDate) {
           setCreatedAt(clampToNow(inferredDate));
@@ -247,23 +284,26 @@ export function NewEntryScreen() {
   }
 
   function handleOpenDateTimePicker() {
-    if (Platform.OS === 'android') {
-      setAndroidStep('date');
+    if (Platform.OS === "android") {
+      setAndroidStep("date");
     } else {
       setShowIOSPicker((visible) => !visible);
     }
   }
 
-  function handleAndroidDateTimeChange(event: DateTimePickerEvent, selected?: Date) {
-    if (androidStep === 'date') {
-      if (event.type === 'set' && selected) {
+  function handleAndroidDateTimeChange(
+    event: DateTimePickerEvent,
+    selected?: Date,
+  ) {
+    if (androidStep === "date") {
+      if (event.type === "set" && selected) {
         setAndroidTempDate(selected);
-        setAndroidStep('time');
+        setAndroidStep("time");
       } else {
         setAndroidStep(null);
       }
-    } else if (androidStep === 'time') {
-      if (event.type === 'set' && selected && androidTempDate) {
+    } else if (androidStep === "time") {
+      if (event.type === "set" && selected && androidTempDate) {
         const combined = new Date(androidTempDate);
         combined.setHours(selected.getHours(), selected.getMinutes(), 0, 0);
         setCreatedAt(clampToNow(combined));
@@ -273,7 +313,10 @@ export function NewEntryScreen() {
     }
   }
 
-  function handleIOSDateTimeChange(event: DateTimePickerEvent, selected?: Date) {
+  function handleIOSDateTimeChange(
+    event: DateTimePickerEvent,
+    selected?: Date,
+  ) {
     if (selected) {
       setCreatedAt(clampToNow(selected));
     }
@@ -333,7 +376,7 @@ export function NewEntryScreen() {
           location,
           photos,
           tagIds: selectedTagIds,
-        })
+        }),
       );
       savedRef.current = true;
       navigation.goBack();
@@ -345,98 +388,124 @@ export function NewEntryScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.content}>
-      <View style={styles.pickerRow}>
-        <Button label="Take photo" onPress={handleTakePhoto} style={styles.pickerButton} />
-        <Button label="Choose from library" onPress={handlePickFromLibrary} style={styles.pickerButton} />
-      </View>
-
-      {photos.length > 0 ? (
-        <View style={styles.thumbnailRow}>
-          {photos.map((photo, index) => (
-            <Pressable
-              key={photo.id}
-              onPress={() => setViewerIndex(index)}
-              onLongPress={() => removePhoto(photo.id)}
-              style={styles.thumbnailWrapper}
-            >
-              <PhotoThumbnail uri={resolvePhotoUri(photo.uri)} size={80} />
-            </Pressable>
-          ))}
+      <ScrollView
+        ref={scrollRef}
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+      >
+        <View style={styles.pickerRow}>
+          <Button
+            label="Take photo"
+            onPress={handleTakePhoto}
+            style={styles.pickerButton}
+          />
+          <Button
+            label="Choose from library"
+            onPress={handlePickFromLibrary}
+            style={styles.pickerButton}
+          />
         </View>
-      ) : (
-        <Text style={styles.hint}>Add at least one photo. Tap a thumbnail to preview it, long-press to remove it.</Text>
-      )}
 
-      <Pressable onPress={handleOpenDateTimePicker} style={styles.dateTimeRow}>
-        <Text style={styles.dateTimeLabel}>{formatFullDateTime(createdAt.toISOString())}</Text>
-      </Pressable>
+        {photos.length > 0 ? (
+          <View style={styles.thumbnailRow}>
+            {photos.map((photo, index) => (
+              <Pressable
+                key={photo.id}
+                onPress={() => setViewerIndex(index)}
+                onLongPress={() => removePhoto(photo.id)}
+                style={styles.thumbnailWrapper}
+              >
+                <PhotoThumbnail uri={resolvePhotoUri(photo.uri)} size={80} />
+              </Pressable>
+            ))}
+          </View>
+        ) : (
+          <Text style={styles.hint}>
+            Add at least one photo. Tap a thumbnail to preview it, long-press to
+            remove it.
+          </Text>
+        )}
 
-      {Platform.OS === 'android' && androidStep ? (
-        <DateTimePicker
-          value={androidStep === 'date' ? createdAt : (androidTempDate ?? createdAt)}
-          mode={androidStep}
-          display="default"
-          maximumDate={new Date()}
-          onChange={handleAndroidDateTimeChange}
+        <Pressable
+          onPress={handleOpenDateTimePicker}
+          style={styles.dateTimeRow}
+        >
+          <Text style={styles.dateTimeLabel}>
+            {formatFullDateTime(createdAt.toISOString())}
+          </Text>
+        </Pressable>
+
+        {Platform.OS === "android" && androidStep ? (
+          <DateTimePicker
+            value={
+              androidStep === "date"
+                ? createdAt
+                : (androidTempDate ?? createdAt)
+            }
+            mode={androidStep}
+            display="default"
+            maximumDate={new Date()}
+            onChange={handleAndroidDateTimeChange}
+          />
+        ) : null}
+
+        {Platform.OS === "ios" && showIOSPicker ? (
+          <DateTimePicker
+            value={createdAt}
+            mode="datetime"
+            display="inline"
+            maximumDate={new Date()}
+            onChange={handleIOSDateTimeChange}
+            style={styles.iosPicker}
+          />
+        ) : null}
+
+        {tags.length > 0 ? (
+          <View style={styles.tagRow}>
+            {tags.map((tag) => (
+              <TagChip
+                key={tag.id}
+                icon={tag.icon}
+                label={tag.label}
+                selected={selectedTagIds.includes(tag.id)}
+                onPress={() => toggleTag(tag.id)}
+              />
+            ))}
+          </View>
+        ) : null}
+
+        <TextInput
+          style={styles.commentInput}
+          placeholder="What did you eat?"
+          placeholderTextColor={theme.colors.muted}
+          value={comment}
+          onChangeText={setComment}
+          onFocus={handleCommentFocus}
+          multiline
         />
-      ) : null}
 
-      {Platform.OS === 'ios' && showIOSPicker ? (
-        <DateTimePicker
-          value={createdAt}
-          mode="datetime"
-          display="inline"
-          maximumDate={new Date()}
-          onChange={handleIOSDateTimeChange}
-          style={styles.iosPicker}
+        <Button
+          label="Add"
+          onPress={handleAdd}
+          disabled={photos.length === 0 || saving}
+          loading={saving}
         />
-      ) : null}
 
-      {tags.length > 0 ? (
-        <View style={styles.tagRow}>
-          {tags.map((tag) => (
-            <TagChip
-              key={tag.id}
-              icon={tag.icon}
-              label={tag.label}
-              selected={selectedTagIds.includes(tag.id)}
-              onPress={() => toggleTag(tag.id)}
-            />
-          ))}
-        </View>
-      ) : null}
-
-      <TextInput
-        style={styles.commentInput}
-        placeholder="What did you eat?"
-        placeholderTextColor={theme.colors.muted}
-        value={comment}
-        onChangeText={setComment}
-        onFocus={handleCommentFocus}
-        multiline
-      />
-
-      <Button
-        label="Add"
-        onPress={handleAdd}
-        disabled={photos.length === 0 || saving}
-        loading={saving}
-      />
-
-      {viewerIndex !== null ? (
-        <ImageViewing
-          images={photos.map((photo) => ({ uri: resolvePhotoUri(photo.uri) }))}
-          imageIndex={viewerIndex}
-          visible
-          onRequestClose={closeViewer}
-          onImageIndexChange={setViewerIndex}
-          HeaderComponent={BoundViewerHeader}
-          FooterComponent={BoundViewerFooter}
-        />
-      ) : null}
+        {viewerIndex !== null ? (
+          <ImageViewing
+            images={photos.map((photo) => ({
+              uri: resolvePhotoUri(photo.uri),
+            }))}
+            imageIndex={viewerIndex}
+            visible
+            onRequestClose={closeViewer}
+            onImageIndexChange={setViewerIndex}
+            HeaderComponent={BoundViewerHeader}
+            FooterComponent={BoundViewerFooter}
+          />
+        ) : null}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -454,7 +523,7 @@ const styles = StyleSheet.create({
     padding: theme.spacing.md,
   },
   pickerRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: theme.spacing.sm,
     marginBottom: theme.spacing.md,
   },
@@ -462,8 +531,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   thumbnailRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: theme.spacing.sm,
     marginBottom: theme.spacing.md,
   },
@@ -487,8 +556,8 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   tagRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: theme.spacing.sm,
     marginBottom: theme.spacing.md,
   },
@@ -497,14 +566,14 @@ const styles = StyleSheet.create({
     borderRadius: theme.radii.md,
     padding: theme.spacing.md,
     minHeight: 96,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
     ...theme.typography.body,
     color: theme.colors.text,
     marginBottom: theme.spacing.md,
   },
   viewerTopBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: theme.spacing.md,
   },
   viewerTopBarButton: {
@@ -522,8 +591,8 @@ const styles = StyleSheet.create({
     padding: theme.spacing.md,
   },
   dots: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: theme.spacing.xs,
     marginBottom: theme.spacing.sm,
   },
@@ -541,7 +610,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.radii.md,
     padding: theme.spacing.sm,
     minHeight: 64,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
     ...theme.typography.body,
     color: theme.colors.text,
   },

@@ -1,13 +1,13 @@
 export const colors = {
-  background: '#D7D5CD',
-  surface: '#EEEBE3',
-  primary: '#435C4A',
-  secondary: '#C46849',
-  muted: '#8A9A86',
-  accentDark: '#243D2D',
-  text: '#2A2A26',
-  textOnDark: '#F7F5EE',
-  danger: '#B41D1D',
+  background: "#D7D5CD",
+  surface: "#EEEBE3",
+  primary: "#435C4A",
+  secondary: "#C46849",
+  muted: "#8A9A86",
+  accentDark: "#243D2D",
+  text: "#2A2A26",
+  textOnDark: "#F7F5EE",
+  danger: "#B41D1D",
 } as const;
 
 export const spacing = {
@@ -26,15 +26,15 @@ export const radii = {
 } as const;
 
 export const typography = {
-  title: { fontSize: 22, fontWeight: '700' as const },
-  subtitle: { fontSize: 16, fontWeight: '600' as const },
-  body: { fontSize: 15, fontWeight: '400' as const },
-  caption: { fontSize: 13, fontWeight: '400' as const },
+  title: { fontSize: 22, fontWeight: "700" as const },
+  subtitle: { fontSize: 16, fontWeight: "600" as const },
+  body: { fontSize: 15, fontWeight: "400" as const },
+  caption: { fontSize: 13, fontWeight: "400" as const },
 } as const;
 
 export const shadows = {
   card: {
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 6,

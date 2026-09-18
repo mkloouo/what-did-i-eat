@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
-import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import { theme } from '../theme/theme';
+import React, { ReactNode } from "react";
+import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
+import { theme } from "../theme/theme";
 
 type Props = {
   children: ReactNode;
