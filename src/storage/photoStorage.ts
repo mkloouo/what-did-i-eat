@@ -18,10 +18,15 @@ async function ensurePhotosDir(): Promise<void> {
  * Resolves a relative photo path (as stored in Redux) to an absolute URI
  * usable by <Image>/ImageViewing. Computed fresh from the current
  * documentDirectory so it survives the app's container path changing
- * across reinstalls/updates.
+ * across reinstalls/updates. Entries saved before paths became relative
+ * still hold a full URI (with a scheme, e.g. "file://") — pass those
+ * through unchanged instead of double-prefixing them.
  */
-export function resolvePhotoUri(relativePath: string): string {
-  return `${FileSystem.documentDirectory}${relativePath}`;
+export function resolvePhotoUri(path: string): string {
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(path)) {
+    return path;
+  }
+  return `${FileSystem.documentDirectory}${path}`;
 }
 
 export async function savePickedPhoto(sourceUri: string, id: string): Promise<string> {
