@@ -338,7 +338,7 @@ export function NewEntryScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
       <View style={styles.pickerRow}>
         <Button label="Take photo" onPress={handleTakePhoto} style={styles.pickerButton} />
         <Button label="Choose from library" onPress={handlePickFromLibrary} style={styles.pickerButton} />
@@ -436,6 +436,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
+  },
+  scroll: {
+    flex: 1,
   },
   content: {
     padding: theme.spacing.md,
