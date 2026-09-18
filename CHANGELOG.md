@@ -5,6 +5,14 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-18
+
+### Added
+
+- Setting to use a different photo layout on the Entry page than on the
+  Feed.
+- Setting to turn off saving your location with new entries.
+
 ### Changed
 
 - Deduplicated count-badge styling into a shared `CountBadge` component (feed
@@ -31,6 +39,16 @@ All notable changes to this project are documented here. Format loosely follows
   instead of a separate dash boxed inside each card. Added a "No rules.
   Just notice." banner, always shown between the first and second day
   sections.
+- Entries list: tapping a photo now opens the entry, photos are a touch
+  smaller, and each row now shows its photo on the left with the time and
+  tags on the right.
+- Entry page title now shows the entry's time, e.g. "2:30 PM Record".
+- Tags screen redesigned: tags now show as icon + label chips, with a
+  "Select" mode for deleting several at once and tap-to-edit; many more
+  icons to choose from.
+- Feed timeline polish: day labels now sit at the left edge, spacing
+  between days is more even, and the dashed line reaches the bottom of
+  the screen.
 
 ### Fixed
 
@@ -40,3 +58,5 @@ All notable changes to this project are documented here. Format loosely follows
   bottom time label instead of stopping partway down; photo collage
   corners touching the card's edge now match the card's own corner
   radius.
+- Some older entries' photos could show up blank/gray instead of the
+  actual picture; fixed.
