@@ -24,6 +24,7 @@ export function PhotoCarousel({ photoUris }: Props) {
     >
       {width > 0 ? (
         <ScrollView
+          style={{ width, height: width }}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}

@@ -134,6 +134,7 @@ export function NewEntryScreen() {
   const [androidStep, setAndroidStep] = useState<'date' | 'time' | null>(null);
   const [androidTempDate, setAndroidTempDate] = useState<Date | null>(null);
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+  const scrollRef = useRef<ScrollView>(null);
   const tags = useAppSelector((state) => Object.values(state.tags));
   const inferDateFromFirstImportedPhoto = useAppSelector(
     (state) => state.settings.inferDateFromFirstImportedPhoto
@@ -191,6 +192,13 @@ export function NewEntryScreen() {
     } catch {
       Alert.alert('Could not save photo', 'Something went wrong saving that photo. Please try again.');
     }
+  }
+
+  // The built-in "scroll focused input into view" behavior doesn't
+  // reliably reveal this input once several photos are attached. The
+  // delay lets KeyboardAvoidingView's resize settle first.
+  function handleCommentFocus() {
+    setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
   }
 
   async function handleTakePhoto() {
@@ -338,7 +346,7 @@ export function NewEntryScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.content}>
       <View style={styles.pickerRow}>
         <Button label="Take photo" onPress={handleTakePhoto} style={styles.pickerButton} />
         <Button label="Choose from library" onPress={handlePickFromLibrary} style={styles.pickerButton} />
@@ -406,6 +414,7 @@ export function NewEntryScreen() {
         placeholderTextColor={theme.colors.muted}
         value={comment}
         onChangeText={setComment}
+        onFocus={handleCommentFocus}
         multiline
       />
 
