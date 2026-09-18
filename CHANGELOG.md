@@ -5,6 +5,12 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Changed
+
+- Reformatted everything with prettier.
+- Aligned Banner bottom padding to similar from the other feed elements.
+- Aligned theme colors with colors from Stitch project.
+
 ## [1.4.0] - 2026-09-18
 
 ### Added
