@@ -37,8 +37,11 @@ without asking them to re-explain it:
 
 1. Implement and commit the feature work first, as its own commit(s) — never bundled with
    the version bump.
-2. Bump the version string in both `package.json` and `app.json` (`expo.version`) to the
-   new `X.Y.Z`. Commit these two files together, alone, with message `release vX.Y.Z`.
+2. Move `CHANGELOG.md`'s `[Unreleased]` section content under a new `## [X.Y.Z] -
+   YYYY-MM-DD` heading (leave `[Unreleased]` empty above it, ready for the next round).
+   Bump the version string in both `package.json` and `app.json` (`expo.version`) to the
+   new `X.Y.Z`. Commit `CHANGELOG.md` + these two files together, alone, with message
+   `release vX.Y.Z`.
 3. Build the APK locally: `npx eas-cli build --platform android --profile production-apk
    --local --non-interactive`. This takes several minutes (native Gradle build) — run it
    with `run_in_background: true` on the Bash tool rather than blocking or polling. It
