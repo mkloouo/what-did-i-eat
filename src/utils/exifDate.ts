@@ -2,7 +2,9 @@
 // which `new Date(...)` cannot parse directly.
 const EXIF_DATE_PATTERN = /^(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})$/;
 
-export function parseExifDateTime(value: string | undefined | null): Date | null {
+export function parseExifDateTime(
+  value: string | undefined | null,
+): Date | null {
   if (!value) return null;
   const match = EXIF_DATE_PATTERN.exec(value.trim());
   if (!match) return null;
@@ -14,7 +16,7 @@ export function parseExifDateTime(value: string | undefined | null): Date | null
     Number(day),
     Number(hour),
     Number(minute),
-    Number(second)
+    Number(second),
   );
   return Number.isNaN(date.getTime()) ? null : date;
 }

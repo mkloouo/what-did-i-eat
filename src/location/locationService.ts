@@ -1,12 +1,12 @@
-import * as Location from 'expo-location';
-import { EntryLocation } from '../types/models';
+import * as Location from "expo-location";
+import { EntryLocation } from "../types/models";
 
 const POSITION_TIMEOUT_MS = 8000;
 
 export async function captureCurrentLocation(): Promise<EntryLocation | null> {
   try {
     const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
+    if (status !== "granted") {
       return null;
     }
 
@@ -20,7 +20,10 @@ export async function captureCurrentLocation(): Promise<EntryLocation | null> {
 
     let position: Location.LocationObject | null;
     try {
-      position = await Promise.race([Location.getCurrentPositionAsync({}), timeoutPromise]);
+      position = await Promise.race([
+        Location.getCurrentPositionAsync({}),
+        timeoutPromise,
+      ]);
     } finally {
       clearTimeout(timeoutId);
     }
@@ -33,10 +36,14 @@ export async function captureCurrentLocation(): Promise<EntryLocation | null> {
 
     let placeName: string | null = null;
     try {
-      const results = await Location.reverseGeocodeAsync({ latitude, longitude });
+      const results = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
       const place = results[0];
       if (place) {
-        placeName = [place.street, place.city].filter(Boolean).join(', ') || null;
+        placeName =
+          [place.street, place.city].filter(Boolean).join(", ") || null;
       }
     } catch {
       placeName = null;

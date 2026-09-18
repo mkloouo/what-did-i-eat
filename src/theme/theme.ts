@@ -26,15 +26,15 @@ export const radii = {
 } as const;
 
 export const typography = {
-  title: { fontSize: 22, fontWeight: '700' as const },
-  subtitle: { fontSize: 16, fontWeight: '600' as const },
-  body: { fontSize: 15, fontWeight: '400' as const },
-  caption: { fontSize: 13, fontWeight: '400' as const },
+  title: { fontSize: 22, fontWeight: "700" as const },
+  subtitle: { fontSize: 16, fontWeight: "600" as const },
+  body: { fontSize: 15, fontWeight: "400" as const },
+  caption: { fontSize: 13, fontWeight: "400" as const },
 } as const;
 
 export const shadows = {
   card: {
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 6,

@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import { theme } from '../theme/theme';
+import React from "react";
+import { View, Text, StyleSheet, StyleProp, ViewStyle } from "react-native";
+import { theme } from "../theme/theme";
 
 type Props = {
   label: string;
@@ -25,6 +25,6 @@ const styles = StyleSheet.create({
   badgeText: {
     ...theme.typography.caption,
     color: theme.colors.text,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

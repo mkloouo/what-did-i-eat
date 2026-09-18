@@ -1,12 +1,12 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Tag } from '../types/models';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Tag } from "../types/models";
 
 export type TagsState = Record<string, Tag>;
 
 const initialState: TagsState = {};
 
 const tagsSlice = createSlice({
-  name: 'tags',
+  name: "tags",
   initialState,
   reducers: {
     addTag(state, action: PayloadAction<Tag>) {
