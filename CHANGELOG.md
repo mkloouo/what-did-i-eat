@@ -17,3 +17,11 @@ All notable changes to this project are documented here. Format loosely follows
   Entry Details screen (photos, date, location, tags, comment, edit,
   delete) reached from Feed and Group Details; tapping a photo from there
   opens a now-simplified pure viewer (zoom/swipe only).
+- Development and preview builds now use a distinct `.dev` bundle
+  ID/package and app name ("What Did I Eat (Dev)"), so they can be
+  installed alongside a production build without conflicting.
+
+### Fixed
+
+- The on-screen keyboard no longer covers the active text input on the
+  Tags, New Entry, and Entry Details screens.
