@@ -1,69 +1,28 @@
-import React, { useCallback, useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import React, { useCallback } from "react";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ImageViewing from "react-native-image-viewing";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
-import { useAppSelector, useAppDispatch } from "../store/hooks";
-import {
-  updateEntryComment,
-  updateEntryTags,
-  deleteEntry,
-} from "../store/entriesSlice";
-import { deletePhotoFile, resolvePhotoUri } from "../storage/photoStorage";
+import { useAppSelector } from "../store/hooks";
+import { resolvePhotoUri } from "../storage/photoStorage";
 import { formatFullDateTime } from "../utils/dateFormat";
 import { Button } from "../components/photoLayouts/Button";
 import { theme } from "../theme/theme";
-import { Tag } from "../types/models";
-import { TagChip } from "../components/TagChip";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "PhotoDetails">;
 type Route = RouteProp<RootStackParamList, "PhotoDetails">;
 
 type PhotoDetailsHeaderProps = {
-  entryId: string;
   navigation: Nav;
 };
 
-// Rendered by ImageViewing's HeaderComponent. Kept as its own component (with
-// its own selector/dispatch, keyed only by entryId) so the value passed as
-// HeaderComponent can have a stable identity across parent re-renders.
-function PhotoDetailsHeader({ entryId, navigation }: PhotoDetailsHeaderProps) {
-  const dispatch = useAppDispatch();
-  const entry = useAppSelector((state) => state.entries[entryId]);
+// Rendered by ImageViewing's HeaderComponent. Kept as its own component so
+// the value passed as HeaderComponent can have a stable identity across
+// parent re-renders.
+function PhotoDetailsHeader({ navigation }: PhotoDetailsHeaderProps) {
   const insets = useSafeAreaInsets();
-
-  function confirmDelete() {
-    if (!entry) return;
-    Alert.alert(
-      "Delete entry?",
-      "This removes the photo(s) and comment permanently.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            // Use allSettled so a single failed file delete never blocks
-            // removing the entry itself.
-            await Promise.allSettled(
-              entry.photos.map((photo) => deletePhotoFile(photo.uri)),
-            );
-            dispatch(deleteEntry({ id: entry.id }));
-            navigation.navigate("Tabs");
-          },
-        },
-      ],
-    );
-  }
 
   return (
     <View style={[styles.topBar, { paddingTop: insets.top }]}>
@@ -72,9 +31,6 @@ function PhotoDetailsHeader({ entryId, navigation }: PhotoDetailsHeaderProps) {
         style={styles.topBarButton}
       >
         <Text style={styles.topBarButtonText}>Close</Text>
-      </Pressable>
-      <Pressable onPress={confirmDelete} style={styles.topBarButton}>
-        <Text style={[styles.topBarButtonText, styles.deleteText]}>Delete</Text>
       </Pressable>
     </View>
   );
@@ -85,39 +41,14 @@ type PhotoDetailsFooterProps = {
   imageIndex: number;
 };
 
-// Rendered by ImageViewing's FooterComponent. Owns the comment-editing state
-// itself, keyed only by entryId, so typing in the TextInput never changes the
-// identity of the FooterComponent value passed down from the parent screen
-// (which would otherwise remount this whole subtree on every keystroke).
+// Rendered by ImageViewing's FooterComponent. Keyed only by entryId, so it
+// has a stable identity across parent re-renders.
 function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
-  const dispatch = useAppDispatch();
   const entry = useAppSelector((state) => state.entries[entryId]);
-  const allTags = useAppSelector((state) => state.tags);
   const insets = useSafeAreaInsets();
-  const [isEditing, setIsEditing] = useState(false);
-  const [draftComment, setDraftComment] = useState(entry?.comment ?? "");
-  const [draftTagIds, setDraftTagIds] = useState<string[]>(entry?.tagIds ?? []);
 
   if (!entry) {
     return null;
-  }
-
-  const resolvedTags = (entry.tagIds ?? [])
-    .map((id) => allTags[id])
-    .filter((tag): tag is Tag => Boolean(tag));
-
-  function toggleDraftTag(id: string) {
-    setDraftTagIds((current) =>
-      current.includes(id)
-        ? current.filter((tagId) => tagId !== id)
-        : [...current, id],
-    );
-  }
-
-  function saveEdits() {
-    dispatch(updateEntryComment({ id: entry.id, comment: draftComment }));
-    dispatch(updateEntryTags({ id: entry.id, tagIds: draftTagIds }));
-    setIsEditing(false);
   }
 
   return (
@@ -143,53 +74,6 @@ function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
       {entry.location?.placeName ? (
         <Text style={styles.footerMeta}>{entry.location.placeName}</Text>
       ) : null}
-      {resolvedTags.length > 0 ? (
-        <View style={styles.tagDisplayRow}>
-          {resolvedTags.map((tag) => (
-            <TagChip key={tag.id} icon={tag.icon} label={tag.label} />
-          ))}
-        </View>
-      ) : null}
-
-      {isEditing ? (
-        <View style={styles.editRow}>
-          {Object.values(allTags).length > 0 ? (
-            <View style={styles.tagDisplayRow}>
-              {Object.values(allTags).map((tag) => (
-                <TagChip
-                  key={tag.id}
-                  icon={tag.icon}
-                  label={tag.label}
-                  selected={draftTagIds.includes(tag.id)}
-                  onPress={() => toggleDraftTag(tag.id)}
-                />
-              ))}
-            </View>
-          ) : null}
-          <TextInput
-            style={styles.editInput}
-            value={draftComment}
-            onChangeText={setDraftComment}
-            multiline
-            placeholder="Comment"
-            placeholderTextColor={theme.colors.muted}
-          />
-          <View style={styles.editButtons}>
-            <Button
-              label="Cancel"
-              variant="danger"
-              onPress={() => setIsEditing(false)}
-            />
-            <Button label="Save" onPress={saveEdits} />
-          </View>
-        </View>
-      ) : (
-        <Pressable onPress={() => setIsEditing(true)}>
-          <Text style={styles.comment}>
-            {entry.comment || "No comment — tap to add one"}
-          </Text>
-        </Pressable>
-      )}
     </View>
   );
 }
@@ -202,12 +86,9 @@ export function PhotoDetailsScreen() {
   const entry = useAppSelector((state) => state.entries[entryId]);
   const insets = useSafeAreaInsets();
 
-  // These callbacks only depend on entryId/navigation, so their identity is
-  // stable across re-renders caused by comment-editing keystrokes (which live
-  // entirely inside PhotoDetailsFooter's own state).
   const HeaderComponent = useCallback(
-    () => <PhotoDetailsHeader entryId={entryId} navigation={navigation} />,
-    [entryId, navigation],
+    () => <PhotoDetailsHeader navigation={navigation} />,
+    [navigation],
   );
   const FooterComponent = useCallback(
     ({ imageIndex }: { imageIndex: number }) => (
@@ -263,9 +144,6 @@ const styles = StyleSheet.create({
     color: theme.colors.textOnDark,
     ...theme.typography.subtitle,
   },
-  deleteText: {
-    color: theme.colors.danger,
-  },
   footer: {
     backgroundColor: theme.colors.accentDark,
     padding: theme.spacing.md,
@@ -288,35 +166,6 @@ const styles = StyleSheet.create({
   footerMeta: {
     ...theme.typography.caption,
     color: theme.colors.textOnDark,
-  },
-  tagDisplayRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: theme.spacing.xs,
-    marginTop: theme.spacing.sm,
-  },
-  comment: {
-    ...theme.typography.body,
-    color: theme.colors.textOnDark,
-    marginTop: theme.spacing.sm,
-  },
-  editRow: {
-    marginTop: theme.spacing.sm,
-    rowGap: theme.spacing.sm,
-  },
-  editInput: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radii.md,
-    padding: theme.spacing.sm,
-    minHeight: 64,
-    textAlignVertical: "top",
-    color: theme.colors.text,
-  },
-  editButtons: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: theme.spacing.sm,
-    marginTop: theme.spacing.sm,
   },
   missing: {
     flex: 1,
