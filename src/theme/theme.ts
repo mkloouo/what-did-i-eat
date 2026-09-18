@@ -1,13 +1,13 @@
 export const colors = {
-  background: '#DFD9E2',
-  surface: '#F7F5F9',
-  primary: '#2A7F62',
-  secondary: '#C3ACCE',
-  muted: '#89909F',
-  accentDark: '#538083',
-  text: '#2A2A2E',
-  textOnDark: '#F7F5F9',
-  danger: '#B3413A',
+  background: '#D7D5CD',
+  surface: '#EEEBE3',
+  primary: '#435C4A',
+  secondary: '#C46849',
+  muted: '#8A9A86',
+  accentDark: '#243D2D',
+  text: '#2A2A26',
+  textOnDark: '#F7F5EE',
+  danger: '#B41D1D',
 } as const;
 
 export const spacing = {
