@@ -127,7 +127,7 @@ export function EntryDetailsScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
       <PhotoStack
         photosByEntry={[entry.photos.map((photo) => resolvePhotoUri(photo.uri))]}
         algorithm={photoLayoutAlgorithm}
@@ -183,6 +183,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
+  },
+  scroll: {
+    flex: 1,
   },
   content: {
     padding: theme.spacing.md,
