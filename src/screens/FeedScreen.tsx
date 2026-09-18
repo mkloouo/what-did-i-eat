@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   bannerWrapper: {
     flexDirection: "row",
     paddingHorizontal: theme.spacing.md,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   banner: {
     flex: 1,
