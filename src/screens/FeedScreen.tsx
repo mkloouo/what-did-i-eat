@@ -26,7 +26,7 @@ type Nav = CompositeNavigationProp<
   NativeStackNavigationProp<RootStackParamList>
 >;
 
-const RAIL_COLUMN_WIDTH = 40;
+const RAIL_COLUMN_WIDTH = 48;
 
 type FeedCardProps = {
   item: EntryGroup;
@@ -63,8 +63,14 @@ function FeedCard({ item, photoLayoutAlgorithm, onPress }: FeedCardProps) {
     <Pressable onPress={onPress} style={styles.itemWrapper}>
       <View style={styles.bodyRow}>
         <View style={[styles.timelineRail, railStyle]}>
-          <Text style={styles.timeLabel}>{timeTo}</Text>
-          {isRange ? <Text style={styles.timeLabel}>{timeFrom}</Text> : null}
+          <Text style={styles.timeLabel} numberOfLines={1}>
+            {timeTo}
+          </Text>
+          {isRange ? (
+            <Text style={styles.timeLabel} numberOfLines={1}>
+              {timeFrom}
+            </Text>
+          ) : null}
         </View>
         <Card style={styles.card}>
           <View
@@ -144,10 +150,7 @@ export function FeedScreen() {
             <View style={styles.timelineLine} />
             {sections.map((section, sectionIndex) => (
               <View key={section.dayKey}>
-                <DayDivider
-                  label={dayLabel(section.dayKey)}
-                  railColumnWidth={RAIL_COLUMN_WIDTH}
-                />
+                <DayDivider label={dayLabel(section.dayKey)} />
                 {section.groups.map((group) => (
                   <FeedCard
                     key={group.id}
@@ -159,6 +162,7 @@ export function FeedScreen() {
                 {sectionIndex === 0 ? <NoticeBanner /> : null}
               </View>
             ))}
+            <View style={styles.bottomSpacer} />
           </View>
         </ScrollView>
       )}
@@ -176,10 +180,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContent: {
-    paddingBottom: 56 + theme.spacing.lg + theme.spacing.md,
+    flexGrow: 1,
   },
   timeline: {
     position: "relative",
+    flexGrow: 1,
+    paddingTop: theme.spacing.sm,
+  },
+  bottomSpacer: {
+    height: 56 + theme.spacing.lg + theme.spacing.md,
   },
   timelineLine: {
     position: "absolute",
@@ -214,6 +223,9 @@ const styles = StyleSheet.create({
   timeLabel: {
     ...theme.typography.caption,
     color: theme.colors.muted,
+    backgroundColor: theme.colors.background,
+    paddingHorizontal: theme.spacing.xs,
+    flexShrink: 0,
   },
   photoStackWrapper: {
     flex: 1,
