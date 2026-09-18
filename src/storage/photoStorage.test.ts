@@ -13,6 +13,12 @@ describe('resolvePhotoUri', () => {
   it('turns a stored relative path into an absolute URI', () => {
     expect(resolvePhotoUri('photos/abc123.jpg')).toBe('file:///doc/photos/abc123.jpg');
   });
+
+  it('leaves an already-absolute URI (saved before the relative-path migration) unchanged', () => {
+    expect(resolvePhotoUri('file:///doc/photos/legacy123.jpg')).toBe(
+      'file:///doc/photos/legacy123.jpg'
+    );
+  });
 });
 
 describe('savePickedPhoto', () => {
