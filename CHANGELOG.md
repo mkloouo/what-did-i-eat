@@ -26,6 +26,11 @@ All notable changes to this project are documented here. Format loosely follows
   everywhere now use a tinted brand-green background instead of
   near-white; Entry Detail's date/location merged into one row with
   icons.
+- Feed screen's timeline is now one continuous dashed line running down
+  the whole list (day dividers redesigned as pills sitting on the line),
+  instead of a separate dash boxed inside each card. Added a "No rules.
+  Just notice." banner, always shown between the first and second day
+  sections.
 
 ### Fixed
 
