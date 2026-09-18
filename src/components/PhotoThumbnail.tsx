@@ -1,6 +1,7 @@
 import React from 'react';
-import { Image, View, Text, StyleSheet } from 'react-native';
+import { Image, View, StyleSheet } from 'react-native';
 import { theme } from '../theme/theme';
+import { CountBadge } from './CountBadge';
 
 type Props = {
   uri: string;
@@ -17,9 +18,7 @@ export function PhotoThumbnail({ uri, size = 96, badgeCount }: Props) {
         resizeMode="cover"
       />
       {badgeCount && badgeCount > 1 ? (
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>+{badgeCount - 1}</Text>
-        </View>
+        <CountBadge label={`+${badgeCount - 1}`} style={styles.badge} />
       ) : null}
     </View>
   );
@@ -34,14 +33,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: theme.spacing.xs,
     right: theme.spacing.xs,
-    backgroundColor: theme.colors.secondary,
-    borderRadius: theme.radii.pill,
-    paddingHorizontal: theme.spacing.xs + 2,
-    paddingVertical: 2,
-  },
-  badgeText: {
-    ...theme.typography.caption,
-    color: theme.colors.text,
-    fontWeight: '700',
   },
 });

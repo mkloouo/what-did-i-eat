@@ -6,13 +6,25 @@ import { theme } from '../theme/theme';
 type Props = {
   name: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
+  accessibilityLabel: string;
   color?: string;
   size?: number;
 };
 
-export function IconButton({ name, onPress, color = theme.colors.textOnDark, size = 24 }: Props) {
+export function IconButton({
+  name,
+  onPress,
+  accessibilityLabel,
+  color = theme.colors.textOnDark,
+  size = 24,
+}: Props) {
   return (
-    <Pressable onPress={onPress} style={styles.hitArea}>
+    <Pressable
+      onPress={onPress}
+      style={styles.hitArea}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+    >
       <Ionicons name={name} size={size} color={color} />
     </Pressable>
   );

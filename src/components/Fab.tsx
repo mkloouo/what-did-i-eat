@@ -9,7 +9,12 @@ type Props = {
 
 export function Fab({ onPress }: Props) {
   return (
-    <Pressable onPress={onPress} style={styles.fab}>
+    <Pressable
+      onPress={onPress}
+      style={styles.fab}
+      accessibilityRole="button"
+      accessibilityLabel="New entry"
+    >
       <Ionicons name="add" size={28} color={theme.colors.textOnDark} />
     </Pressable>
   );

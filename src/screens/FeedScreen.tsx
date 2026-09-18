@@ -12,6 +12,7 @@ import {
 } from "../store/selectors/groupSelectors";
 import { dayLabel, formatTime } from "../utils/dateFormat";
 import { Card } from "../components/Card";
+import { CountBadge } from "../components/CountBadge";
 import { PhotoStack } from "../components/PhotoStack";
 import { Fab } from "../components/Fab";
 import { DayDivider } from "../components/DayDivider";
@@ -80,11 +81,7 @@ export function FeedScreen() {
                 <Card style={[styles.card]}>
                   <View style={[styles.cardRow, styles.horizontalMdSpacer]}>
                     {item.entries.length > 1 ? (
-                      <View style={styles.entryBadge}>
-                        <Text style={styles.entryBadgeText}>
-                          {item.entries.length}
-                        </Text>
-                      </View>
+                      <CountBadge label={String(item.entries.length)} />
                     ) : null}
                     <Text style={styles.cardComment} numberOfLines={2}>
                       {item.title}
@@ -161,17 +158,6 @@ const styles = StyleSheet.create({
   },
   photoStackWrapper: {
     flex: 1,
-  },
-  entryBadge: {
-    backgroundColor: theme.colors.secondary,
-    borderRadius: theme.radii.pill,
-    paddingHorizontal: theme.spacing.xs + 2,
-    paddingVertical: 2,
-  },
-  entryBadgeText: {
-    ...theme.typography.caption,
-    color: theme.colors.text,
-    fontWeight: "700",
   },
   horizontalMdSpacer: {
     columnGap: theme.spacing.md,
