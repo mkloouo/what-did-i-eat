@@ -85,22 +85,25 @@ export function EntryDetailsScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () =>
-        isEditing ? (
-          <View style={styles.headerButtonRow}>
-            <Pressable onPress={cancelEdit} style={styles.headerButton}>
-              <Text style={styles.headerButtonText}>Cancel</Text>
-            </Pressable>
-            <Pressable onPress={saveEdits} style={styles.headerButton}>
-              <Text style={styles.headerButtonText}>Save</Text>
-            </Pressable>
-          </View>
-        ) : (
-          <View style={styles.headerButtonRow}>
-            <IconButton name="pencil-outline" onPress={startEdit} accessibilityLabel="Edit entry" />
-            <IconButton name="trash-outline" onPress={confirmDelete} accessibilityLabel="Delete entry" />
-          </View>
-        ),
+      headerRight: !entry
+        ? undefined
+        : isEditing
+        ? () => (
+            <View style={styles.headerButtonRow}>
+              <Pressable onPress={cancelEdit} style={styles.headerButton}>
+                <Text style={styles.headerButtonText}>Cancel</Text>
+              </Pressable>
+              <Pressable onPress={saveEdits} style={styles.headerButton}>
+                <Text style={styles.headerButtonText}>Save</Text>
+              </Pressable>
+            </View>
+          )
+        : () => (
+            <View style={styles.headerButtonRow}>
+              <IconButton name="pencil-outline" onPress={startEdit} accessibilityLabel="Edit entry" />
+              <IconButton name="trash-outline" onPress={confirmDelete} accessibilityLabel="Delete entry" />
+            </View>
+          ),
     });
   }, [navigation, isEditing, entry, draftComment, draftTagIds]);
 

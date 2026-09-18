@@ -25,11 +25,12 @@ export function PhotoStack({ photosByEntry, algorithm, onPhotoPress }: Props) {
     <View style={[styles.stack, { aspectRatio: layout.unitWidth / layout.unitHeight }]}>
       {photos.map((uri, index) => {
         const rect = layout.rects[index];
+        const Tile = onPhotoPress ? Pressable : View;
+        const tileProps = onPhotoPress ? { onPress: () => onPhotoPress(index) } : {};
         return (
-          <Pressable
+          <Tile
             key={uri + index}
-            disabled={!onPhotoPress}
-            onPress={onPhotoPress ? () => onPhotoPress(index) : undefined}
+            {...tileProps}
             style={{
               position: 'absolute',
               left: `${(rect.x / layout.unitWidth) * 100}%`,
@@ -40,7 +41,7 @@ export function PhotoStack({ photosByEntry, algorithm, onPhotoPress }: Props) {
             }}
           >
             <Image source={{ uri }} style={styles.image} resizeMode="cover" />
-          </Pressable>
+          </Tile>
         );
       })}
     </View>
