@@ -20,8 +20,18 @@ All notable changes to this project are documented here. Format loosely follows
 - Development and preview builds now use a distinct `.dev` bundle
   ID/package and app name ("What Did I Eat (Dev)"), so they can be
   installed alongside a production build without conflicting.
+- Designer polish pass on the Entries and Entry Detail screens: Entries
+  cards now show a swipeable photo carousel (instead of a single
+  photo+badge), tag chips, and a bold time/comment hierarchy; tag chips
+  everywhere now use a tinted brand-green background instead of
+  near-white; Entry Detail's date/location merged into one row with
+  icons.
 
 ### Fixed
 
 - The on-screen keyboard no longer covers the active text input on the
   Tags, New Entry, and Entry Details screens.
+- Feed cards: the dashed timeline line now reaches all the way to the
+  bottom time label instead of stopping partway down; photo collage
+  corners touching the card's edge now match the card's own corner
+  radius.
