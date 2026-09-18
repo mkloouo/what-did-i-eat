@@ -36,7 +36,7 @@ export function GroupDetailsScreen() {
       renderItem={({ item }) => (
         <Pressable
           onPress={() =>
-            guardedPress(() => navigation.navigate('PhotoDetails', { entryId: item.id, photoIndex: 0 }))
+            guardedPress(() => navigation.navigate('EntryDetails', { entryId: item.id }))
           }
         >
           <Card style={styles.card}>

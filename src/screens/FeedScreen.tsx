@@ -32,9 +32,8 @@ export function FeedScreen() {
 
   function openGroup(group: EntryGroup) {
     if (group.entries.length === 1) {
-      navigation.navigate("PhotoDetails", {
+      navigation.navigate("EntryDetails", {
         entryId: group.entries[0].id,
-        photoIndex: 0,
       });
     } else {
       navigation.navigate("GroupDetails", {
