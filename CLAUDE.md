@@ -39,9 +39,9 @@ without asking them to re-explain it:
    the version bump.
 2. Move `CHANGELOG.md`'s `[Unreleased]` section content under a new `## [X.Y.Z] -
    YYYY-MM-DD` heading (leave `[Unreleased]` empty above it, ready for the next round).
-   Bump the version string in both `package.json` and `app.json` (`expo.version`) to the
-   new `X.Y.Z`. Commit `CHANGELOG.md` + these two files together, alone, with message
-   `release vX.Y.Z`.
+   Bump the version string in both `package.json` and `app.config.js` (the `version` field
+   — this file replaced the old static `app.json`, see notes below) to the new `X.Y.Z`.
+   Commit `CHANGELOG.md` + these two files together, alone, with message `release vX.Y.Z`.
 3. Build the APK locally: `npx eas-cli build --platform android --profile production-apk
    --local --non-interactive`. This takes several minutes (native Gradle build) — run it
    with `run_in_background: true` on the Bash tool rather than blocking or polling. It
@@ -61,5 +61,14 @@ Notes:
   GitHub release assets. Leftover ones in the working tree from past releases are harmless
   clutter, not something to clean up unprompted.
 - `appVersionSource` is `"remote"` in `eas.json`, so EAS manages the Android `versionCode`
-  itself (`production.autoIncrement: true`); the `app.json`/`package.json` version bump is
-  just the human-readable version string, not what EAS uses for versionCode.
+  itself (`production.autoIncrement: true`); the `app.config.js`/`package.json` version bump
+  is just the human-readable version string, not what EAS uses for versionCode.
+- `app.config.js` (not `app.json`) is the source of truth for Expo config — it's a dynamic
+  config that reads `APP_VARIANT` from the environment. `eas.json` sets `APP_VARIANT` to
+  `"development"`/`"preview"` on those two profiles only; `production`/`production-apk` get
+  no `APP_VARIANT`, which is what keeps them on the real `com.mkloouo.whatdidieat` bundle
+  ID/package and the plain "What Did I Eat" name — dev/preview builds get a `.dev` suffix
+  on both platforms' bundle ID/package and "(Dev)" appended to the name, so a dev-client
+  build can be installed on a device alongside a real release without a signature/package
+  clash. Never hand-edit a `bundleIdentifier`/`package`/`name` string in `app.config.js`
+  outside the `IS_DEV` ternaries — that would apply to every profile including production.
