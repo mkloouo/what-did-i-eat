@@ -1,6 +1,6 @@
-import * as FileSystem from 'expo-file-system/legacy';
+import * as FileSystem from "expo-file-system/legacy";
 
-const PHOTOS_SUBDIR = 'photos/';
+const PHOTOS_SUBDIR = "photos/";
 
 function photosDirUri(): string {
   return `${FileSystem.documentDirectory}${PHOTOS_SUBDIR}`;
@@ -29,10 +29,16 @@ export function resolvePhotoUri(path: string): string {
   return `${FileSystem.documentDirectory}${path}`;
 }
 
-export async function savePickedPhoto(sourceUri: string, id: string): Promise<string> {
+export async function savePickedPhoto(
+  sourceUri: string,
+  id: string,
+): Promise<string> {
   await ensurePhotosDir();
   const relativePath = `${PHOTOS_SUBDIR}${id}.jpg`;
-  await FileSystem.copyAsync({ from: sourceUri, to: resolvePhotoUri(relativePath) });
+  await FileSystem.copyAsync({
+    from: sourceUri,
+    to: resolvePhotoUri(relativePath),
+  });
   return relativePath;
 }
 

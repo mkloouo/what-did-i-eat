@@ -1,4 +1,4 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import {
   persistStore,
   persistReducer,
@@ -8,12 +8,12 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from 'redux-persist';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import entriesReducer from './entriesSlice';
-import settingsReducer from './settingsSlice';
-import tagsReducer from './tagsSlice';
-import appMetaReducer from './appMetaSlice';
+} from "redux-persist";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import entriesReducer from "./entriesSlice";
+import settingsReducer from "./settingsSlice";
+import tagsReducer from "./tagsSlice";
+import appMetaReducer from "./appMetaSlice";
 
 const rootReducer = combineReducers({
   entries: entriesReducer,
@@ -23,7 +23,7 @@ const rootReducer = combineReducers({
 });
 
 const persistConfig = {
-  key: 'what-did-i-eat',
+  key: "what-did-i-eat",
   storage: AsyncStorage,
 };
 

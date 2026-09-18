@@ -1,20 +1,20 @@
-import React from 'react';
-import { FlatList, View, Text, Pressable, StyleSheet } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/types';
-import { useAppSelector } from '../store/hooks';
-import { formatTime } from '../utils/dateFormat';
-import { Card } from '../components/Card';
-import { PhotoCarousel } from '../components/PhotoCarousel';
-import { TagChip } from '../components/TagChip';
-import { resolvePhotoUri } from '../storage/photoStorage';
-import { useScrollTapGuard } from '../hooks/useScrollTapGuard';
-import { Entry, Tag } from '../types/models';
-import { theme } from '../theme/theme';
+import React from "react";
+import { FlatList, View, Text, Pressable, StyleSheet } from "react-native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/types";
+import { useAppSelector } from "../store/hooks";
+import { formatTime } from "../utils/dateFormat";
+import { Card } from "../components/Card";
+import { PhotoCarousel } from "../components/PhotoCarousel";
+import { TagChip } from "../components/TagChip";
+import { resolvePhotoUri } from "../storage/photoStorage";
+import { useScrollTapGuard } from "../hooks/useScrollTapGuard";
+import { Entry, Tag } from "../types/models";
+import { theme } from "../theme/theme";
 
-type Nav = NativeStackNavigationProp<RootStackParamList, 'GroupDetails'>;
-type Route = RouteProp<RootStackParamList, 'GroupDetails'>;
+type Nav = NativeStackNavigationProp<RootStackParamList, "GroupDetails">;
+type Route = RouteProp<RootStackParamList, "GroupDetails">;
 
 type EntryCardProps = {
   entry: Entry;
@@ -63,10 +63,13 @@ export function GroupDetailsScreen() {
   const { entryIds } = route.params;
 
   const entries = useAppSelector((state) =>
-    entryIds.map((id) => state.entries[id]).filter((entry) => entry !== undefined)
+    entryIds
+      .map((id) => state.entries[id])
+      .filter((entry) => entry !== undefined),
   );
   const allTags = useAppSelector((state) => state.tags);
-  const { onScrollBeginDrag, onScrollEndDrag, guardedPress } = useScrollTapGuard();
+  const { onScrollBeginDrag, onScrollEndDrag, guardedPress } =
+    useScrollTapGuard();
 
   return (
     <FlatList
@@ -87,7 +90,9 @@ export function GroupDetailsScreen() {
             entry={item}
             tags={tags}
             onPress={() =>
-              guardedPress(() => navigation.navigate('EntryDetails', { entryId: item.id }))
+              guardedPress(() =>
+                navigation.navigate("EntryDetails", { entryId: item.id }),
+              )
             }
           />
         );
@@ -110,7 +115,7 @@ const styles = StyleSheet.create({
     ...theme.shadows.card,
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: theme.spacing.md,
   },
   photoColumn: {
@@ -118,11 +123,11 @@ const styles = StyleSheet.create({
   },
   infoColumn: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   time: {
     ...theme.typography.subtitle,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.text,
   },
   comment: {
@@ -131,8 +136,8 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.sm,
   },
   tagRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: theme.spacing.xs,
     marginTop: theme.spacing.sm,
   },

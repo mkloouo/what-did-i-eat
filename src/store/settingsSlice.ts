@@ -1,17 +1,17 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GroupingMode, PhotoLayoutAlgorithm, Settings } from '../types/models';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { GroupingMode, PhotoLayoutAlgorithm, Settings } from "../types/models";
 
 const initialState: Settings = {
-  groupingMode: 'rolling',
+  groupingMode: "rolling",
   rollingWindowMinutes: 60,
-  photoLayoutAlgorithm: 'treemap',
-  entryPhotoLayoutAlgorithm: 'treemap',
+  photoLayoutAlgorithm: "treemap",
+  entryPhotoLayoutAlgorithm: "treemap",
   inferDateFromFirstImportedPhoto: false,
   captureLocation: true,
 };
 
 const settingsSlice = createSlice({
-  name: 'settings',
+  name: "settings",
   initialState,
   reducers: {
     setGroupingMode(state, action: PayloadAction<GroupingMode>) {
@@ -20,10 +20,16 @@ const settingsSlice = createSlice({
     setRollingWindowMinutes(state, action: PayloadAction<number>) {
       state.rollingWindowMinutes = action.payload;
     },
-    setPhotoLayoutAlgorithm(state, action: PayloadAction<PhotoLayoutAlgorithm>) {
+    setPhotoLayoutAlgorithm(
+      state,
+      action: PayloadAction<PhotoLayoutAlgorithm>,
+    ) {
       state.photoLayoutAlgorithm = action.payload;
     },
-    setEntryPhotoLayoutAlgorithm(state, action: PayloadAction<PhotoLayoutAlgorithm>) {
+    setEntryPhotoLayoutAlgorithm(
+      state,
+      action: PayloadAction<PhotoLayoutAlgorithm>,
+    ) {
       state.entryPhotoLayoutAlgorithm = action.payload;
     },
     setInferDateFromFirstImportedPhoto(state, action: PayloadAction<boolean>) {

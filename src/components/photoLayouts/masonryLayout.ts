@@ -1,4 +1,4 @@
-import { PhotoLayoutResult, Rect } from './types';
+import { PhotoLayoutResult, Rect } from "./types";
 
 const UNIT_WIDTH = 1000;
 const COLUMNS = 2;
@@ -37,5 +37,9 @@ export function masonryLayout(photosByEntry: string[][]): PhotoLayoutResult {
     columnHeights[column] = y - GAP;
   }
 
-  return { rects, unitWidth: UNIT_WIDTH, unitHeight: Math.max(0, ...columnHeights) };
+  return {
+    rects,
+    unitWidth: UNIT_WIDTH,
+    unitHeight: Math.max(0, ...columnHeights),
+  };
 }

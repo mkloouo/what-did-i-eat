@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, ScrollView, Switch, StyleSheet } from 'react-native';
-import Slider from '@react-native-community/slider';
-import { useAppSelector, useAppDispatch } from '../store/hooks';
+import React from "react";
+import { View, Text, ScrollView, Switch, StyleSheet } from "react-native";
+import Slider from "@react-native-community/slider";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
 import {
   setGroupingMode,
   setRollingWindowMinutes,
@@ -9,23 +9,29 @@ import {
   setEntryPhotoLayoutAlgorithm,
   setInferDateFromFirstImportedPhoto,
   setCaptureLocation,
-} from '../store/settingsSlice';
-import { SegmentedControl } from '../components/SegmentedControl';
-import { theme } from '../theme/theme';
-import { GroupingMode, PhotoLayoutAlgorithm } from '../types/models';
+} from "../store/settingsSlice";
+import { SegmentedControl } from "../components/SegmentedControl";
+import { theme } from "../theme/theme";
+import { GroupingMode, PhotoLayoutAlgorithm } from "../types/models";
 
 export function SettingsScreen() {
   const dispatch = useAppDispatch();
   const groupingMode = useAppSelector((state) => state.settings.groupingMode);
-  const rollingWindowMinutes = useAppSelector((state) => state.settings.rollingWindowMinutes);
-  const photoLayoutAlgorithm = useAppSelector((state) => state.settings.photoLayoutAlgorithm);
+  const rollingWindowMinutes = useAppSelector(
+    (state) => state.settings.rollingWindowMinutes,
+  );
+  const photoLayoutAlgorithm = useAppSelector(
+    (state) => state.settings.photoLayoutAlgorithm,
+  );
   const entryPhotoLayoutAlgorithm = useAppSelector(
-    (state) => state.settings.entryPhotoLayoutAlgorithm
+    (state) => state.settings.entryPhotoLayoutAlgorithm,
   );
   const inferDateFromFirstImportedPhoto = useAppSelector(
-    (state) => state.settings.inferDateFromFirstImportedPhoto
+    (state) => state.settings.inferDateFromFirstImportedPhoto,
   );
-  const captureLocation = useAppSelector((state) => state.settings.captureLocation);
+  const captureLocation = useAppSelector(
+    (state) => state.settings.captureLocation,
+  );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -33,15 +39,17 @@ export function SettingsScreen() {
       <SegmentedControl
         value={groupingMode}
         options={[
-          { value: 'rolling', label: 'Rolling window' },
-          { value: 'day', label: 'Single day' },
+          { value: "rolling", label: "Rolling window" },
+          { value: "day", label: "Single day" },
         ]}
         onChange={(value) => dispatch(setGroupingMode(value as GroupingMode))}
       />
 
-      {groupingMode === 'rolling' ? (
+      {groupingMode === "rolling" ? (
         <View style={styles.sliderRow}>
-          <Text style={styles.sliderLabel}>Window: {rollingWindowMinutes} min</Text>
+          <Text style={styles.sliderLabel}>
+            Window: {rollingWindowMinutes} min
+          </Text>
           <Slider
             minimumValue={30}
             maximumValue={240}
@@ -49,7 +57,9 @@ export function SettingsScreen() {
             value={rollingWindowMinutes}
             minimumTrackTintColor={theme.colors.primary}
             maximumTrackTintColor={theme.colors.muted}
-            onSlidingComplete={(value) => dispatch(setRollingWindowMinutes(value))}
+            onSlidingComplete={(value) =>
+              dispatch(setRollingWindowMinutes(value))
+            }
           />
         </View>
       ) : null}
@@ -58,18 +68,22 @@ export function SettingsScreen() {
       <SegmentedControl
         value={photoLayoutAlgorithm}
         options={[
-          { value: 'masonry', label: 'Columns' },
-          { value: 'treemap', label: 'Mosaic' },
+          { value: "masonry", label: "Columns" },
+          { value: "treemap", label: "Mosaic" },
         ]}
-        onChange={(value) => dispatch(setPhotoLayoutAlgorithm(value as PhotoLayoutAlgorithm))}
+        onChange={(value) =>
+          dispatch(setPhotoLayoutAlgorithm(value as PhotoLayoutAlgorithm))
+        }
       />
 
-      <Text style={[styles.label, styles.secondLabel]}>Entry page photo layout</Text>
+      <Text style={[styles.label, styles.secondLabel]}>
+        Entry page photo layout
+      </Text>
       <SegmentedControl
         value={entryPhotoLayoutAlgorithm}
         options={[
-          { value: 'masonry', label: 'Columns' },
-          { value: 'treemap', label: 'Mosaic' },
+          { value: "masonry", label: "Columns" },
+          { value: "treemap", label: "Mosaic" },
         ]}
         onChange={(value) =>
           dispatch(setEntryPhotoLayoutAlgorithm(value as PhotoLayoutAlgorithm))
@@ -80,8 +94,8 @@ export function SettingsScreen() {
         <View style={styles.toggleTextGroup}>
           <Text style={styles.label}>Infer date from imported photo</Text>
           <Text style={styles.toggleHint}>
-            When importing from the gallery, set the entry's date from the first photo you pick —
-            handy for backfilling old meals.
+            When importing from the gallery, set the entry's date from the first
+            photo you pick — handy for backfilling old meals.
           </Text>
         </View>
         <Switch
@@ -97,7 +111,8 @@ export function SettingsScreen() {
         <View style={styles.toggleTextGroup}>
           <Text style={styles.label}>Save location with photos</Text>
           <Text style={styles.toggleHint}>
-            When off, new entries are saved without capturing your current location.
+            When off, new entries are saved without capturing your current
+            location.
           </Text>
         </View>
         <Switch
@@ -137,8 +152,8 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xs,
   },
   toggleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: theme.spacing.sm,
     marginTop: theme.spacing.lg,
   },

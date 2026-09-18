@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { theme } from '../theme/theme';
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { theme } from "../theme/theme";
 
 type Props = {
   count: number;
@@ -26,7 +26,10 @@ export function PaginationDots({
           key={index}
           style={[
             styles.dot,
-            { backgroundColor: index === activeIndex ? activeDotColor : dotColor },
+            {
+              backgroundColor:
+                index === activeIndex ? activeDotColor : dotColor,
+            },
           ]}
         />
       ))}
@@ -36,8 +39,8 @@ export function PaginationDots({
 
 const styles = StyleSheet.create({
   dots: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: theme.spacing.xs,
   },
   dot: {
