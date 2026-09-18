@@ -75,7 +75,9 @@ function FeedCard({ item, photoLayoutAlgorithm, onPress }: FeedCardProps) {
         <Card style={styles.card}>
           <View
             style={[styles.cardRow, styles.horizontalMdSpacer]}
-            onLayout={(event) => setTitleRowHeight(event.nativeEvent.layout.height)}
+            onLayout={(event) =>
+              setTitleRowHeight(event.nativeEvent.layout.height)
+            }
           >
             {item.entries.length > 1 ? (
               <CountBadge label={String(item.entries.length)} />
@@ -86,7 +88,9 @@ function FeedCard({ item, photoLayoutAlgorithm, onPress }: FeedCardProps) {
           </View>
           <View
             style={styles.photoStackWrapper}
-            onLayout={(event) => setPhotoStackHeight(event.nativeEvent.layout.height)}
+            onLayout={(event) =>
+              setPhotoStackHeight(event.nativeEvent.layout.height)
+            }
           >
             <PhotoStack
               photosByEntry={item.photosByEntry}
@@ -113,8 +117,11 @@ function NoticeBanner() {
 export function FeedScreen() {
   const navigation = useNavigation<Nav>();
   const sections = useAppSelector(selectFeedSections);
-  const photoLayoutAlgorithm = useAppSelector((state) => state.settings.photoLayoutAlgorithm);
-  const { onScrollBeginDrag, onScrollEndDrag, guardedPress } = useScrollTapGuard();
+  const photoLayoutAlgorithm = useAppSelector(
+    (state) => state.settings.photoLayoutAlgorithm,
+  );
+  const { onScrollBeginDrag, onScrollEndDrag, guardedPress } =
+    useScrollTapGuard();
 
   function openGroup(group: EntryGroup) {
     if (group.entries.length === 1) {

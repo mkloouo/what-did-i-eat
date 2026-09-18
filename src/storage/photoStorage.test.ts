@@ -1,77 +1,88 @@
-import * as FileSystem from 'expo-file-system/legacy';
-import { savePickedPhoto, deletePhotoFile, resolvePhotoUri } from './photoStorage';
+import * as FileSystem from "expo-file-system/legacy";
+import {
+  savePickedPhoto,
+  deletePhotoFile,
+  resolvePhotoUri,
+} from "./photoStorage";
 
-jest.mock('expo-file-system/legacy', () => ({
-  documentDirectory: 'file:///doc/',
+jest.mock("expo-file-system/legacy", () => ({
+  documentDirectory: "file:///doc/",
   getInfoAsync: jest.fn(),
   makeDirectoryAsync: jest.fn(),
   copyAsync: jest.fn(),
   deleteAsync: jest.fn(),
 }));
 
-describe('resolvePhotoUri', () => {
-  it('turns a stored relative path into an absolute URI', () => {
-    expect(resolvePhotoUri('photos/abc123.jpg')).toBe('file:///doc/photos/abc123.jpg');
+describe("resolvePhotoUri", () => {
+  it("turns a stored relative path into an absolute URI", () => {
+    expect(resolvePhotoUri("photos/abc123.jpg")).toBe(
+      "file:///doc/photos/abc123.jpg",
+    );
   });
 
-  it('leaves an already-absolute URI (saved before the relative-path migration) unchanged', () => {
-    expect(resolvePhotoUri('file:///doc/photos/legacy123.jpg')).toBe(
-      'file:///doc/photos/legacy123.jpg'
+  it("leaves an already-absolute URI (saved before the relative-path migration) unchanged", () => {
+    expect(resolvePhotoUri("file:///doc/photos/legacy123.jpg")).toBe(
+      "file:///doc/photos/legacy123.jpg",
     );
   });
 });
 
-describe('savePickedPhoto', () => {
+describe("savePickedPhoto", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('creates the photos directory if it does not exist, then copies the file', async () => {
+  it("creates the photos directory if it does not exist, then copies the file", async () => {
     (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({ exists: false });
 
-    const relativePath = await savePickedPhoto('file:///tmp/picked.jpg', 'abc123');
+    const relativePath = await savePickedPhoto(
+      "file:///tmp/picked.jpg",
+      "abc123",
+    );
 
     expect(FileSystem.makeDirectoryAsync).toHaveBeenCalledWith(
-      'file:///doc/photos/',
-      { intermediates: true }
+      "file:///doc/photos/",
+      { intermediates: true },
     );
     expect(FileSystem.copyAsync).toHaveBeenCalledWith({
-      from: 'file:///tmp/picked.jpg',
-      to: 'file:///doc/photos/abc123.jpg',
+      from: "file:///tmp/picked.jpg",
+      to: "file:///doc/photos/abc123.jpg",
     });
-    expect(relativePath).toBe('photos/abc123.jpg');
+    expect(relativePath).toBe("photos/abc123.jpg");
   });
 
-  it('does not recreate the directory if it already exists', async () => {
+  it("does not recreate the directory if it already exists", async () => {
     (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({ exists: true });
 
-    await savePickedPhoto('file:///tmp/picked2.jpg', 'def456');
+    await savePickedPhoto("file:///tmp/picked2.jpg", "def456");
 
     expect(FileSystem.makeDirectoryAsync).not.toHaveBeenCalled();
   });
 });
 
-describe('deletePhotoFile', () => {
+describe("deletePhotoFile", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('deletes the file when it exists, resolving the relative path first', async () => {
+  it("deletes the file when it exists, resolving the relative path first", async () => {
     (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({ exists: true });
 
-    await deletePhotoFile('photos/abc123.jpg');
+    await deletePhotoFile("photos/abc123.jpg");
 
-    expect(FileSystem.getInfoAsync).toHaveBeenCalledWith('file:///doc/photos/abc123.jpg');
+    expect(FileSystem.getInfoAsync).toHaveBeenCalledWith(
+      "file:///doc/photos/abc123.jpg",
+    );
     expect(FileSystem.deleteAsync).toHaveBeenCalledWith(
-      'file:///doc/photos/abc123.jpg',
-      { idempotent: true }
+      "file:///doc/photos/abc123.jpg",
+      { idempotent: true },
     );
   });
 
-  it('does nothing when the file does not exist', async () => {
+  it("does nothing when the file does not exist", async () => {
     (FileSystem.getInfoAsync as jest.Mock).mockResolvedValue({ exists: false });
 
-    await deletePhotoFile('photos/missing.jpg');
+    await deletePhotoFile("photos/missing.jpg");
 
     expect(FileSystem.deleteAsync).not.toHaveBeenCalled();
   });

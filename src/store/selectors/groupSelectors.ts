@@ -1,9 +1,9 @@
-import { createSelector } from '@reduxjs/toolkit';
-import { RootState } from '../rootState';
-import { Entry, GroupingMode } from '../../types/models';
-import { dayKeyOf } from '../../utils/dateFormat';
-import { resolvePhotoUri } from '../../storage/photoStorage';
-import { computeWindowTitle } from '../../utils/windowTitle';
+import { createSelector } from "@reduxjs/toolkit";
+import { RootState } from "../rootState";
+import { Entry, GroupingMode } from "../../types/models";
+import { dayKeyOf } from "../../utils/dateFormat";
+import { resolvePhotoUri } from "../../storage/photoStorage";
+import { computeWindowTitle } from "../../utils/windowTitle";
 
 export type EntryGroup = {
   id: string;
@@ -22,12 +22,16 @@ export type DaySection = {
 
 const selectEntriesById = (state: RootState) => state.entries;
 const selectGroupingMode = (state: RootState) => state.settings.groupingMode;
-const selectRollingWindowMinutes = (state: RootState) => state.settings.rollingWindowMinutes;
+const selectRollingWindowMinutes = (state: RootState) =>
+  state.settings.rollingWindowMinutes;
 
-export const selectEntriesSortedByDate = createSelector([selectEntriesById], (entriesById): Entry[] =>
-  Object.values(entriesById).sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-  )
+export const selectEntriesSortedByDate = createSelector(
+  [selectEntriesById],
+  (entriesById): Entry[] =>
+    Object.values(entriesById).sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    ),
 );
 
 function finalizeGroup(entries: Entry[], dayKey: string): EntryGroup {
@@ -55,11 +59,11 @@ function groupEntriesWithinDay(
   entries: Entry[],
   groupingMode: GroupingMode,
   windowMs: number,
-  dayKey: string
+  dayKey: string,
 ): EntryGroup[] {
   if (entries.length === 0) return [];
 
-  if (groupingMode === 'day') {
+  if (groupingMode === "day") {
     return [finalizeGroup(entries, dayKey)];
   }
 
@@ -69,7 +73,9 @@ function groupEntriesWithinDay(
   for (let i = 1; i < entries.length; i++) {
     const prev = current[current.length - 1];
     const candidate = entries[i];
-    const gap = new Date(candidate.createdAt).getTime() - new Date(prev.createdAt).getTime();
+    const gap =
+      new Date(candidate.createdAt).getTime() -
+      new Date(prev.createdAt).getTime();
 
     if (gap <= windowMs) {
       current.push(candidate);
@@ -98,8 +104,13 @@ export const selectFeedSections = createSelector(
 
     return dayKeys.map((dayKey) => {
       const dayEntries = byDay.get(dayKey)!;
-      const groups = groupEntriesWithinDay(dayEntries, groupingMode, windowMs, dayKey).reverse();
+      const groups = groupEntriesWithinDay(
+        dayEntries,
+        groupingMode,
+        windowMs,
+        dayKey,
+      ).reverse();
       return { dayKey, groups };
     });
-  }
+  },
 );

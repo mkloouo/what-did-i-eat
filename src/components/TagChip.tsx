@@ -1,8 +1,8 @@
-import React from 'react';
-import { Pressable, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { TagIcon } from '../types/models';
-import { theme } from '../theme/theme';
+import React from "react";
+import { Pressable, Text, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { TagIcon } from "../types/models";
+import { theme } from "../theme/theme";
 
 type Props = {
   icon: TagIcon;
@@ -24,15 +24,17 @@ export function TagChip({ icon, label, selected = false, onPress }: Props) {
         color={selected ? theme.colors.textOnDark : theme.colors.text}
         style={styles.icon}
       />
-      <Text style={[styles.label, selected && styles.labelSelected]}>{label}</Text>
+      <Text style={[styles.label, selected && styles.labelSelected]}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: `${theme.colors.primary}1A`,
     borderRadius: theme.radii.pill,
     paddingVertical: theme.spacing.xs,
@@ -50,6 +52,6 @@ const styles = StyleSheet.create({
   },
   labelSelected: {
     color: theme.colors.textOnDark,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

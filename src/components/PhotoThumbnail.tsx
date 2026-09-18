@@ -1,7 +1,7 @@
-import React from 'react';
-import { Image, View, StyleSheet } from 'react-native';
-import { theme } from '../theme/theme';
-import { CountBadge } from './CountBadge';
+import React from "react";
+import { Image, View, StyleSheet } from "react-native";
+import { theme } from "../theme/theme";
+import { CountBadge } from "./CountBadge";
 
 type Props = {
   uri: string;
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.muted,
   },
   badge: {
-    position: 'absolute',
+    position: "absolute",
     bottom: theme.spacing.xs,
     right: theme.spacing.xs,
   },

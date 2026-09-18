@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -9,24 +9,28 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/types';
-import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { updateEntryComment, updateEntryTags, deleteEntry } from '../store/entriesSlice';
-import { deletePhotoFile, resolvePhotoUri } from '../storage/photoStorage';
-import { formatFullDateTime, formatTime } from '../utils/dateFormat';
-import { PhotoStack } from '../components/PhotoStack';
-import { TagChip } from '../components/TagChip';
-import { IconButton } from '../components/IconButton';
-import { Button } from '../components/photoLayouts/Button';
-import { Tag } from '../types/models';
-import { theme } from '../theme/theme';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/types";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
+import {
+  updateEntryComment,
+  updateEntryTags,
+  deleteEntry,
+} from "../store/entriesSlice";
+import { deletePhotoFile, resolvePhotoUri } from "../storage/photoStorage";
+import { formatFullDateTime, formatTime } from "../utils/dateFormat";
+import { PhotoStack } from "../components/PhotoStack";
+import { TagChip } from "../components/TagChip";
+import { IconButton } from "../components/IconButton";
+import { Button } from "../components/photoLayouts/Button";
+import { Tag } from "../types/models";
+import { theme } from "../theme/theme";
 
-type Nav = NativeStackNavigationProp<RootStackParamList, 'EntryDetails'>;
-type Route = RouteProp<RootStackParamList, 'EntryDetails'>;
+type Nav = NativeStackNavigationProp<RootStackParamList, "EntryDetails">;
+type Route = RouteProp<RootStackParamList, "EntryDetails">;
 
 export function EntryDetailsScreen() {
   const navigation = useNavigation<Nav>();
@@ -37,11 +41,11 @@ export function EntryDetailsScreen() {
   const entry = useAppSelector((state) => state.entries[entryId]);
   const allTags = useAppSelector((state) => state.tags);
   const photoLayoutAlgorithm = useAppSelector(
-    (state) => state.settings.entryPhotoLayoutAlgorithm
+    (state) => state.settings.entryPhotoLayoutAlgorithm,
   );
 
   const [isEditing, setIsEditing] = useState(false);
-  const [draftComment, setDraftComment] = useState(entry?.comment ?? '');
+  const [draftComment, setDraftComment] = useState(entry?.comment ?? "");
   const [draftTagIds, setDraftTagIds] = useState<string[]>(entry?.tagIds ?? []);
   const scrollRef = useRef<ScrollView>(null);
 
@@ -74,52 +78,64 @@ export function EntryDetailsScreen() {
 
   function toggleDraftTag(id: string) {
     setDraftTagIds((current) =>
-      current.includes(id) ? current.filter((tagId) => tagId !== id) : [...current, id]
+      current.includes(id)
+        ? current.filter((tagId) => tagId !== id)
+        : [...current, id],
     );
   }
 
   function confirmDelete() {
     if (!entry) return;
     Alert.alert(
-      'Delete entry?',
-      'This removes the photo(s) and comment permanently.',
+      "Delete entry?",
+      "This removes the photo(s) and comment permanently.",
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: 'Delete',
-          style: 'destructive',
+          text: "Delete",
+          style: "destructive",
           onPress: async () => {
-            await Promise.allSettled(entry.photos.map((photo) => deletePhotoFile(photo.uri)));
+            await Promise.allSettled(
+              entry.photos.map((photo) => deletePhotoFile(photo.uri)),
+            );
             dispatch(deleteEntry({ id: entry.id }));
             navigation.goBack();
           },
         },
-      ]
+      ],
     );
   }
 
   useEffect(() => {
     navigation.setOptions({
-      title: entry ? `${formatTime(entry.createdAt)} Record` : 'Entry',
+      title: entry ? `${formatTime(entry.createdAt)} Record` : "Entry",
       headerRight: !entry
         ? undefined
         : isEditing
-        ? () => (
-            <View style={styles.headerButtonRow}>
-              <Pressable onPress={cancelEdit} style={styles.headerButton}>
-                <Text style={styles.headerButtonText}>Cancel</Text>
-              </Pressable>
-              <Pressable onPress={saveEdits} style={styles.headerButton}>
-                <Text style={styles.headerButtonText}>Save</Text>
-              </Pressable>
-            </View>
-          )
-        : () => (
-            <View style={styles.headerButtonRow}>
-              <IconButton name="pencil-outline" onPress={startEdit} accessibilityLabel="Edit entry" />
-              <IconButton name="trash-outline" onPress={confirmDelete} accessibilityLabel="Delete entry" />
-            </View>
-          ),
+          ? () => (
+              <View style={styles.headerButtonRow}>
+                <Pressable onPress={cancelEdit} style={styles.headerButton}>
+                  <Text style={styles.headerButtonText}>Cancel</Text>
+                </Pressable>
+                <Pressable onPress={saveEdits} style={styles.headerButton}>
+                  <Text style={styles.headerButtonText}>Save</Text>
+                </Pressable>
+              </View>
+            )
+          : () => (
+              <View style={styles.headerButtonRow}>
+                <IconButton
+                  name="pencil-outline"
+                  onPress={startEdit}
+                  accessibilityLabel="Edit entry"
+                />
+                <IconButton
+                  name="trash-outline"
+                  onPress={confirmDelete}
+                  accessibilityLabel="Delete entry"
+                />
+              </View>
+            ),
     });
   }, [navigation, isEditing, entry, draftComment, draftTagIds]);
 
@@ -127,7 +143,7 @@ export function EntryDetailsScreen() {
     return (
       <View style={styles.missing}>
         <Text style={styles.missingText}>This entry no longer exists.</Text>
-        <Button label="Back" onPress={() => navigation.navigate('Tabs')} />
+        <Button label="Back" onPress={() => navigation.navigate("Tabs")} />
       </View>
     );
   }
@@ -139,66 +155,85 @@ export function EntryDetailsScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.content}>
-      <PhotoStack
-        photosByEntry={[entry.photos.map((photo) => resolvePhotoUri(photo.uri))]}
-        algorithm={photoLayoutAlgorithm}
-        onPhotoPress={(index) =>
-          navigation.navigate('PhotoDetails', { entryId: entry.id, photoIndex: index })
-        }
-      />
-      <View style={styles.metaRow}>
-        <View style={styles.metaItem}>
-          <Ionicons name="time-outline" size={14} color={theme.colors.muted} />
-          <Text style={styles.meta}>{formatFullDateTime(entry.createdAt)}</Text>
-        </View>
-        {entry.location?.placeName ? (
+      <ScrollView
+        ref={scrollRef}
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+      >
+        <PhotoStack
+          photosByEntry={[
+            entry.photos.map((photo) => resolvePhotoUri(photo.uri)),
+          ]}
+          algorithm={photoLayoutAlgorithm}
+          onPhotoPress={(index) =>
+            navigation.navigate("PhotoDetails", {
+              entryId: entry.id,
+              photoIndex: index,
+            })
+          }
+        />
+        <View style={styles.metaRow}>
           <View style={styles.metaItem}>
-            <Ionicons name="location-outline" size={14} color={theme.colors.muted} />
-            <Text style={styles.meta}>{entry.location.placeName}</Text>
+            <Ionicons
+              name="time-outline"
+              size={14}
+              color={theme.colors.muted}
+            />
+            <Text style={styles.meta}>
+              {formatFullDateTime(entry.createdAt)}
+            </Text>
           </View>
-        ) : null}
-      </View>
+          {entry.location?.placeName ? (
+            <View style={styles.metaItem}>
+              <Ionicons
+                name="location-outline"
+                size={14}
+                color={theme.colors.muted}
+              />
+              <Text style={styles.meta}>{entry.location.placeName}</Text>
+            </View>
+          ) : null}
+        </View>
 
-      {isEditing ? (
-        <>
-          {Object.values(allTags).length > 0 ? (
-            <View style={styles.tagRow}>
-              {Object.values(allTags).map((tag) => (
-                <TagChip
-                  key={tag.id}
-                  icon={tag.icon}
-                  label={tag.label}
-                  selected={draftTagIds.includes(tag.id)}
-                  onPress={() => toggleDraftTag(tag.id)}
-                />
-              ))}
-            </View>
-          ) : null}
-          <TextInput
-            style={styles.commentInput}
-            value={draftComment}
-            onChangeText={setDraftComment}
-            onFocus={handleCommentFocus}
-            multiline
-            placeholder="Comment"
-            placeholderTextColor={theme.colors.muted}
-          />
-        </>
-      ) : (
-        <>
-          {resolvedTags.length > 0 ? (
-            <View style={styles.tagRow}>
-              {resolvedTags.map((tag) => (
-                <TagChip key={tag.id} icon={tag.icon} label={tag.label} />
-              ))}
-            </View>
-          ) : null}
-          <Text style={styles.comment}>{entry.comment || 'No comment'}</Text>
-        </>
-      )}
+        {isEditing ? (
+          <>
+            {Object.values(allTags).length > 0 ? (
+              <View style={styles.tagRow}>
+                {Object.values(allTags).map((tag) => (
+                  <TagChip
+                    key={tag.id}
+                    icon={tag.icon}
+                    label={tag.label}
+                    selected={draftTagIds.includes(tag.id)}
+                    onPress={() => toggleDraftTag(tag.id)}
+                  />
+                ))}
+              </View>
+            ) : null}
+            <TextInput
+              style={styles.commentInput}
+              value={draftComment}
+              onChangeText={setDraftComment}
+              onFocus={handleCommentFocus}
+              multiline
+              placeholder="Comment"
+              placeholderTextColor={theme.colors.muted}
+            />
+          </>
+        ) : (
+          <>
+            {resolvedTags.length > 0 ? (
+              <View style={styles.tagRow}>
+                {resolvedTags.map((tag) => (
+                  <TagChip key={tag.id} icon={tag.icon} label={tag.label} />
+                ))}
+              </View>
+            ) : null}
+            <Text style={styles.comment}>{entry.comment || "No comment"}</Text>
+          </>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -217,8 +252,8 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   headerButtonRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   headerButton: {
     paddingHorizontal: theme.spacing.sm,
@@ -229,13 +264,13 @@ const styles = StyleSheet.create({
     ...theme.typography.subtitle,
   },
   metaRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: theme.spacing.md,
   },
   metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: theme.spacing.xs,
   },
   meta: {
@@ -243,8 +278,8 @@ const styles = StyleSheet.create({
     color: theme.colors.muted,
   },
   tagRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: theme.spacing.xs,
   },
   comment: {
@@ -256,15 +291,15 @@ const styles = StyleSheet.create({
     borderRadius: theme.radii.md,
     padding: theme.spacing.sm,
     minHeight: 96,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
     color: theme.colors.text,
     ...theme.typography.body,
   },
   missing: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: theme.spacing.md,
   },
   missingText: {

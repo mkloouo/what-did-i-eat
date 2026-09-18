@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 export type AppMetaState = {
   hasSeededDefaultTags: boolean;
@@ -9,7 +9,7 @@ const initialState: AppMetaState = {
 };
 
 const appMetaSlice = createSlice({
-  name: 'appMeta',
+  name: "appMeta",
   initialState,
   reducers: {
     markDefaultTagsSeeded(state) {

@@ -1,22 +1,35 @@
-import React from 'react';
-import { ActivityIndicator, Pressable, Text, StyleSheet, ViewStyle } from 'react-native';
-import { theme } from '../../theme/theme';
+import React from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  Text,
+  StyleSheet,
+  ViewStyle,
+} from "react-native";
+import { theme } from "../../theme/theme";
 
 type Props = {
   label: string;
   onPress: () => void;
   disabled?: boolean;
   loading?: boolean;
-  variant?: 'primary' | 'danger';
+  variant?: "primary" | "danger";
   style?: ViewStyle;
 };
 
-export function Button({ label, onPress, disabled, loading, variant = 'primary', style }: Props) {
+export function Button({
+  label,
+  onPress,
+  disabled,
+  loading,
+  variant = "primary",
+  style,
+}: Props) {
   const backgroundColor = disabled
     ? theme.colors.muted
-    : variant === 'danger'
-    ? theme.colors.danger
-    : theme.colors.primary;
+    : variant === "danger"
+      ? theme.colors.danger
+      : theme.colors.primary;
 
   return (
     <Pressable
@@ -38,12 +51,12 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.lg,
     borderRadius: theme.radii.md,
-    alignItems: 'center',
-    justifyContent: 'center'
+    alignItems: "center",
+    justifyContent: "center",
   },
   label: {
     color: theme.colors.textOnDark,
     ...theme.typography.subtitle,
-    textAlign: 'center'
+    textAlign: "center",
   },
 });

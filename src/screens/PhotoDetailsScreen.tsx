@@ -61,7 +61,10 @@ function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
     >
       {entry.photos.length > 1 ? (
         <View style={styles.dotsWrapper}>
-          <PaginationDots count={entry.photos.length} activeIndex={imageIndex} />
+          <PaginationDots
+            count={entry.photos.length}
+            activeIndex={imageIndex}
+          />
         </View>
       ) : null}
       <Text style={styles.footerMeta}>
@@ -135,6 +138,8 @@ const styles = StyleSheet.create({
   },
   topBarButton: {
     padding: theme.spacing.sm,
+    borderRadius: theme.radii.lg,
+    backgroundColor: theme.colors.accentDark,
   },
   topBarButtonText: {
     color: theme.colors.textOnDark,

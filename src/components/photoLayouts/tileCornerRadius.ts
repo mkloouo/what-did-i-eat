@@ -1,4 +1,4 @@
-import { Rect } from './types';
+import { Rect } from "./types";
 
 const EPSILON = 0.01;
 
@@ -18,7 +18,7 @@ export function tileCornerRadius(
   unitWidth: number,
   unitHeight: number,
   outerRadius: number,
-  innerRadius: number
+  innerRadius: number,
 ): TileCornerRadius {
   const touchesLeft = rect.x <= EPSILON;
   const touchesTop = rect.y <= EPSILON;
@@ -27,8 +27,11 @@ export function tileCornerRadius(
 
   return {
     borderTopLeftRadius: touchesTop && touchesLeft ? outerRadius : innerRadius,
-    borderTopRightRadius: touchesTop && touchesRight ? outerRadius : innerRadius,
-    borderBottomLeftRadius: touchesBottom && touchesLeft ? outerRadius : innerRadius,
-    borderBottomRightRadius: touchesBottom && touchesRight ? outerRadius : innerRadius,
+    borderTopRightRadius:
+      touchesTop && touchesRight ? outerRadius : innerRadius,
+    borderBottomLeftRadius:
+      touchesBottom && touchesLeft ? outerRadius : innerRadius,
+    borderBottomRightRadius:
+      touchesBottom && touchesRight ? outerRadius : innerRadius,
   };
 }

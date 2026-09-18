@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { theme } from '../theme/theme';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { theme } from "../theme/theme";
 
 type Props = {
   label: string;
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.md,
   },
   pill: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     backgroundColor: theme.colors.surface,
     borderRadius: theme.radii.pill,
     paddingHorizontal: theme.spacing.sm,
