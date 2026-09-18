@@ -5,6 +5,7 @@ import { theme } from '../theme/theme';
 import { TabNavigator } from './TabNavigator';
 import { NewEntryScreen } from '../screens/NewEntryScreen';
 import { GroupDetailsScreen } from '../screens/GroupDetailsScreen';
+import { EntryDetailsScreen } from '../screens/EntryDetailsScreen';
 import { PhotoDetailsScreen } from '../screens/PhotoDetailsScreen';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { addTag } from '../store/tagsSlice';
@@ -42,6 +43,11 @@ export function RootNavigator() {
         name="GroupDetails"
         component={GroupDetailsScreen}
         options={{ title: 'Entries' }}
+      />
+      <Stack.Screen
+        name="EntryDetails"
+        component={EntryDetailsScreen}
+        options={{ title: 'Entry' }}
       />
       <Stack.Screen
         name="PhotoDetails"
