@@ -13,3 +13,7 @@ All notable changes to this project are documented here. Format loosely follows
 - Tightened `Card`'s `style` prop typing to `StyleProp<ViewStyle>`.
 - Added accessibility labels/roles to icon-only controls (`Fab`, and the
   edit/delete `IconButton`s in the Tags screen).
+- Replaced the photo-viewer-does-everything entry screen with a dedicated
+  Entry Details screen (photos, date, location, tags, comment, edit,
+  delete) reached from Feed and Group Details; tapping a photo from there
+  opens a now-simplified pure viewer (zoom/swipe only).
