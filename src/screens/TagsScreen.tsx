@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, FlatList, Pressable, Alert, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  Pressable,
+  Alert,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { addTag, updateTag, deleteTag } from '../store/tagsSlice';
@@ -58,7 +68,10 @@ export function TagsScreen() {
   const isEditingForm = editingId !== null;
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
       <FlatList
         contentContainerStyle={styles.content}
         data={tags}
@@ -124,7 +137,7 @@ export function TagsScreen() {
         )}
         ListEmptyComponent={<Text style={styles.empty}>No tags yet — add your first one above.</Text>}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

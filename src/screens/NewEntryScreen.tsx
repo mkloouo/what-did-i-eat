@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -333,7 +334,11 @@ export function NewEntryScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={styles.content}>
       <View style={styles.pickerRow}>
         <Button label="Take photo" onPress={handleTakePhoto} style={styles.pickerButton} />
         <Button label="Choose from library" onPress={handlePickFromLibrary} style={styles.pickerButton} />
@@ -422,7 +427,8 @@ export function NewEntryScreen() {
           FooterComponent={BoundViewerFooter}
         />
       ) : null}
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

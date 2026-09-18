@@ -7,6 +7,8 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -121,7 +123,11 @@ export function EntryDetailsScreen() {
     .filter((tag): tag is Tag => Boolean(tag));
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={styles.content}>
       <PhotoStack
         photosByEntry={[entry.photos.map((photo) => resolvePhotoUri(photo.uri))]}
         algorithm={photoLayoutAlgorithm}
@@ -168,7 +174,8 @@ export function EntryDetailsScreen() {
           <Text style={styles.comment}>{entry.comment || 'No comment'}</Text>
         </>
       )}
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
