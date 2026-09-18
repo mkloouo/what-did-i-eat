@@ -109,12 +109,14 @@ export function TagsScreen() {
             <IconButton
               name="pencil-outline"
               onPress={() => startEdit(item)}
+              accessibilityLabel={`Edit ${item.label}`}
               color={theme.colors.muted}
               size={18}
             />
             <IconButton
               name="trash-outline"
               onPress={() => confirmDelete(item)}
+              accessibilityLabel={`Delete ${item.label}`}
               color={theme.colors.danger}
               size={18}
             />
