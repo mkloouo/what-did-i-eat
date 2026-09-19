@@ -23,6 +23,33 @@ All notable changes to this project are documented here. Format loosely follows
   `createSelector` so they stop returning a new array reference on every
   render.
 
+## [1.6.0] - 2026-09-19
+
+Step 2 of the Wall redesign. Same dev build as 1.5.0 — no native changes.
+
+### Added
+
+- The Wall: a single scrolling feed of edge-to-edge photo pieces, replacing
+  the tab bar's Feed screen and the separate Group Details screen. A meal
+  with several entries now tiles all its photos as one piece with each
+  entry's time, comment, and tags listed underneath, collapsing beyond
+  three into a "+N more" line that expands in place.
+- A tag filter rail below the header: tap a tag to show only matching
+  meals, regrouped around the gaps left by everything else; tap it again
+  to clear the filter.
+- A draggable day scrubber on the right edge, showing a tick per day and
+  letting you jump straight to one.
+- Settings and Tags are now reached from a settings icon in the Wall's
+  header, instead of a bottom tab bar.
+
+### Changed
+
+- The app no longer invents a name for a window of eating (no more
+  "Leisurely Grazing Window" or "Night Owl Kitchen") — the photos and your
+  own words are the whole of it.
+- Removed the tab bar and the floating "+" button; capture is a single
+  "Hang a new one" bar at the bottom of the Wall.
+
 ## [1.5.0] - 2026-09-19
 
 Step 1 of the Wall redesign. Needs a new dev build.
