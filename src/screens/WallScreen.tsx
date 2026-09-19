@@ -134,6 +134,14 @@ export function WallScreen() {
             renderItem={renderItem}
             onViewableItemsChanged={handleViewableItemsChanged}
             contentContainerStyle={styles.listContent}
+            // Off: it's meant for chat-like screens where content is
+            // prepended above/below an anchor. Enabled (FlashList's
+            // default), it reacts to redux-persist's entries hydrating
+            // just after mount — data going empty-to-populated reads as
+            // "content added above" — by reserving blank leading space
+            // meant to hold scroll position for a scroll that never
+            // happened.
+            maintainVisibleContentPosition={{ disabled: true }}
           />
           {scrubberEnabled ? (
             <Scrubber
