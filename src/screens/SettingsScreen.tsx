@@ -24,6 +24,7 @@ import { SegmentedControl } from "../components/SegmentedControl";
 import { theme } from "../theme/theme";
 import { GroupingMode } from "../types/models";
 import { formatDuration } from "../utils/dateFormat";
+import { MergeWindowPreview } from "../components/settings/MergeWindowPreview";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "Settings">;
 
@@ -68,6 +69,7 @@ export function SettingsScreen() {
             maximumTrackTintColor={theme.colors.chalk}
             onValueChange={(value) => dispatch(setRollingWindowMinutes(value))}
           />
+          <MergeWindowPreview rollingWindowMinutes={rollingWindowMinutes} />
         </View>
       ) : null}
 
