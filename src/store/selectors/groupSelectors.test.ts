@@ -28,8 +28,7 @@ function stateFrom(
     settings: {
       groupingMode,
       rollingWindowMinutes,
-      photoLayoutAlgorithm: "treemap",
-      entryPhotoLayoutAlgorithm: "treemap",
+      wallColumns: 4,
       inferDateFromFirstImportedPhoto: false,
       captureLocation: true,
     },

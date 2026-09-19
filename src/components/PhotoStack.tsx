@@ -2,9 +2,7 @@ import React from "react";
 import { View, Pressable, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { theme } from "../theme/theme";
-import { PhotoLayoutAlgorithm } from "../types/models";
-import { masonryLayout } from "./photoLayouts/masonryLayout";
-import { squarifiedLayout } from "./photoLayouts/squarifiedLayout";
+import { squareGridLayout } from "./photoLayouts/squareGridLayout";
 import { tileCornerRadius } from "./photoLayouts/tileCornerRadius";
 import { tileInsets } from "./photoLayouts/tileInsets";
 
@@ -12,7 +10,8 @@ const DEFAULT_SEAM = 2;
 
 type Props = {
   photosByEntry: string[][];
-  algorithm: PhotoLayoutAlgorithm;
+  // How many photos wide the grid runs before wrapping to a new row.
+  columns: number;
   onPhotoPress?: (index: number) => void;
   // Gap between tiles in px. The collage's outer edge stays flush.
   seam?: number;
@@ -22,7 +21,7 @@ type Props = {
 
 export function PhotoStack({
   photosByEntry,
-  algorithm,
+  columns,
   onPhotoPress,
   seam = DEFAULT_SEAM,
   cornerRadius = 0,
@@ -32,10 +31,7 @@ export function PhotoStack({
     return null;
   }
 
-  const layout =
-    algorithm === "masonry"
-      ? masonryLayout(photosByEntry)
-      : squarifiedLayout(photosByEntry);
+  const layout = squareGridLayout(photosByEntry, columns);
 
   return (
     <View

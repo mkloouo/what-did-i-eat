@@ -1,8 +1,7 @@
 import reducer, {
   setGroupingMode,
   setRollingWindowMinutes,
-  setPhotoLayoutAlgorithm,
-  setEntryPhotoLayoutAlgorithm,
+  setWallColumns,
   setInferDateFromFirstImportedPhoto,
   setCaptureLocation,
 } from "./settingsSlice";
@@ -10,14 +9,13 @@ import reducer, {
 const baseState = {
   groupingMode: "rolling" as const,
   rollingWindowMinutes: 60,
-  photoLayoutAlgorithm: "treemap" as const,
-  entryPhotoLayoutAlgorithm: "treemap" as const,
+  wallColumns: 4,
   inferDateFromFirstImportedPhoto: false,
   captureLocation: true,
 };
 
 describe("settingsSlice", () => {
-  it("defaults to a 60-minute rolling window, treemap layout, and inferred-date off", () => {
+  it("defaults to a 60-minute rolling window, 4 wall columns, and inferred-date off", () => {
     expect(reducer(undefined, { type: "@@INIT" })).toEqual(baseState);
   });
 
@@ -31,15 +29,19 @@ describe("settingsSlice", () => {
     expect(state.rollingWindowMinutes).toBe(120);
   });
 
-  it("setPhotoLayoutAlgorithm switches the algorithm", () => {
-    const state = reducer(baseState, setPhotoLayoutAlgorithm("masonry"));
-    expect(state.photoLayoutAlgorithm).toBe("masonry");
+  it("setWallColumns updates the column count", () => {
+    const state = reducer(baseState, setWallColumns(6));
+    expect(state.wallColumns).toBe(6);
   });
 
-  it("setEntryPhotoLayoutAlgorithm switches the entry page algorithm independently", () => {
-    const state = reducer(baseState, setEntryPhotoLayoutAlgorithm("masonry"));
-    expect(state.entryPhotoLayoutAlgorithm).toBe("masonry");
-    expect(state.photoLayoutAlgorithm).toBe("treemap");
+  it("setWallColumns clamps below the 3-column floor", () => {
+    const state = reducer(baseState, setWallColumns(1));
+    expect(state.wallColumns).toBe(3);
+  });
+
+  it("setWallColumns clamps above the 10-column ceiling", () => {
+    const state = reducer(baseState, setWallColumns(20));
+    expect(state.wallColumns).toBe(10);
   });
 
   it("setCaptureLocation toggles the flag", () => {

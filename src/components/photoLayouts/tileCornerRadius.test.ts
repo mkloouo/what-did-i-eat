@@ -85,9 +85,9 @@ describe("tileCornerRadius", () => {
     });
   });
 
-  it("treats a shorter masonry column that falls short of unitHeight as not touching the bottom", () => {
-    // e.g. masonryLayout's unitHeight is the taller column's height; a
-    // shorter column's last tile ends above that, so it shouldn't round.
+  it("treats a rect that falls short of unitHeight as not touching the bottom", () => {
+    // A rect can end above the collage's overall height (e.g. one column
+    // is shorter than another), so it shouldn't round as a bottom corner.
     const result = tileCornerRadius(
       { x: 0, y: 500, width: 400, height: 400 },
       UNIT,
