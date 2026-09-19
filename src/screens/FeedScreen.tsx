@@ -83,9 +83,6 @@ function FeedCard({ item, photoLayoutAlgorithm, onPress }: FeedCardProps) {
             {item.entries.length > 1 ? (
               <CountBadge label={String(item.entries.length)} />
             ) : null}
-            <Text style={styles.cardComment} numberOfLines={2}>
-              {item.title}
-            </Text>
           </View>
           <View
             style={styles.photoStackWrapper}
@@ -132,7 +129,7 @@ export function FeedScreen() {
     } else {
       navigation.navigate("GroupDetails", {
         entryIds: group.entries.map((e) => e.id),
-        title: group.title,
+        title: "",
       });
     }
   }
