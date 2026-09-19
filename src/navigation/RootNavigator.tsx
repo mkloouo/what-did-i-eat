@@ -55,7 +55,7 @@ export function RootNavigator() {
       <Stack.Screen
         name="EntryDetails"
         component={EntryDetailsScreen}
-        options={{ title: "Entry" }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="PhotoDetails"

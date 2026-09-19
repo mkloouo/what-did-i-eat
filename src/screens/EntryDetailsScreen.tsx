@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -10,9 +10,11 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { RootStackParamList } from "../navigation/types";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import {
@@ -21,8 +23,12 @@ import {
   deleteEntry,
 } from "../store/entriesSlice";
 import { deletePhotoFile, resolvePhotoUri } from "../storage/photoStorage";
-import { formatFullDateTime, formatTime } from "../utils/dateFormat";
-import { PhotoStack } from "../components/PhotoStack";
+import {
+  formatFullDateTime,
+  formatTime,
+  dayLabel,
+  dayKeyOf,
+} from "../utils/dateFormat";
 import { TagChip } from "../components/TagChip";
 import { IconButton } from "../components/IconButton";
 import { Button } from "../components/photoLayouts/Button";
@@ -36,17 +42,19 @@ export function EntryDetailsScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { entryId } = route.params;
+  const insets = useSafeAreaInsets();
 
   const dispatch = useAppDispatch();
   const entry = useAppSelector((state) => state.entries[entryId]);
   const allTags = useAppSelector((state) => state.tags);
-  const photoLayoutAlgorithm = useAppSelector(
-    (state) => state.settings.entryPhotoLayoutAlgorithm,
-  );
 
   const [isEditing, setIsEditing] = useState(false);
   const [draftComment, setDraftComment] = useState(entry?.comment ?? "");
-  const [draftTagIds, setDraftTagIds] = useState<string[]>(entry?.tagIds ?? []);
+  const [draftTagIds, setDraftTagIds] = useState<string[]>(
+    entry?.tagIds ?? [],
+  );
+  const [showTagPicker, setShowTagPicker] = useState(false);
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const scrollRef = useRef<ScrollView>(null);
 
   // The built-in "scroll focused input into view" behavior doesn't
@@ -62,10 +70,12 @@ export function EntryDetailsScreen() {
     if (!entry) return;
     setDraftComment(entry.comment);
     setDraftTagIds(entry.tagIds ?? []);
+    setShowTagPicker(false);
     setIsEditing(true);
   }
 
   function cancelEdit() {
+    setShowTagPicker(false);
     setIsEditing(false);
   }
 
@@ -73,6 +83,7 @@ export function EntryDetailsScreen() {
     if (!entry) return;
     dispatch(updateEntryComment({ id: entry.id, comment: draftComment }));
     dispatch(updateEntryTags({ id: entry.id, tagIds: draftTagIds }));
+    setShowTagPicker(false);
     setIsEditing(false);
   }
 
@@ -106,42 +117,14 @@ export function EntryDetailsScreen() {
     );
   }
 
-  useEffect(() => {
-    navigation.setOptions({
-      title: entry ? `${formatTime(entry.createdAt)} Record` : "Entry",
-      headerRight: !entry
-        ? undefined
-        : isEditing
-          ? () => (
-              <View style={styles.headerButtonRow}>
-                <Pressable onPress={cancelEdit} style={styles.headerButton}>
-                  <Text style={styles.headerButtonText}>Cancel</Text>
-                </Pressable>
-                <Pressable onPress={saveEdits} style={styles.headerButton}>
-                  <Text style={styles.headerButtonText}>Save</Text>
-                </Pressable>
-              </View>
-            )
-          : () => (
-              <View style={styles.headerButtonRow}>
-                <IconButton
-                  name="pencil-outline"
-                  onPress={startEdit}
-                  accessibilityLabel="Edit entry"
-                />
-                <IconButton
-                  name="trash-outline"
-                  onPress={confirmDelete}
-                  accessibilityLabel="Delete entry"
-                />
-              </View>
-            ),
-    });
-  }, [navigation, isEditing, entry, draftComment, draftTagIds]);
-
   if (!entry) {
     return (
-      <View style={styles.missing}>
+      <View
+        style={[
+          styles.missing,
+          { paddingTop: insets.top, paddingBottom: insets.bottom },
+        ]}
+      >
         <Text style={styles.missingText}>This entry no longer exists.</Text>
         <Button label="Back" onPress={() => navigation.navigate("Home")} />
       </View>
@@ -151,159 +134,339 @@ export function EntryDetailsScreen() {
   const resolvedTags = (entry.tagIds ?? [])
     .map((id) => allTags[id])
     .filter((tag): tag is Tag => Boolean(tag));
+  const draftTags = draftTagIds
+    .map((id) => allTags[id])
+    .filter((tag): tag is Tag => Boolean(tag));
+  const unselectedTags = Object.values(allTags).filter(
+    (tag) => !draftTagIds.includes(tag.id),
+  );
+  const photoUris = entry.photos.map((photo) => resolvePhotoUri(photo.uri));
+  const heroIndex = Math.min(activePhotoIndex, photoUris.length - 1);
+  const heroUri = photoUris[heroIndex];
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <View
+        style={[
+          styles.header,
+          { paddingTop: insets.top + theme.spacing.sm },
+        ]}
+      >
+        {isEditing ? (
+          <Pressable onPress={cancelEdit} style={styles.headerSideButton}>
+            <Text style={styles.headerAction}>Cancel</Text>
+          </Pressable>
+        ) : (
+          <IconButton
+            name="chevron-back-outline"
+            onPress={() => navigation.goBack()}
+            accessibilityLabel="Back"
+          />
+        )}
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          {dayLabel(dayKeyOf(entry.createdAt))} · {formatTime(entry.createdAt)}
+        </Text>
+        <Pressable
+          onPress={isEditing ? saveEdits : startEdit}
+          style={styles.headerSideButton}
+        >
+          <Text style={styles.headerAction}>
+            {isEditing ? "Save" : "Edit"}
+          </Text>
+        </Pressable>
+      </View>
+
       <ScrollView
         ref={scrollRef}
         style={styles.scroll}
         contentContainerStyle={styles.content}
       >
-        <PhotoStack
-          photosByEntry={[
-            entry.photos.map((photo) => resolvePhotoUri(photo.uri)),
-          ]}
-          algorithm={photoLayoutAlgorithm}
-          onPhotoPress={(index) =>
+        <Pressable
+          onPress={() =>
             navigation.navigate("PhotoDetails", {
               entryId: entry.id,
-              photoIndex: index,
+              photoIndex: heroIndex,
             })
           }
-        />
-        <View style={styles.metaRow}>
-          <View style={styles.metaItem}>
-            <Ionicons
-              name="time-outline"
-              size={14}
-              color={theme.colors.muted}
-            />
-            <Text style={styles.meta}>
-              {formatFullDateTime(entry.createdAt)}
+        >
+          <Image
+            source={{ uri: heroUri }}
+            style={styles.hero}
+            contentFit="cover"
+          />
+        </Pressable>
+
+        {photoUris.length > 1 ? (
+          <View style={styles.thumbSection}>
+            <Text style={styles.photoCount}>
+              {heroIndex + 1} of {photoUris.length}
             </Text>
+            <ScrollView
+              horizontal
+              style={styles.thumbScroll}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.thumbRow}
+            >
+              {photoUris.map((uri, index) => (
+                <Pressable
+                  key={uri + index}
+                  onPress={() => setActivePhotoIndex(index)}
+                >
+                  <Image
+                    source={{ uri }}
+                    style={[
+                      styles.thumb,
+                      index === heroIndex
+                        ? styles.thumbActive
+                        : styles.thumbDimmed,
+                    ]}
+                    contentFit="cover"
+                  />
+                </Pressable>
+              ))}
+            </ScrollView>
           </View>
-          {entry.location?.placeName ? (
-            <View style={styles.metaItem}>
-              <Ionicons
-                name="location-outline"
-                size={14}
-                color={theme.colors.muted}
-              />
-              <Text style={styles.meta}>{entry.location.placeName}</Text>
-            </View>
-          ) : null}
-        </View>
+        ) : null}
 
         {isEditing ? (
-          <>
-            {Object.values(allTags).length > 0 ? (
-              <View style={styles.tagRow}>
-                {Object.values(allTags).map((tag) => (
-                  <TagChip
-                    key={tag.id}
-                    icon={tag.icon}
-                    label={tag.label}
-                    selected={draftTagIds.includes(tag.id)}
-                    onPress={() => toggleDraftTag(tag.id)}
-                  />
-                ))}
-              </View>
-            ) : null}
-            <TextInput
-              style={styles.commentInput}
-              value={draftComment}
-              onChangeText={setDraftComment}
-              onFocus={handleCommentFocus}
-              multiline
-              placeholder="Comment"
-              placeholderTextColor={theme.colors.muted}
-            />
-          </>
+          <TextInput
+            style={styles.commentInput}
+            value={draftComment}
+            onChangeText={setDraftComment}
+            onFocus={handleCommentFocus}
+            multiline
+            placeholder="Comment"
+            placeholderTextColor={theme.colors.chalk}
+          />
         ) : (
-          <>
-            {resolvedTags.length > 0 ? (
-              <View style={styles.tagRow}>
-                {resolvedTags.map((tag) => (
-                  <TagChip key={tag.id} icon={tag.icon} label={tag.label} />
-                ))}
-              </View>
-            ) : null}
-            <Text style={styles.comment}>{entry.comment || "No comment"}</Text>
-          </>
+          <Text style={styles.comment}>{entry.comment || "No comment"}</Text>
         )}
+
+        {isEditing ? (
+          <View style={styles.tagRow}>
+            {draftTags.map((tag) => (
+              <TagChip
+                key={tag.id}
+                icon={tag.icon}
+                label={tag.label}
+                selected
+                onPress={() => toggleDraftTag(tag.id)}
+              />
+            ))}
+            {unselectedTags.length > 0 ? (
+              <Pressable
+                onPress={() => setShowTagPicker((current) => !current)}
+                style={styles.addTagChip}
+              >
+                <Ionicons
+                  name="add-outline"
+                  size={14}
+                  color={theme.colors.chalk}
+                />
+                <Text style={styles.addTagLabel}>Add tag</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        ) : resolvedTags.length > 0 ? (
+          <View style={styles.tagRow}>
+            {resolvedTags.map((tag) => (
+              <TagChip key={tag.id} icon={tag.icon} label={tag.label} />
+            ))}
+          </View>
+        ) : null}
+
+        {isEditing && showTagPicker && unselectedTags.length > 0 ? (
+          <View style={styles.tagRow}>
+            {unselectedTags.map((tag) => (
+              <TagChip
+                key={tag.id}
+                icon={tag.icon}
+                label={tag.label}
+                onPress={() => toggleDraftTag(tag.id)}
+              />
+            ))}
+          </View>
+        ) : null}
+
+        <View style={styles.detailList}>
+          <DetailRow
+            label="Taken"
+            value={formatFullDateTime(entry.createdAt)}
+          />
+          {entry.location?.placeName ? (
+            <DetailRow label="Place" value={entry.location.placeName} />
+          ) : null}
+          <DetailRow
+            label="Photos"
+            value={`${entry.photos.length} photo${
+              entry.photos.length === 1 ? "" : "s"
+            }`}
+          />
+        </View>
+
+        <Pressable onPress={confirmDelete} style={styles.deleteRow}>
+          <Text style={styles.deleteLabel}>Delete entry</Text>
+        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
+  );
+}
+
+type DetailRowProps = { label: string; value: string };
+
+function DetailRow({ label, value }: DetailRowProps) {
+  return (
+    <View style={styles.detailRow}>
+      <Text style={styles.detailLabel}>{label}</Text>
+      <Text style={styles.detailValue}>{value}</Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.wall,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: theme.spacing.sm,
+    paddingBottom: theme.spacing.sm,
+  },
+  headerSideButton: {
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.sm,
+    minWidth: 60,
+  },
+  headerAction: {
+    ...theme.typography.subtitle,
+    color: theme.colors.brass,
+  },
+  headerTitle: {
+    ...theme.typography.subtitle,
+    color: theme.colors.bone,
+    flex: 1,
+    textAlign: "center",
   },
   scroll: {
     flex: 1,
   },
   content: {
-    padding: theme.spacing.md,
+    paddingBottom: theme.spacing.xl,
     gap: theme.spacing.md,
   },
-  headerButtonRow: {
-    flexDirection: "row",
-    alignItems: "center",
+  hero: {
+    width: "100%",
+    aspectRatio: 1,
+    backgroundColor: theme.colors.seam,
   },
-  headerButton: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
-  },
-  headerButtonText: {
-    color: theme.colors.textOnDark,
-    ...theme.typography.subtitle,
-  },
-  metaRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: theme.spacing.md,
-  },
-  metaItem: {
-    flexDirection: "row",
-    alignItems: "center",
+  thumbSection: {
     gap: theme.spacing.xs,
   },
-  meta: {
+  photoCount: {
     ...theme.typography.caption,
-    color: theme.colors.muted,
+    color: theme.colors.chalk,
+    paddingHorizontal: theme.spacing.md,
+  },
+  thumbScroll: {
+    flexGrow: 0,
+  },
+  thumbRow: {
+    flexDirection: "row",
+    gap: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+  },
+  thumb: {
+    width: 56,
+    height: 56,
+    backgroundColor: theme.colors.seam,
+  },
+  thumbActive: {
+    opacity: 1,
+    borderWidth: 2,
+    borderColor: theme.colors.hairline,
+  },
+  thumbDimmed: {
+    opacity: 0.5,
+  },
+  comment: {
+    ...theme.typography.body,
+    color: theme.colors.bone,
+    paddingHorizontal: theme.spacing.md,
+  },
+  commentInput: {
+    marginHorizontal: theme.spacing.md,
+    backgroundColor: theme.colors.seam,
+    borderRadius: theme.radii.md,
+    padding: theme.spacing.sm,
+    minHeight: 96,
+    textAlignVertical: "top",
+    color: theme.colors.bone,
+    ...theme.typography.body,
   },
   tagRow: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: theme.spacing.xs,
+    paddingHorizontal: theme.spacing.md,
   },
-  comment: {
-    ...theme.typography.body,
-    color: theme.colors.text,
+  addTagChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: theme.colors.seam,
+    borderRadius: theme.radii.pill,
+    paddingVertical: theme.spacing.xs,
+    paddingHorizontal: theme.spacing.sm,
+    gap: theme.spacing.xs,
   },
-  commentInput: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radii.md,
-    padding: theme.spacing.sm,
-    minHeight: 96,
-    textAlignVertical: "top",
-    color: theme.colors.text,
+  addTagLabel: {
+    ...theme.typography.caption,
+    color: theme.colors.chalk,
+  },
+  detailList: {
+    marginHorizontal: theme.spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.hairline,
+  },
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: theme.spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.hairline,
+  },
+  detailLabel: {
     ...theme.typography.body,
+    color: theme.colors.chalk,
+  },
+  detailValue: {
+    ...theme.typography.body,
+    color: theme.colors.bone,
+  },
+  deleteRow: {
+    marginHorizontal: theme.spacing.md,
+    marginTop: theme.spacing.md,
+    alignItems: "center",
+    paddingVertical: theme.spacing.sm,
+  },
+  deleteLabel: {
+    ...theme.typography.subtitle,
+    color: theme.colors.clay,
   },
   missing: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.wall,
     alignItems: "center",
     justifyContent: "center",
     gap: theme.spacing.md,
   },
   missingText: {
     ...theme.typography.body,
-    color: theme.colors.text,
+    color: theme.colors.bone,
   },
 });
