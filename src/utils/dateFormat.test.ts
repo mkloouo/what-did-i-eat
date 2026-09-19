@@ -3,6 +3,7 @@ import {
   dayLabel,
   formatTime,
   formatFullDateTime,
+  formatDuration,
 } from "./dateFormat";
 
 describe("dayKeyOf", () => {
@@ -53,5 +54,22 @@ describe("formatTime / formatFullDateTime", () => {
     expect(
       formatFullDateTime("2026-03-05T14:30:00.000Z").length,
     ).toBeGreaterThan(0);
+  });
+});
+
+describe("formatDuration", () => {
+  it("renders a sub-hour duration as minutes only", () => {
+    expect(formatDuration(30)).toBe("30 m");
+    expect(formatDuration(45)).toBe("45 m");
+  });
+
+  it("renders an exact hour without a minutes part", () => {
+    expect(formatDuration(60)).toBe("1 h");
+    expect(formatDuration(240)).toBe("4 h");
+  });
+
+  it("renders an hour-plus-minutes duration as both parts", () => {
+    expect(formatDuration(90)).toBe("1 h 30 m");
+    expect(formatDuration(135)).toBe("2 h 15 m");
   });
 });
