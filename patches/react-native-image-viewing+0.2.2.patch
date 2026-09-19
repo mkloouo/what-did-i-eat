@@ -1,0 +1,55 @@
+diff --git a/node_modules/react-native-image-viewing/dist/ImageViewing.js b/node_modules/react-native-image-viewing/dist/ImageViewing.js
+index 3d7641a..fb175c6 100644
+--- a/node_modules/react-native-image-viewing/dist/ImageViewing.js
++++ b/node_modules/react-native-image-viewing/dist/ImageViewing.js
+@@ -45,7 +45,7 @@ function ImageViewing({ images, keyExtractor, imageIndex, visible, onRequestClos
+         imageIndex: currentImageIndex,
+     })) : (<ImageDefaultHeader onRequestClose={onRequestCloseEnhanced}/>)}
+         </Animated.View>
+-        <VirtualizedList ref={imageList} data={images} horizontal pagingEnabled windowSize={2} initialNumToRender={1} maxToRenderPerBatch={1} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} initialScrollIndex={imageIndex} getItem={(_, index) => images[index]} getItemCount={() => images.length} getItemLayout={(_, index) => ({
++        <VirtualizedList ref={imageList} data={images} horizontal pagingEnabled windowSize={5} initialNumToRender={3} maxToRenderPerBatch={3} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} initialScrollIndex={imageIndex} getItem={(_, index) => images[index]} getItemCount={() => images.length} getItemLayout={(_, index) => ({
+         length: SCREEN_WIDTH,
+         offset: SCREEN_WIDTH * index,
+         index,
+diff --git a/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js b/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js
+index 99dcbc7..c55a833 100644
+--- a/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js
++++ b/node_modules/react-native-image-viewing/dist/hooks/usePanResponder.js
+@@ -157,22 +157,22 @@ const usePanResponder = ({ initialScale, initialTranslate, onZoom, doubleTapToZo
+                         nextScale + (initialScale - nextScale) * OUT_BOUND_MULTIPLIER;
+                 }
+                 /**
+-                 * In case image is scaling down -> move it in direction of initial position
++                 * Keep the point under the fingers fixed on screen as the image
++                 * scales, instead of always zooming toward the image's own
++                 * center. anchorX/Y is the pinch gesture's midpoint, fixed for
++                 * the whole gesture since initialTouches never changes mid-pinch.
++                 * (Patched via patch-package — see patches/react-native-image-viewing+0.2.2.patch.)
+                  */
+-                if (currentScale > initialScale && currentScale > nextScale) {
+-                    const k = (currentScale - initialScale) / (currentScale - nextScale);
+-                    const nextTranslateX = nextScale < initialScale
+-                        ? initialTranslate.x
+-                        : currentTranslate.x -
+-                            (currentTranslate.x - initialTranslate.x) / k;
+-                    const nextTranslateY = nextScale < initialScale
+-                        ? initialTranslate.y
+-                        : currentTranslate.y -
+-                            (currentTranslate.y - initialTranslate.y) / k;
+-                    translateValue.x.setValue(nextTranslateX);
+-                    translateValue.y.setValue(nextTranslateY);
+-                    tmpTranslate = { x: nextTranslateX, y: nextTranslateY };
+-                }
++                const anchorX = (initialTouches[0].pageX + initialTouches[1].pageX) / 2;
++                const anchorY = (initialTouches[0].pageY + initialTouches[1].pageY) / 2;
++                const scaleRatio = nextScale / currentScale;
++                const nextTranslateX = currentTranslate.x +
++                    (anchorX - imageDimensions.width / 2 - currentTranslate.x) * (1 - scaleRatio);
++                const nextTranslateY = currentTranslate.y +
++                    (anchorY - imageDimensions.height / 2 - currentTranslate.y) * (1 - scaleRatio);
++                translateValue.x.setValue(nextTranslateX);
++                translateValue.y.setValue(nextTranslateY);
++                tmpTranslate = { x: nextTranslateX, y: nextTranslateY };
+                 scaleValue.setValue(nextScale);
+                 tmpScale = nextScale;
+             }
