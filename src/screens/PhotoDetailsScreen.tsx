@@ -139,14 +139,14 @@ const styles = StyleSheet.create({
   topBarButton: {
     padding: theme.spacing.sm,
     borderRadius: theme.radii.lg,
-    backgroundColor: theme.colors.accentDark,
+    backgroundColor: theme.colors.wall,
   },
   topBarButtonText: {
-    color: theme.colors.textOnDark,
+    color: theme.colors.bone,
     ...theme.typography.subtitle,
   },
   footer: {
-    backgroundColor: theme.colors.accentDark,
+    backgroundColor: theme.colors.wall,
     padding: theme.spacing.md,
   },
   dotsWrapper: {
@@ -154,17 +154,17 @@ const styles = StyleSheet.create({
   },
   footerMeta: {
     ...theme.typography.caption,
-    color: theme.colors.textOnDark,
+    color: theme.colors.bone,
   },
   missing: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.wall,
     alignItems: "center",
     justifyContent: "center",
     gap: theme.spacing.md,
   },
   missingText: {
     ...theme.typography.body,
-    color: theme.colors.text,
+    color: theme.colors.bone,
   },
 });
