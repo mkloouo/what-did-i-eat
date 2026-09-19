@@ -44,7 +44,7 @@ export function WallScreen() {
   // redux-persist replaces the whole appMeta object on load, so an existing
   // install without this key would read undefined — never trust it raw.
   const scrubberEnabled = useAppSelector(
-    (state) => state.appMeta.scrubberEnabled ?? false,
+    (state) => state.appMeta.scrubberEnabled ?? true,
   );
 
   const items = useMemo(() => buildWallItems(sections), [sections]);

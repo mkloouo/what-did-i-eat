@@ -7,29 +7,27 @@ describe("appMetaSlice", () => {
   it("starts with hasSeededDefaultTags false", () => {
     expect(reducer(undefined, { type: "@@INIT" })).toEqual({
       hasSeededDefaultTags: false,
-      scrubberEnabled: false,
+      scrubberEnabled: true,
     });
   });
 
   it("markDefaultTagsSeeded flips the flag to true", () => {
     const state = reducer(
-      { hasSeededDefaultTags: false, scrubberEnabled: false },
+      { hasSeededDefaultTags: false, scrubberEnabled: true },
       markDefaultTagsSeeded(),
     );
-    expect(state).toEqual({ hasSeededDefaultTags: true, scrubberEnabled: false });
+    expect(state).toEqual({ hasSeededDefaultTags: true, scrubberEnabled: true });
   });
 
-  it("starts with the Wall scrubber disabled — it's rough with few days logged", () => {
-    expect(reducer(undefined, { type: "@@INIT" }).scrubberEnabled).toBe(
-      false,
-    );
+  it("starts with the Wall scrubber enabled", () => {
+    expect(reducer(undefined, { type: "@@INIT" }).scrubberEnabled).toBe(true);
   });
 
   it("setScrubberEnabled toggles the flag", () => {
     const state = reducer(
-      { hasSeededDefaultTags: true, scrubberEnabled: false },
-      setScrubberEnabled(true),
+      { hasSeededDefaultTags: true, scrubberEnabled: true },
+      setScrubberEnabled(false),
     );
-    expect(state).toEqual({ hasSeededDefaultTags: true, scrubberEnabled: true });
+    expect(state).toEqual({ hasSeededDefaultTags: true, scrubberEnabled: false });
   });
 });
