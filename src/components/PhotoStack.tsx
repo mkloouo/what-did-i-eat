@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Image, Pressable, StyleSheet } from "react-native";
+import { View, Pressable, StyleSheet } from "react-native";
+import { Image } from "expo-image";
 import { theme } from "../theme/theme";
 import { PhotoLayoutAlgorithm } from "../types/models";
 import { masonryLayout } from "./photoLayouts/masonryLayout";
@@ -72,7 +73,7 @@ export function PhotoStack({
             <Image
               source={{ uri }}
               style={[styles.image, corners]}
-              resizeMode="cover"
+              contentFit="cover"
             />
           </Tile>
         );
