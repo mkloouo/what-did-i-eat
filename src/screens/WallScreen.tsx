@@ -41,6 +41,11 @@ export function WallScreen() {
   const photoLayoutAlgorithm = useAppSelector(
     (state) => state.settings.photoLayoutAlgorithm,
   );
+  // redux-persist replaces the whole appMeta object on load, so an existing
+  // install without this key would read undefined — never trust it raw.
+  const scrubberEnabled = useAppSelector(
+    (state) => state.appMeta.scrubberEnabled ?? false,
+  );
 
   const items = useMemo(() => buildWallItems(sections), [sections]);
   const dayKeys = useMemo(
@@ -130,11 +135,13 @@ export function WallScreen() {
             onViewableItemsChanged={handleViewableItemsChanged}
             contentContainerStyle={styles.listContent}
           />
-          <Scrubber
-            dayKeys={dayKeys}
-            activeDayKey={activeDayKey}
-            onSelectDay={scrollToDay}
-          />
+          {scrubberEnabled ? (
+            <Scrubber
+              dayKeys={dayKeys}
+              activeDayKey={activeDayKey}
+              onSelectDay={scrollToDay}
+            />
+          ) : null}
         </View>
       )}
 

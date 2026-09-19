@@ -34,7 +34,7 @@ function stateFrom(
       captureLocation: true,
     },
     tags: {},
-    appMeta: { hasSeededDefaultTags: true },
+    appMeta: { hasSeededDefaultTags: true, scrubberEnabled: false },
   };
 }
 
