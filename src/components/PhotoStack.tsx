@@ -5,16 +5,27 @@ import { PhotoLayoutAlgorithm } from "../types/models";
 import { masonryLayout } from "./photoLayouts/masonryLayout";
 import { squarifiedLayout } from "./photoLayouts/squarifiedLayout";
 import { tileCornerRadius } from "./photoLayouts/tileCornerRadius";
+import { tileInsets } from "./photoLayouts/tileInsets";
 
-const TILE_INSET = 2;
+const DEFAULT_SEAM = 2;
 
 type Props = {
   photosByEntry: string[][];
   algorithm: PhotoLayoutAlgorithm;
   onPhotoPress?: (index: number) => void;
+  // Gap between tiles in px. The collage's outer edge stays flush.
+  seam?: number;
+  // Rounds the collage's outer corners only; interior corners stay square.
+  cornerRadius?: number;
 };
 
-export function PhotoStack({ photosByEntry, algorithm, onPhotoPress }: Props) {
+export function PhotoStack({
+  photosByEntry,
+  algorithm,
+  onPhotoPress,
+  seam = DEFAULT_SEAM,
+  cornerRadius = 0,
+}: Props) {
   const photos = photosByEntry.flat();
   if (photos.length === 0) {
     return null;
@@ -42,8 +53,8 @@ export function PhotoStack({ photosByEntry, algorithm, onPhotoPress }: Props) {
           rect,
           layout.unitWidth,
           layout.unitHeight,
-          theme.radii.lg,
-          theme.radii.md,
+          cornerRadius,
+          0,
         );
         return (
           <Tile
@@ -55,7 +66,7 @@ export function PhotoStack({ photosByEntry, algorithm, onPhotoPress }: Props) {
               top: `${(rect.y / layout.unitHeight) * 100}%`,
               width: `${(rect.width / layout.unitWidth) * 100}%`,
               height: `${(rect.height / layout.unitHeight) * 100}%`,
-              padding: TILE_INSET,
+              ...tileInsets(rect, layout.unitWidth, layout.unitHeight, seam),
             }}
           >
             <Image
@@ -77,6 +88,6 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-    backgroundColor: theme.colors.muted,
+    backgroundColor: theme.colors.seam,
   },
 });
