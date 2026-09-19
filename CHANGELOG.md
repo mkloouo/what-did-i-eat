@@ -23,6 +23,23 @@ All notable changes to this project are documented here. Format loosely follows
   `createSelector` so they stop returning a new array reference on every
   render.
 
+## [1.7.0] - 2026-09-19
+
+Step 3 of the Wall redesign. Same dev build as 1.5.0 — no native changes.
+
+### Changed
+
+- The Entry page: a custom header (back, date and time, Edit), a large
+  hero photo with a thumbnail strip for entries with more than one photo,
+  and Taken/Place/Photos detail rows, replacing the old photo collage and
+  icon-button header.
+- Editing an entry's tags now has an inline "+ tag" control instead of
+  showing every tag at once.
+- Delete moved to the bottom of the Entry page, in clay, instead of a
+  header icon.
+- The photo viewer is restyled dark to match the Wall; it is still the
+  same pure zoom-and-swipe viewer.
+
 ## [1.6.0] - 2026-09-19
 
 Step 2 of the Wall redesign. Same dev build as 1.5.0 — no native changes.
