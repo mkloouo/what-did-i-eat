@@ -22,6 +22,19 @@ All notable changes to this project are documented here. Format loosely follows
   and New Entry screens, and the entry-lookup-by-ids in Group Details) with
   `createSelector` so they stop returning a new array reference on every
   render.
+## [1.7.1] - 2026-09-19
+
+Follow-up to the Wall redesign. Same dev build as 1.5.0 — no native changes.
+
+### Changed
+
+- The Wall's photo layout is now a fixed grid of equal squares instead of a
+  masonry/mosaic choice. How many photos wide it runs is a new "Photos per
+  row" slider in Settings (3–10, default 4), replacing the old "Photo
+  layout" and "Entry page photo layout" switches — the second was already
+  dead code since 1.7.0 gave the Entry page its own layout.
+- Settings sliders (rolling window, and the new columns slider) now update
+  live as you drag, instead of only when you release.
 
 ## [1.7.0] - 2026-09-19
 
