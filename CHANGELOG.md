@@ -23,6 +23,26 @@ All notable changes to this project are documented here. Format loosely follows
   `createSelector` so they stop returning a new array reference on every
   render.
 
+## [1.5.0] - 2026-09-19
+
+Step 1 of the Wall redesign. Needs a new dev build.
+
+### Added
+
+- Native modules for the whole redesign: fonts, splash screen, system UI,
+  linear gradient, expo-image and FlashList.
+- Contrast tests for every text and background colour pair the app draws.
+
+### Changed
+
+- The whole app now wears the Wall look: dark green-black ground, bone text, a
+  brass accent, Instrument Sans everywhere, no shadows.
+- Photo collages sit flush to their edges with a 2px seam and square corners.
+- Buttons, tag chips and segmented controls restyled for the dark ground.
+- The app opens on a dark splash and stays on it until the font has loaded.
+- Reformatted everything with prettier.
+- Aligned Banner bottom padding to similar from the other feed elements.
+
 ## [v1.4.1] - 2026-09-18
 
 ### Changed
