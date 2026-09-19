@@ -132,6 +132,10 @@ export function WallScreen() {
             ref={listRef}
             style={styles.list}
             data={items}
+            // The custom Scrubber is the Wall's scroll indicator when it's
+            // on; the native one would just double up on the same edge.
+            // Falls back to the native one if the Scrubber's ever off.
+            showsVerticalScrollIndicator={!scrubberEnabled}
             keyExtractor={(item) =>
               item.type === "day" ? `day-${item.dayKey}` : item.group.id
             }
