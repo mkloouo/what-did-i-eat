@@ -12,8 +12,8 @@ type Props = {
 export function PaginationDots({
   count,
   activeIndex,
-  dotColor = theme.colors.muted,
-  activeDotColor = theme.colors.textOnDark,
+  dotColor = theme.colors.chalk,
+  activeDotColor = theme.colors.bone,
 }: Props) {
   if (count <= 1) {
     return null;
