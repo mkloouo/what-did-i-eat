@@ -1065,8 +1065,8 @@ and replace `    backgroundColor: theme.colors.primary,` with `    backgroundCol
 
 - [ ] **Step 6: Verify no `fontWeight` remains and everything compiles**
 
-Run: `grep -rn "fontWeight" src --include='*.ts' --include='*.tsx'`
-Expected: only the comment in `src/theme/theme.ts` and the two strings in `src/theme/theme.test.ts`. None in components or screens.
+Run: `grep -rln "fontWeight" src --include='*.ts' --include='*.tsx'`
+Expected: exactly three files — `src/theme/theme.ts` (a comment), `src/theme/theme.test.ts` (two strings), and `src/theme/navigationTheme.ts` (four literal `fontWeight: "400"` entries required by React Navigation's `Theme` type, unrelated to this app's own text styles). None of Button.tsx, TagChip.tsx, SegmentedControl.tsx, CountBadge.tsx, Fab.tsx, or any screen.
 
 Run: `npx tsc --noEmit`
 Expected: no new errors.
