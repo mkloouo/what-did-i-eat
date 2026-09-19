@@ -57,6 +57,11 @@ export function Scrubber({ dayKeys, activeDayKey, onSelectDay }: Props) {
     <PanGestureHandler
       onGestureEvent={handleGesture}
       onHandlerStateChange={handleStateChange}
+      // The visual rail is a deliberately thin 6px — nowhere near a usable
+      // touch target on its own. hitSlop widens what actually catches the
+      // gesture without changing how anything looks; nativeEvent.y stays
+      // relative to the rail View itself, unaffected by this.
+      hitSlop={{ left: 32 }}
     >
       <View
         style={styles.rail}
