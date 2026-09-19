@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import {
   PanGestureHandler,
@@ -20,6 +20,13 @@ type Props = {
 export function Scrubber({ dayKeys, activeDayKey, onSelectDay }: Props) {
   const [railHeight, setRailHeight] = useState(0);
   const [dragY, setDragY] = useState<number | null>(null);
+  // Tracks the last day actually reported to onSelectDay, so a gesture
+  // frame that lands on the same nearest tick as the last one doesn't
+  // re-trigger a scroll. With only a few widely-spaced ticks, tiny finger
+  // jitter near the midpoint between two of them can flip the nearest
+  // pick back and forth — deduping here is what stops each flip from
+  // firing its own competing scroll.
+  const lastReportedDay = useRef<string | null>(null);
 
   const ticks = buildScrubberTicks(dayKeys, railHeight);
 
@@ -27,7 +34,10 @@ export function Scrubber({ dayKeys, activeDayKey, onSelectDay }: Props) {
     const y = event.nativeEvent.y;
     setDragY(y);
     const day = nearestDayForY(ticks, y);
-    if (day) onSelectDay(day);
+    if (day && day !== lastReportedDay.current) {
+      lastReportedDay.current = day;
+      onSelectDay(day);
+    }
   }
 
   function handleStateChange(event: PanGestureHandlerGestureEvent) {

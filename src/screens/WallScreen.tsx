@@ -56,12 +56,17 @@ export function WallScreen() {
   function scrollToDay(dayKey: string) {
     const index = firstItemIndexForDay(items, dayKey);
     if (index < 0) return;
-    listRef.current?.scrollToIndex({ index, animated: true }).catch(() => {
+    // Not animated: the Scrubber calls this to track a drag in progress,
+    // so the list should jump to each new target immediately. An animated
+    // scroll interpolates over time, and a drag can re-target this well
+    // before the previous animation finishes — repeatedly interrupting and
+    // re-easing is what made the scrubber visibly fight itself.
+    listRef.current?.scrollToIndex({ index, animated: false }).catch(() => {
       // The row may not have a measured position yet on the first attempt —
       // one retry after a frame is enough for FlashList to have settled.
       requestAnimationFrame(() => {
         listRef.current
-          ?.scrollToIndex({ index, animated: true })
+          ?.scrollToIndex({ index, animated: false })
           .catch(() => {});
       });
     });
