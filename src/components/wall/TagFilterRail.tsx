@@ -1,8 +1,14 @@
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { Pressable, ScrollView, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../navigation/types";
 import { useAppSelector } from "../../store/hooks";
 import { TagChip } from "../TagChip";
 import { theme } from "../../theme/theme";
+
+type Nav = NativeStackNavigationProp<RootStackParamList, "Home">;
 
 type Props = {
   activeTagId: string | null;
@@ -10,10 +16,11 @@ type Props = {
 };
 
 // One tag is active at a time; tapping the active tag clears the filter.
+// The trailing Edit button always shows, even with no tags yet, since it's
+// how a first-time user reaches the Tags screen to create one.
 export function TagFilterRail({ activeTagId, onSelect }: Props) {
+  const navigation = useNavigation<Nav>();
   const tags = useAppSelector((state) => Object.values(state.tags));
-
-  if (tags.length === 0) return null;
 
   return (
     <ScrollView
@@ -35,6 +42,14 @@ export function TagFilterRail({ activeTagId, onSelect }: Props) {
           />
         );
       })}
+      <Pressable
+        onPress={() => navigation.navigate("Tags")}
+        accessibilityRole="button"
+        accessibilityLabel="Edit tags"
+        style={styles.editButton}
+      >
+        <Ionicons name="pencil-outline" size={14} color={theme.colors.chalk} />
+      </Pressable>
     </ScrollView>
   );
 }
@@ -53,5 +68,13 @@ const styles = StyleSheet.create({
     gap: theme.spacing.sm,
     paddingHorizontal: theme.spacing.md,
     paddingBottom: theme.spacing.sm,
+  },
+  editButton: {
+    width: 30,
+    height: 30,
+    borderRadius: theme.radii.pill,
+    backgroundColor: theme.colors.seam,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

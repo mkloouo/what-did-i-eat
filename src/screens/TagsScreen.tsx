@@ -18,7 +18,6 @@ import { addTag, updateTag, deleteTag } from "../store/tagsSlice";
 import { generateId } from "../utils/id";
 import { isValidTagLabel } from "../utils/tagLabel";
 import { Tag, TagIcon, TAG_ICON_OPTIONS } from "../types/models";
-import { Card } from "../components/Card";
 import { TagChip } from "../components/TagChip";
 import { Button } from "../components/photoLayouts/Button";
 import { theme } from "../theme/theme";
@@ -123,6 +122,7 @@ export function TagsScreen() {
               <Text
                 style={[
                   styles.headerButtonText,
+                  styles.headerButtonTextDanger,
                   selectedIds.length === 0 && styles.headerButtonTextDisabled,
                 ]}
               >
@@ -146,7 +146,7 @@ export function TagsScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.content}>
-        <Card style={styles.formCard}>
+        <View style={styles.form}>
           <Text style={styles.label}>
             {editingId === "new"
               ? "Add a tag"
@@ -168,8 +168,8 @@ export function TagsScreen() {
                       size={22}
                       color={
                         draftIcon === icon
-                          ? theme.colors.primary
-                          : theme.colors.muted
+                          ? theme.colors.brass
+                          : theme.colors.chalk
                       }
                     />
                   </Pressable>
@@ -178,7 +178,7 @@ export function TagsScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="e.g. Home cooked"
-                placeholderTextColor={theme.colors.muted}
+                placeholderTextColor={theme.colors.chalk}
                 value={draftLabel}
                 onChangeText={setDraftLabel}
               />
@@ -194,7 +194,7 @@ export function TagsScreen() {
           ) : (
             <Button label="Add tag" onPress={startAdd} />
           )}
-        </Card>
+        </View>
 
         {tags.length === 0 ? (
           <Text style={styles.empty}>
@@ -221,7 +221,7 @@ export function TagsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.wall,
   },
   content: {
     padding: theme.spacing.md,
@@ -235,18 +235,24 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.xs,
   },
   headerButtonText: {
-    color: theme.colors.textOnDark,
+    color: theme.colors.bone,
     ...theme.typography.subtitle,
+  },
+  headerButtonTextDanger: {
+    color: theme.colors.clay,
   },
   headerButtonTextDisabled: {
     opacity: 0.5,
   },
-  formCard: {
-    marginBottom: theme.spacing.md,
+  form: {
+    marginBottom: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.hairline,
   },
   label: {
     ...theme.typography.caption,
-    color: theme.colors.muted,
+    color: theme.colors.chalk,
     marginBottom: theme.spacing.sm,
   },
   iconRow: {
@@ -259,11 +265,11 @@ const styles = StyleSheet.create({
     padding: theme.spacing.xs,
   },
   input: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.seam,
     borderRadius: theme.radii.md,
     padding: theme.spacing.sm,
     ...theme.typography.body,
-    color: theme.colors.text,
+    color: theme.colors.bone,
     marginBottom: theme.spacing.sm,
   },
   formButtons: {
@@ -278,7 +284,7 @@ const styles = StyleSheet.create({
   },
   empty: {
     ...theme.typography.body,
-    color: theme.colors.muted,
+    color: theme.colors.chalk,
     textAlign: "center",
     marginTop: theme.spacing.lg,
   },
