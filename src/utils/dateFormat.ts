@@ -48,3 +48,12 @@ export function formatDuration(minutes: number): string {
   if (mins === 0) return `${hours} h`;
   return `${hours} h ${mins} m`;
 }
+
+export function minuteOfDay(iso: string): number {
+  const d = new Date(iso);
+  return d.getHours() * 60 + d.getMinutes();
+}
+
+export function dayFraction(iso: string): number {
+  return minuteOfDay(iso) / 1440;
+}

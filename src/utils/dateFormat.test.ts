@@ -4,6 +4,8 @@ import {
   formatTime,
   formatFullDateTime,
   formatDuration,
+  minuteOfDay,
+  dayFraction,
 } from "./dateFormat";
 
 describe("dayKeyOf", () => {
@@ -71,5 +73,25 @@ describe("formatDuration", () => {
   it("renders an hour-plus-minutes duration as both parts", () => {
     expect(formatDuration(90)).toBe("1 h 30 m");
     expect(formatDuration(135)).toBe("2 h 15 m");
+  });
+});
+
+describe("minuteOfDay / dayFraction", () => {
+  it("gives 0 at local midnight", () => {
+    const midnight = new Date(2026, 2, 5, 0, 0, 0).toISOString();
+    expect(minuteOfDay(midnight)).toBe(0);
+    expect(dayFraction(midnight)).toBe(0);
+  });
+
+  it("gives 720 minutes / 0.5 at local noon", () => {
+    const noon = new Date(2026, 2, 5, 12, 0, 0).toISOString();
+    expect(minuteOfDay(noon)).toBe(720);
+    expect(dayFraction(noon)).toBe(0.5);
+  });
+
+  it("gives 1439 minutes / just under 1 at 23:59", () => {
+    const lastMinute = new Date(2026, 2, 5, 23, 59, 0).toISOString();
+    expect(minuteOfDay(lastMinute)).toBe(1439);
+    expect(dayFraction(lastMinute)).toBeCloseTo(1439 / 1440);
   });
 });
