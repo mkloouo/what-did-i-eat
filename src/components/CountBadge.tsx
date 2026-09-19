@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     ...theme.typography.caption,
-    color: theme.colors.text,
-    fontWeight: "700",
+    color: theme.colors.bone,
+    fontFamily: theme.fonts.semibold,
   },
 });
