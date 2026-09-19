@@ -18,6 +18,7 @@ export function TagFilterRail({ activeTagId, onSelect }: Props) {
   return (
     <ScrollView
       horizontal
+      style={styles.scroll}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.content}
     >
@@ -39,6 +40,13 @@ export function TagFilterRail({ activeTagId, onSelect }: Props) {
 }
 
 const styles = StyleSheet.create({
+  // Left unstyled, a ScrollView doesn't size itself to content in a flex
+  // column the way a plain View does — it expands to claim the remaining
+  // vertical space like a flex:1 sibling would. flexGrow: 0 pins the rail
+  // to its content's own height (the chip row).
+  scroll: {
+    flexGrow: 0,
+  },
   content: {
     flexDirection: "row",
     alignItems: "center",
