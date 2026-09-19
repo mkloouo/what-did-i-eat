@@ -41,6 +41,7 @@ export function TagFilterRail({ activeTagId, onSelect }: Props) {
 const styles = StyleSheet.create({
   content: {
     flexDirection: "row",
+    alignItems: "center",
     gap: theme.spacing.sm,
     paddingHorizontal: theme.spacing.md,
     paddingBottom: theme.spacing.sm,
