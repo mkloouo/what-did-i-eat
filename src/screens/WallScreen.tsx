@@ -1,38 +1,31 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import {
-  FlashList,
-  FlashListRef,
-  ListRenderItemInfo,
-  ViewToken,
-} from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../navigation/types";
-import { useAppSelector } from "../store/hooks";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { selectFeedSections } from "../store/selectors/groupSelectors";
-import {
-  buildWallItems,
-  firstItemIndexForDay,
-  currentDayFromViewableItems,
-  WallItem,
-} from "../utils/wallItems";
-import { WallPiece } from "../components/wall/WallPiece";
-import { DaySeam } from "../components/wall/DaySeam";
+import { setTimelineView } from "../store/appMetaSlice";
+import { buildWallItems } from "../utils/wallItems";
+import { WallFeed } from "../components/wall/WallFeed";
 import { TagFilterRail } from "../components/wall/TagFilterRail";
-import { Scrubber } from "../components/wall/Scrubber";
+import { DaysBoard } from "../components/days/DaysBoard";
+import { SegmentedControl } from "../components/SegmentedControl";
+import { TimelineView } from "../types/models";
 import { theme } from "../theme/theme";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "Home">;
 
 export function WallScreen() {
   const navigation = useNavigation<Nav>();
+  const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
   const [activeTagId, setActiveTagId] = useState<string | null>(null);
-  const [activeDayKey, setActiveDayKey] = useState<string | null>(null);
-  const listRef = useRef<FlashListRef<WallItem>>(null);
+  const [pendingScrollDayKey, setPendingScrollDayKey] = useState<
+    string | null
+  >(null);
 
   const sections = useAppSelector((state) =>
     selectFeedSections(state, activeTagId),
@@ -44,6 +37,9 @@ export function WallScreen() {
   const scrubberEnabled = useAppSelector(
     (state) => state.appMeta.scrubberEnabled ?? true,
   );
+  const timelineView = useAppSelector(
+    (state) => state.appMeta.timelineView ?? "wall",
+  );
 
   const items = useMemo(() => buildWallItems(sections), [sections]);
   const dayKeys = useMemo(
@@ -51,113 +47,73 @@ export function WallScreen() {
     [sections],
   );
 
-  function scrollToDay(dayKey: string) {
-    const index = firstItemIndexForDay(items, dayKey);
-    if (index < 0) return;
-    // Not animated: the Scrubber calls this to track a drag in progress,
-    // so the list should jump to each new target immediately. An animated
-    // scroll interpolates over time, and a drag can re-target this well
-    // before the previous animation finishes — repeatedly interrupting and
-    // re-easing is what made the scrubber visibly fight itself.
-    listRef.current?.scrollToIndex({ index, animated: false }).catch(() => {
-      // The row may not have a measured position yet on the first attempt —
-      // one retry after a frame is enough for FlashList to have settled.
-      requestAnimationFrame(() => {
-        listRef.current
-          ?.scrollToIndex({ index, animated: false })
-          .catch(() => {});
-      });
-    });
-  }
-
-  function handleViewableItemsChanged({
-    viewableItems,
-  }: {
-    viewableItems: ViewToken<WallItem>[];
-  }) {
-    const indices = viewableItems
-      .map((token) => token.index)
-      .filter((index): index is number => index !== null);
-    setActiveDayKey(currentDayFromViewableItems(items, indices));
-  }
-
-  function renderItem({ item }: ListRenderItemInfo<WallItem>) {
-    if (item.type === "day") {
-      return <DaySeam label={item.label} />;
-    }
-    return (
-      <WallPiece
-        group={item.group}
-        tagsById={tagsById}
-        wallColumns={wallColumns}
-        onPressEntry={(entryId) =>
-          navigation.navigate("EntryDetails", { entryId })
-        }
-      />
-    );
+  function goToWallDay(dayKey: string) {
+    setPendingScrollDayKey(dayKey);
+    dispatch(setTimelineView("wall"));
   }
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + theme.spacing.sm }]}>
-        <Text style={styles.title}>What did I eat</Text>
-        <Pressable
-          onPress={() => navigation.navigate("Settings")}
-          accessibilityRole="button"
-          accessibilityLabel="Settings"
-          style={styles.settingsButton}
-        >
-          <Ionicons
-            name="settings-outline"
-            size={20}
-            color={theme.colors.chalk}
-          />
-        </Pressable>
+      <View
+        style={[styles.header, { paddingTop: insets.top + theme.spacing.sm }]}
+      >
+        <Text style={styles.title} numberOfLines={1}>
+          What did I eat
+        </Text>
+        <View style={styles.headerControls}>
+          <View style={styles.toggleWrap}>
+            <SegmentedControl
+              value={timelineView}
+              options={[
+                { value: "wall", label: "Wall" },
+                { value: "days", label: "Days" },
+              ]}
+              onChange={(value) =>
+                dispatch(setTimelineView(value as TimelineView))
+              }
+            />
+          </View>
+          <Pressable
+            onPress={() => navigation.navigate("Settings")}
+            accessibilityRole="button"
+            accessibilityLabel="Settings"
+            style={styles.settingsButton}
+          >
+            <Ionicons
+              name="settings-outline"
+              size={20}
+              color={theme.colors.chalk}
+            />
+          </Pressable>
+        </View>
       </View>
 
       <TagFilterRail activeTagId={activeTagId} onSelect={setActiveTagId} />
 
-      {items.length === 0 ? (
+      {sections.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>Nothing on the wall yet</Text>
+          <Text style={styles.emptyTitle}>
+            Nothing {timelineView === "wall" ? "on the wall" : "here"} yet
+          </Text>
           <Text style={styles.emptyBody}>
             Photograph the next thing you eat.
           </Text>
         </View>
+      ) : timelineView === "wall" ? (
+        <WallFeed
+          items={items}
+          dayKeys={dayKeys}
+          tagsById={tagsById}
+          wallColumns={wallColumns}
+          scrubberEnabled={scrubberEnabled}
+          onPressEntry={(entryId) =>
+            navigation.navigate("EntryDetails", { entryId })
+          }
+          pendingScrollDayKey={pendingScrollDayKey}
+          onScrolledToDay={() => setPendingScrollDayKey(null)}
+        />
       ) : (
-        <View style={styles.body}>
-          <FlashList
-            ref={listRef}
-            style={styles.list}
-            data={items}
-            // The custom Scrubber is the Wall's scroll indicator when it's
-            // on; the native one would just double up on the same edge.
-            // Falls back to the native one if the Scrubber's ever off.
-            showsVerticalScrollIndicator={!scrubberEnabled}
-            keyExtractor={(item) =>
-              item.type === "day" ? `day-${item.dayKey}` : item.group.id
-            }
-            getItemType={(item) => item.type}
-            renderItem={renderItem}
-            onViewableItemsChanged={handleViewableItemsChanged}
-            contentContainerStyle={styles.listContent}
-            // Off: it's meant for chat-like screens where content is
-            // prepended above/below an anchor. Enabled (FlashList's
-            // default), it reacts to redux-persist's entries hydrating
-            // just after mount — data going empty-to-populated reads as
-            // "content added above" — by reserving blank leading space
-            // meant to hold scroll position for a scroll that never
-            // happened.
-            maintainVisibleContentPosition={{ disabled: true }}
-          />
-          {scrubberEnabled ? (
-            <Scrubber
-              dayKeys={dayKeys}
-              activeDayKey={activeDayKey}
-              onSelectDay={scrollToDay}
-            />
-          ) : null}
-        </View>
+        <DaysBoard sections={sections} onPressDay={goToWallDay} />
       )}
 
       <Pressable
@@ -189,19 +145,18 @@ const styles = StyleSheet.create({
   title: {
     ...theme.typography.subtitle,
     color: theme.colors.bone,
+    flexShrink: 1,
+  },
+  headerControls: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing.sm,
+  },
+  toggleWrap: {
+    width: 140,
   },
   settingsButton: {
     padding: theme.spacing.xs,
-  },
-  body: {
-    flex: 1,
-    flexDirection: "row",
-  },
-  list: {
-    flex: 1,
-  },
-  listContent: {
-    paddingBottom: theme.spacing.xl,
   },
   empty: {
     flex: 1,
