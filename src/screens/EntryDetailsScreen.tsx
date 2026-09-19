@@ -143,7 +143,7 @@ export function EntryDetailsScreen() {
     return (
       <View style={styles.missing}>
         <Text style={styles.missingText}>This entry no longer exists.</Text>
-        <Button label="Back" onPress={() => navigation.navigate("Tabs")} />
+        <Button label="Back" onPress={() => navigation.navigate("Home")} />
       </View>
     );
   }
