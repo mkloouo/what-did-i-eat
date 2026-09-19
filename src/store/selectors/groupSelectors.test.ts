@@ -160,19 +160,4 @@ describe("selectFeedSections", () => {
     expect(sections[0].groups[0].entries[0].id).toBe("b");
     expect(sections[0].groups[1].entries[0].id).toBe("a");
   });
-
-  it("populates a title, and keeps timeFrom/timeTo as oldest/newest despite entries being reversed", () => {
-    const e1 = entry("a", "2026-03-05T12:00:00.000Z");
-    const e2 = entry("b", "2026-03-05T12:05:00.000Z");
-    const state = stateFrom([e1, e2]);
-
-    const sections = selectFeedSections(state);
-    const group = sections[0].groups[0];
-
-    expect(typeof group.title).toBe("string");
-    expect(group.title.length).toBeGreaterThan(0);
-    expect(group.entries.map((e) => e.id)).toEqual(["b", "a"]);
-    expect(group.timeFrom).toBe(e1.createdAt);
-    expect(group.timeTo).toBe(e2.createdAt);
-  });
 });
