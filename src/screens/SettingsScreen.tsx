@@ -1,6 +1,17 @@
 import React from "react";
-import { View, Text, ScrollView, Switch, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Switch,
+  Pressable,
+  StyleSheet,
+} from "react-native";
 import Slider from "@react-native-community/slider";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/types";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import {
   setGroupingMode,
@@ -12,8 +23,12 @@ import {
 import { SegmentedControl } from "../components/SegmentedControl";
 import { theme } from "../theme/theme";
 import { GroupingMode } from "../types/models";
+import { formatDuration } from "../utils/dateFormat";
+
+type Nav = NativeStackNavigationProp<RootStackParamList, "Settings">;
 
 export function SettingsScreen() {
+  const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
   const groupingMode = useAppSelector((state) => state.settings.groupingMode);
   const rollingWindowMinutes = useAppSelector(
@@ -29,12 +44,12 @@ export function SettingsScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.label}>Grouping</Text>
+      <Text style={styles.label}>What counts as one meal</Text>
       <SegmentedControl
         value={groupingMode}
         options={[
-          { value: "rolling", label: "Rolling window" },
-          { value: "day", label: "Single day" },
+          { value: "rolling", label: "Photos close in time" },
+          { value: "day", label: "A whole day" },
         ]}
         onChange={(value) => dispatch(setGroupingMode(value as GroupingMode))}
       />
@@ -42,15 +57,15 @@ export function SettingsScreen() {
       {groupingMode === "rolling" ? (
         <View style={styles.sliderRow}>
           <Text style={styles.sliderLabel}>
-            Window: {rollingWindowMinutes} min
+            Merge photos taken within: {formatDuration(rollingWindowMinutes)}
           </Text>
           <Slider
             minimumValue={30}
             maximumValue={240}
             step={15}
             value={rollingWindowMinutes}
-            minimumTrackTintColor={theme.colors.primary}
-            maximumTrackTintColor={theme.colors.muted}
+            minimumTrackTintColor={theme.colors.brass}
+            maximumTrackTintColor={theme.colors.chalk}
             onValueChange={(value) => dispatch(setRollingWindowMinutes(value))}
           />
         </View>
@@ -64,14 +79,14 @@ export function SettingsScreen() {
         maximumValue={10}
         step={1}
         value={wallColumns}
-        minimumTrackTintColor={theme.colors.primary}
-        maximumTrackTintColor={theme.colors.muted}
+        minimumTrackTintColor={theme.colors.brass}
+        maximumTrackTintColor={theme.colors.chalk}
         onValueChange={(value) => dispatch(setWallColumns(value))}
       />
 
       <View style={styles.toggleRow}>
         <View style={styles.toggleTextGroup}>
-          <Text style={styles.label}>Infer date from imported photo</Text>
+          <Text style={styles.label}>Use the photo's own date</Text>
           <Text style={styles.toggleHint}>
             When importing from the gallery, set the entry's date from the first
             photo you pick — handy for backfilling old meals.
@@ -82,13 +97,13 @@ export function SettingsScreen() {
           onValueChange={(value) => {
             dispatch(setInferDateFromFirstImportedPhoto(value));
           }}
-          trackColor={{ true: theme.colors.primary }}
+          trackColor={{ true: theme.colors.brass }}
         />
       </View>
 
       <View style={styles.toggleRow}>
         <View style={styles.toggleTextGroup}>
-          <Text style={styles.label}>Save location with photos</Text>
+          <Text style={styles.label}>Save where you were</Text>
           <Text style={styles.toggleHint}>
             When off, new entries are saved without capturing your current
             location.
@@ -99,9 +114,23 @@ export function SettingsScreen() {
           onValueChange={(value) => {
             dispatch(setCaptureLocation(value));
           }}
-          trackColor={{ true: theme.colors.primary }}
+          trackColor={{ true: theme.colors.brass }}
         />
       </View>
+
+      <Pressable
+        style={styles.navRow}
+        onPress={() => navigation.navigate("Tags")}
+        accessibilityRole="button"
+        accessibilityLabel="Edit tags"
+      >
+        <Text style={styles.navLabel}>Edit tags</Text>
+        <Ionicons
+          name="chevron-forward-outline"
+          size={18}
+          color={theme.colors.chalk}
+        />
+      </Pressable>
     </ScrollView>
   );
 }
@@ -109,14 +138,14 @@ export function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.wall,
   },
   content: {
     padding: theme.spacing.md,
   },
   label: {
     ...theme.typography.caption,
-    color: theme.colors.muted,
+    color: theme.colors.chalk,
     marginBottom: theme.spacing.sm,
   },
   secondLabel: {
@@ -127,7 +156,7 @@ const styles = StyleSheet.create({
   },
   sliderLabel: {
     ...theme.typography.body,
-    color: theme.colors.text,
+    color: theme.colors.bone,
     marginBottom: theme.spacing.xs,
   },
   toggleRow: {
@@ -141,7 +170,20 @@ const styles = StyleSheet.create({
   },
   toggleHint: {
     ...theme.typography.caption,
-    color: theme.colors.muted,
+    color: theme.colors.chalk,
     marginTop: theme.spacing.xs,
+  },
+  navRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: theme.spacing.lg,
+    paddingTop: theme.spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.hairline,
+  },
+  navLabel: {
+    ...theme.typography.body,
+    color: theme.colors.bone,
   },
 });

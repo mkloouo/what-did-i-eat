@@ -37,9 +37,9 @@ export function RootNavigator() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: theme.colors.accentDark },
-        headerTintColor: theme.colors.textOnDark,
-        contentStyle: { backgroundColor: theme.colors.background },
+        headerStyle: { backgroundColor: theme.colors.wall },
+        headerTintColor: theme.colors.bone,
+        contentStyle: { backgroundColor: theme.colors.wall },
       }}
     >
       <Stack.Screen
