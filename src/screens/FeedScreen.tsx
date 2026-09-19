@@ -271,7 +271,6 @@ const styles = StyleSheet.create({
     borderRadius: theme.radii.pill,
     paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.md,
-    ...theme.shadows.card,
   },
   bannerText: {
     ...theme.typography.body,
