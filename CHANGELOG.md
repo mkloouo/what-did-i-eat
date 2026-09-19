@@ -22,6 +22,23 @@ All notable changes to this project are documented here. Format loosely follows
   and New Entry screens, and the entry-lookup-by-ids in Group Details) with
   `createSelector` so they stop returning a new array reference on every
   render.
+
+## [1.8.0] - 2026-09-19
+
+Step 4 of the Wall redesign. Same dev build as 1.5.0 — no native changes.
+
+### Changed
+
+- Settings is restyled for the Wall, with every setting's copy updated:
+  "What counts as one meal", "Merge photos taken within" (now shown as
+  e.g. "1 h 30 m"), "Photos per row", "Use the photo's own date" and
+  "Save where you were". A new "Edit tags" row opens the Tags screen.
+- The Wall's tag rail gained a matching Edit button, and now always shows
+  (previously it hid itself entirely with no tags yet).
+- Tags and Capture (New Entry) are restyled onto the Wall's tokens, with
+  no change to either flow. Tags' add/edit form is no longer boxed in a
+  card — cards are gone everywhere now.
+
 ## [1.7.1] - 2026-09-19
 
 Follow-up to the Wall redesign. Same dev build as 1.5.0 — no native changes.
