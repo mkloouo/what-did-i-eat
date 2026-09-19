@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types";
 import { theme } from "../theme/theme";
-import { TabNavigator } from "./TabNavigator";
+import { WallScreen } from "../screens/WallScreen";
 import { NewEntryScreen } from "../screens/NewEntryScreen";
-import { GroupDetailsScreen } from "../screens/GroupDetailsScreen";
 import { EntryDetailsScreen } from "../screens/EntryDetailsScreen";
 import { PhotoDetailsScreen } from "../screens/PhotoDetailsScreen";
+import { SettingsScreen } from "../screens/SettingsScreen";
+import { TagsScreen } from "../screens/TagsScreen";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { addTag } from "../store/tagsSlice";
 import { markDefaultTagsSeeded } from "../store/appMetaSlice";
@@ -42,19 +43,14 @@ export function RootNavigator() {
       }}
     >
       <Stack.Screen
-        name="Tabs"
-        component={TabNavigator}
+        name="Home"
+        component={WallScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
         name="NewEntry"
         component={NewEntryScreen}
         options={{ title: "New Entry" }}
-      />
-      <Stack.Screen
-        name="GroupDetails"
-        component={GroupDetailsScreen}
-        options={({ route }) => ({ title: route.params.title })}
       />
       <Stack.Screen
         name="EntryDetails"
@@ -65,6 +61,16 @@ export function RootNavigator() {
         name="PhotoDetails"
         component={PhotoDetailsScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{ title: "Settings" }}
+      />
+      <Stack.Screen
+        name="Tags"
+        component={TagsScreen}
+        options={{ title: "Tags" }}
       />
     </Stack.Navigator>
   );
