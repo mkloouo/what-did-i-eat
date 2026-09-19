@@ -161,3 +161,51 @@ describe("selectFeedSections", () => {
     expect(sections[0].groups[1].entries[0].id).toBe("a");
   });
 });
+
+describe("selectFeedSections with a tag filter", () => {
+  it("drops entries that don't carry the filtered tag", () => {
+    const e1 = { ...entry("a", "2026-03-05T12:00:00.000Z"), tagIds: ["coffee"] };
+    const e2 = { ...entry("b", "2026-03-05T20:00:00.000Z"), tagIds: ["dinner"] };
+    const state = stateFrom([e1, e2]);
+
+    const sections = selectFeedSections(state, "coffee");
+
+    expect(sections).toHaveLength(1);
+    expect(sections[0].groups[0].entries.map((e) => e.id)).toEqual(["a"]);
+  });
+
+  it("regroups remaining entries once non-matching ones are removed", () => {
+    const e1 = { ...entry("a", "2026-03-05T12:00:00.000Z"), tagIds: ["coffee"] };
+    const e2 = { ...entry("b", "2026-03-05T12:30:00.000Z"), tagIds: ["dinner"] };
+    const e3 = { ...entry("c", "2026-03-05T13:00:00.000Z"), tagIds: ["coffee"] };
+    const state = stateFrom([e1, e2, e3], "rolling", 60);
+
+    // Unfiltered, a/b/c are each within 60 min of a neighbour: one group.
+    expect(
+      selectFeedSections(state).flatMap((s) => s.groups),
+    ).toHaveLength(1);
+
+    // Filtered to "coffee", b drops out, leaving a and c 60 min apart —
+    // still one group, not a gap where b used to be.
+    const sections = selectFeedSections(state, "coffee");
+    expect(sections[0].groups).toHaveLength(1);
+    expect(sections[0].groups[0].entries.map((e) => e.id)).toEqual([
+      "c",
+      "a",
+    ]);
+  });
+
+  it("never matches an entry with no tags", () => {
+    const e1 = entry("a", "2026-03-05T12:00:00.000Z");
+    const state = stateFrom([e1]);
+
+    expect(selectFeedSections(state, "coffee")).toEqual([]);
+  });
+
+  it("returns every entry when no tag is selected", () => {
+    const e1 = { ...entry("a", "2026-03-05T12:00:00.000Z"), tagIds: ["coffee"] };
+    const state = stateFrom([e1]);
+
+    expect(selectFeedSections(state, null)).toEqual(selectFeedSections(state));
+  });
+});
