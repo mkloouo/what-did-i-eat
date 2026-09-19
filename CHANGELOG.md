@@ -23,6 +23,17 @@ All notable changes to this project are documented here. Format loosely follows
   `createSelector` so they stop returning a new array reference on every
   render.
 
+## [1.8.1] - 2026-09-19
+
+Bugfix follow-up. Same dev build as 1.5.0 — no native changes.
+
+### Fixed
+
+- The photo viewer's swipe between photos no longer hitches partway
+  through the gesture.
+- Pinching to zoom now zooms toward wherever you're actually pinching,
+  instead of always toward the center of the photo.
+
 ## [1.8.0] - 2026-09-19
 
 Step 4 of the Wall redesign. Same dev build as 1.5.0 — no native changes.
