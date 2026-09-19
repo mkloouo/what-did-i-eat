@@ -15,7 +15,7 @@ export function IconButton({
   name,
   onPress,
   accessibilityLabel,
-  color = theme.colors.textOnDark,
+  color = theme.colors.bone,
   size = 24,
 }: Props) {
   return (
