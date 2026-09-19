@@ -38,27 +38,28 @@ export function SegmentedControl<T>({
 const styles = StyleSheet.create({
   segmented: {
     flexDirection: "row",
-    borderRadius: theme.radii.pill,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: theme.colors.muted,
+    gap: 2,
+    padding: 2,
+    borderRadius: theme.radii.md,
+    backgroundColor: theme.colors.seam,
   },
   segment: {
     flex: 1,
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.md,
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: theme.radii.sm,
   },
   segmentActive: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.bone,
   },
   segmentText: {
     ...theme.typography.body,
-    color: theme.colors.text,
+    color: theme.colors.bone,
   },
   segmentTextActive: {
-    color: theme.colors.textOnDark,
-    fontWeight: "700",
+    color: theme.colors.wall,
+    fontFamily: theme.fonts.semibold,
   },
 });

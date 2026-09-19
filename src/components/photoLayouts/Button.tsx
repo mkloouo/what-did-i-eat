@@ -26,10 +26,11 @@ export function Button({
   style,
 }: Props) {
   const backgroundColor = disabled
-    ? theme.colors.muted
+    ? theme.colors.seam
     : variant === "danger"
-      ? theme.colors.danger
-      : theme.colors.primary;
+      ? theme.colors.clay
+      : theme.colors.bone;
+  const textColor = disabled ? theme.colors.chalk : theme.colors.wall;
 
   return (
     <Pressable
@@ -38,9 +39,9 @@ export function Button({
       style={[styles.button, { backgroundColor }, style]}
     >
       {loading ? (
-        <ActivityIndicator color={theme.colors.textOnDark} />
+        <ActivityIndicator color={textColor} />
       ) : (
-        <Text style={styles.label}>{label}</Text>
+        <Text style={[styles.label, { color: textColor }]}>{label}</Text>
       )}
     </Pressable>
   );
@@ -55,7 +56,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   label: {
-    color: theme.colors.textOnDark,
     ...theme.typography.subtitle,
     textAlign: "center",
   },

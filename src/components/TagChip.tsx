@@ -21,7 +21,7 @@ export function TagChip({ icon, label, selected = false, onPress }: Props) {
       <Ionicons
         name={icon}
         size={14}
-        color={selected ? theme.colors.textOnDark : theme.colors.text}
+        color={selected ? theme.colors.wall : theme.colors.chalk}
         style={styles.icon}
       />
       <Text style={[styles.label, selected && styles.labelSelected]}>
@@ -35,23 +35,23 @@ const styles = StyleSheet.create({
   chip: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: `${theme.colors.primary}1A`,
+    backgroundColor: theme.colors.seam,
     borderRadius: theme.radii.pill,
     paddingVertical: theme.spacing.xs,
     paddingHorizontal: theme.spacing.sm,
   },
   chipSelected: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.brass,
   },
   icon: {
     marginRight: theme.spacing.xs,
   },
   label: {
     ...theme.typography.caption,
-    color: theme.colors.text,
+    color: theme.colors.bone,
   },
   labelSelected: {
-    color: theme.colors.textOnDark,
-    fontWeight: "700",
+    color: theme.colors.wall,
+    fontFamily: theme.fonts.semibold,
   },
 });

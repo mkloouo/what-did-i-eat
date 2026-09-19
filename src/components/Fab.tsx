@@ -18,7 +18,7 @@ export function Fab({ variant, onPress, style }: Props) {
       accessibilityRole="button"
       accessibilityLabel={`New entry using ${variant} button`}
     >
-      <Ionicons name={variant} size={28} color={theme.colors.textOnDark} />
+      <Ionicons name="add" size={28} color={theme.colors.wall} />
     </Pressable>
   );
 }
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: theme.radii.pill,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.bone,
     alignItems: "center",
     justifyContent: "center",
   },
