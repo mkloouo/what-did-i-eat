@@ -4,7 +4,7 @@ import { EntryGroup } from "../../store/selectors/groupSelectors";
 import { entryForPhotoIndex } from "../../utils/entryForPhotoIndex";
 import { PhotoStack } from "../PhotoStack";
 import { formatTime } from "../../utils/dateFormat";
-import { PhotoLayoutAlgorithm, Tag } from "../../types/models";
+import { Tag } from "../../types/models";
 import { theme } from "../../theme/theme";
 
 const VISIBLE_ENTRY_COUNT = 3;
@@ -12,14 +12,14 @@ const VISIBLE_ENTRY_COUNT = 3;
 type Props = {
   group: EntryGroup;
   tagsById: Record<string, Tag>;
-  photoLayoutAlgorithm: PhotoLayoutAlgorithm;
+  wallColumns: number;
   onPressEntry: (entryId: string) => void;
 };
 
 export function WallPiece({
   group,
   tagsById,
-  photoLayoutAlgorithm,
+  wallColumns,
   onPressEntry,
 }: Props) {
   const [expanded, setExpanded] = useState(false);
@@ -33,7 +33,7 @@ export function WallPiece({
     <View>
       <PhotoStack
         photosByEntry={group.photosByEntry}
-        algorithm={photoLayoutAlgorithm}
+        columns={wallColumns}
         cornerRadius={0}
         onPhotoPress={(index) => {
           const entry = entryForPhotoIndex(

@@ -65,8 +65,15 @@ if it does not, that step chooses the fallback.
 Photo rules: photos run edge to edge with 2px seams and square corners. There
 are no cards and no shadows. Text never sits on top of a photograph, so no
 scrims, no overlaid badges, no overflow pills. `PhotoStack` gets seam-size and
-corner-radius parameters instead of a rewrite, so masonry and mosaic keep
-working and the layout settings mean what they meant before.
+corner-radius parameters instead of a rewrite.
+
+**Revision (1.7.1):** the masonry/mosaic algorithm choice never shipped past
+1.6.0 in practice and is gone. `PhotoStack` now always lays a group's photos
+out as a fixed-width grid of equal squares (`squareGridLayout`), wrapping to
+a new row every N photos. N is `wallColumns`, a single Wall-only setting
+(3–10, default 4) — see Settings below. The Entry page never used a
+layout choice either, once 1.7.0 gave it its own hero-photo-plus-thumbnails
+treatment; `entryPhotoLayoutAlgorithm` is removed with it.
 
 ## Navigation
 
@@ -85,8 +92,9 @@ candidates, confirmed against actual usage at plan time.
 
 ## Wall view
 
-**Piece.** The group's photos tile as one block using the existing masonry or
-mosaic layout. Under it is a label list, newest entry first. Each row has the
+**Piece.** The group's photos tile as one block, a fixed-width grid of equal
+squares wrapping at `wallColumns` photos per row (1.7.1). Under it is a label
+list, newest entry first. Each row has the
 entry's time, its comment capped at two lines, and its tags as brass text. More
 than three entries collapse the rest into a "+N more" line that expands in
 place. Place lives on the Entry page, so a label carries three facts: time,
@@ -139,14 +147,15 @@ fallback for rows not yet measured.
 
 ## Settings
 
-The same six settings, re-labelled from the Wall mockup:
+Re-labelled from the Wall mockup. Originally six settings; 1.7.1 replaced the
+two photo-layout-algorithm settings with one, `wallColumns`, so there are
+five:
 
 | setting | new copy |
 |---|---|
 | `groupingMode` | "What counts as one meal": Photos close in time / A whole day |
 | `rollingWindowMinutes` | "Merge photos taken within", shown as `1 h 30 m`; range and step unchanged |
-| `photoLayoutAlgorithm` | "How a multi-photo meal tiles", On the wall |
-| `entryPhotoLayoutAlgorithm` | same control, On one meal |
+| `wallColumns` | "Photos per row" (1.7.1), a 3–10 slider, default 4 — replaces `photoLayoutAlgorithm`/`entryPhotoLayoutAlgorithm` |
 | `inferDateFromFirstImportedPhoto` | "Use the photo's own date" |
 | `captureLocation` | "Save where you were" |
 
@@ -211,6 +220,7 @@ client, and each step ends with a concrete test plan.
 | 1.5.0 | Wall look everywhere: tokens, fonts, shared components. All native deps and the single dev build. Tabs still in place. |
 | 1.6.0 | Home replaces the tabs. Wall feed, tag rail, seams and the draggable scrubber replace Feed and the Group screen. |
 | 1.7.0 | Entry page and photo viewer. |
+| 1.7.1 | Wall's photo grid becomes a fixed, user-configurable column count, replacing the masonry/mosaic algorithm choice on both the Wall and (already dead since 1.7.0) the Entry page. |
 | 1.8.0 | Capture, Settings and Tags restyled. |
 | 1.9.0 | Days view, header toggle, and the live band preview in Settings. |
 | 2.0.0 | Cleanup of removed files, docs, README and CHANGELOG. |

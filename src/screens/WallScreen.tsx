@@ -38,9 +38,7 @@ export function WallScreen() {
     selectFeedSections(state, activeTagId),
   );
   const tagsById = useAppSelector((state) => state.tags);
-  const photoLayoutAlgorithm = useAppSelector(
-    (state) => state.settings.photoLayoutAlgorithm,
-  );
+  const wallColumns = useAppSelector((state) => state.settings.wallColumns);
   // redux-persist replaces the whole appMeta object on load, so an existing
   // install without this key would read undefined — never trust it raw.
   const scrubberEnabled = useAppSelector(
@@ -91,7 +89,7 @@ export function WallScreen() {
       <WallPiece
         group={item.group}
         tagsById={tagsById}
-        photoLayoutAlgorithm={photoLayoutAlgorithm}
+        wallColumns={wallColumns}
         onPressEntry={(entryId) =>
           navigation.navigate("EntryDetails", { entryId })
         }

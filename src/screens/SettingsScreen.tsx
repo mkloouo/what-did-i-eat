@@ -5,14 +5,13 @@ import { useAppSelector, useAppDispatch } from "../store/hooks";
 import {
   setGroupingMode,
   setRollingWindowMinutes,
-  setPhotoLayoutAlgorithm,
-  setEntryPhotoLayoutAlgorithm,
+  setWallColumns,
   setInferDateFromFirstImportedPhoto,
   setCaptureLocation,
 } from "../store/settingsSlice";
 import { SegmentedControl } from "../components/SegmentedControl";
 import { theme } from "../theme/theme";
-import { GroupingMode, PhotoLayoutAlgorithm } from "../types/models";
+import { GroupingMode } from "../types/models";
 
 export function SettingsScreen() {
   const dispatch = useAppDispatch();
@@ -20,12 +19,7 @@ export function SettingsScreen() {
   const rollingWindowMinutes = useAppSelector(
     (state) => state.settings.rollingWindowMinutes,
   );
-  const photoLayoutAlgorithm = useAppSelector(
-    (state) => state.settings.photoLayoutAlgorithm,
-  );
-  const entryPhotoLayoutAlgorithm = useAppSelector(
-    (state) => state.settings.entryPhotoLayoutAlgorithm,
-  );
+  const wallColumns = useAppSelector((state) => state.settings.wallColumns);
   const inferDateFromFirstImportedPhoto = useAppSelector(
     (state) => state.settings.inferDateFromFirstImportedPhoto,
   );
@@ -57,37 +51,22 @@ export function SettingsScreen() {
             value={rollingWindowMinutes}
             minimumTrackTintColor={theme.colors.primary}
             maximumTrackTintColor={theme.colors.muted}
-            onSlidingComplete={(value) =>
-              dispatch(setRollingWindowMinutes(value))
-            }
+            onValueChange={(value) => dispatch(setRollingWindowMinutes(value))}
           />
         </View>
       ) : null}
 
-      <Text style={[styles.label, styles.secondLabel]}>Photo layout</Text>
-      <SegmentedControl
-        value={photoLayoutAlgorithm}
-        options={[
-          { value: "masonry", label: "Columns" },
-          { value: "treemap", label: "Mosaic" },
-        ]}
-        onChange={(value) =>
-          dispatch(setPhotoLayoutAlgorithm(value as PhotoLayoutAlgorithm))
-        }
-      />
-
       <Text style={[styles.label, styles.secondLabel]}>
-        Entry page photo layout
+        Photos per row: {wallColumns}
       </Text>
-      <SegmentedControl
-        value={entryPhotoLayoutAlgorithm}
-        options={[
-          { value: "masonry", label: "Columns" },
-          { value: "treemap", label: "Mosaic" },
-        ]}
-        onChange={(value) =>
-          dispatch(setEntryPhotoLayoutAlgorithm(value as PhotoLayoutAlgorithm))
-        }
+      <Slider
+        minimumValue={3}
+        maximumValue={10}
+        step={1}
+        value={wallColumns}
+        minimumTrackTintColor={theme.colors.primary}
+        maximumTrackTintColor={theme.colors.muted}
+        onValueChange={(value) => dispatch(setWallColumns(value))}
       />
 
       <View style={styles.toggleRow}>

@@ -18,15 +18,12 @@ export type Entry = {
   tagIds?: string[];
 };
 
-export type PhotoLayoutAlgorithm = "masonry" | "treemap";
-
 export type GroupingMode = "rolling" | "day";
 
 export type Settings = {
   groupingMode: GroupingMode;
   rollingWindowMinutes: number;
-  photoLayoutAlgorithm: PhotoLayoutAlgorithm;
-  entryPhotoLayoutAlgorithm: PhotoLayoutAlgorithm;
+  wallColumns: number;
   inferDateFromFirstImportedPhoto: boolean;
   captureLocation: boolean;
 };
