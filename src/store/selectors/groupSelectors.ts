@@ -22,6 +22,11 @@ const selectEntriesById = (state: RootState) => state.entries;
 const selectGroupingMode = (state: RootState) => state.settings.groupingMode;
 const selectRollingWindowMinutes = (state: RootState) =>
   state.settings.rollingWindowMinutes;
+// The active tag filter isn't part of redux state — it's UI state owned by
+// the Wall screen — so it arrives as this selector's own second argument
+// instead of being read off `state`.
+const selectTagFilter = (_state: RootState, tagId: string | null = null) =>
+  tagId;
 
 export const selectEntriesSortedByDate = createSelector(
   [selectEntriesById],
@@ -91,11 +96,22 @@ export const makeSelectEntriesByIds = () =>
   );
 
 export const selectFeedSections = createSelector(
-  [selectEntriesSortedByDate, selectGroupingMode, selectRollingWindowMinutes],
-  (sortedEntries, groupingMode, rollingWindowMinutes): DaySection[] => {
+  [
+    selectEntriesSortedByDate,
+    selectGroupingMode,
+    selectRollingWindowMinutes,
+    selectTagFilter,
+  ],
+  (sortedEntries, groupingMode, rollingWindowMinutes, tagId): DaySection[] => {
+    // The filter runs before grouping, so a filtered wall regroups exactly
+    // the matching entries instead of leaving a gap inside an old group.
+    const entries = tagId
+      ? sortedEntries.filter((entry) => (entry.tagIds ?? []).includes(tagId))
+      : sortedEntries;
+
     const windowMs = rollingWindowMinutes * 60_000;
     const byDay = new Map<string, Entry[]>();
-    for (const entry of sortedEntries) {
+    for (const entry of entries) {
       const key = dayKeyOf(entry.createdAt);
       const list = byDay.get(key) ?? [];
       list.push(entry);
