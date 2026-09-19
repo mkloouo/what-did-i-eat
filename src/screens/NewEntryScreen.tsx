@@ -33,6 +33,7 @@ import { captureCurrentLocation } from "../location/locationService";
 import { Photo, Tag } from "../types/models";
 import { Button } from "../components/photoLayouts/Button";
 import { PhotoThumbnail } from "../components/PhotoThumbnail";
+import { PaginationDots } from "../components/PaginationDots";
 import { formatFullDateTime } from "../utils/dateFormat";
 import { parseExifDateTime } from "../utils/exifDate";
 import { theme } from "../theme/theme";
@@ -105,16 +106,9 @@ function ViewerFooter({
         { paddingBottom: insets.bottom + theme.spacing.md },
       ]}
     >
-      {photos.length > 1 ? (
-        <View style={styles.dots}>
-          {photos.map((photo, index) => (
-            <View
-              key={photo.id}
-              style={[styles.dot, index === imageIndex && styles.dotActive]}
-            />
-          ))}
-        </View>
-      ) : null}
+      <View style={styles.dotsWrapper}>
+        <PaginationDots count={photos.length} activeIndex={imageIndex} />
+      </View>
       {tags.length > 0 ? (
         <View style={styles.tagRow}>
           {tags.map((tag) => (
@@ -131,7 +125,7 @@ function ViewerFooter({
       <TextInput
         style={styles.viewerCommentInput}
         placeholder="What did you eat?"
-        placeholderTextColor={theme.colors.muted}
+        placeholderTextColor={theme.colors.chalk}
         value={comment}
         onChangeText={setComment}
         multiline
@@ -490,7 +484,7 @@ export function NewEntryScreen() {
         <TextInput
           style={styles.commentInput}
           placeholder="What did you eat?"
-          placeholderTextColor={theme.colors.muted}
+          placeholderTextColor={theme.colors.chalk}
           value={comment}
           onChangeText={setComment}
           onFocus={handleCommentFocus}
@@ -525,7 +519,7 @@ export function NewEntryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.wall,
   },
   scroll: {
     flex: 1,
@@ -550,18 +544,18 @@ const styles = StyleSheet.create({
   thumbnailWrapper: {},
   hint: {
     ...theme.typography.caption,
-    color: theme.colors.muted,
+    color: theme.colors.chalk,
     marginBottom: theme.spacing.md,
   },
   dateTimeRow: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.seam,
     borderRadius: theme.radii.md,
     padding: theme.spacing.md,
     marginBottom: theme.spacing.md,
   },
   dateTimeLabel: {
     ...theme.typography.body,
-    color: theme.colors.text,
+    color: theme.colors.bone,
   },
   iosPicker: {
     marginBottom: theme.spacing.md,
@@ -573,13 +567,13 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   commentInput: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.seam,
     borderRadius: theme.radii.md,
     padding: theme.spacing.md,
     minHeight: 96,
     textAlignVertical: "top",
     ...theme.typography.body,
-    color: theme.colors.text,
+    color: theme.colors.bone,
     marginBottom: theme.spacing.md,
   },
   viewerTopBar: {
@@ -591,38 +585,26 @@ const styles = StyleSheet.create({
     padding: theme.spacing.sm,
   },
   viewerTopBarButtonText: {
-    color: theme.colors.textOnDark,
+    color: theme.colors.bone,
     ...theme.typography.subtitle,
   },
   viewerRemoveText: {
-    color: theme.colors.danger,
+    color: theme.colors.clay,
   },
   viewerFooter: {
-    backgroundColor: theme.colors.accentDark,
+    backgroundColor: theme.colors.wall,
     padding: theme.spacing.md,
   },
-  dots: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: theme.spacing.xs,
+  dotsWrapper: {
     marginBottom: theme.spacing.sm,
   },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: theme.colors.muted,
-  },
-  dotActive: {
-    backgroundColor: theme.colors.textOnDark,
-  },
   viewerCommentInput: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.seam,
     borderRadius: theme.radii.md,
     padding: theme.spacing.sm,
     minHeight: 64,
     textAlignVertical: "top",
     ...theme.typography.body,
-    color: theme.colors.text,
+    color: theme.colors.bone,
   },
 });
