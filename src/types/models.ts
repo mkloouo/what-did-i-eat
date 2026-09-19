@@ -20,6 +20,8 @@ export type Entry = {
 
 export type GroupingMode = "rolling" | "day";
 
+export type TimelineView = "wall" | "days";
+
 export type Settings = {
   groupingMode: GroupingMode;
   rollingWindowMinutes: number;

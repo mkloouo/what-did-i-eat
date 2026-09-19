@@ -33,7 +33,11 @@ function stateFrom(
       captureLocation: true,
     },
     tags: {},
-    appMeta: { hasSeededDefaultTags: true, scrubberEnabled: false },
+    appMeta: {
+      hasSeededDefaultTags: true,
+      scrubberEnabled: false,
+      timelineView: "wall",
+    },
   };
 }
 
