@@ -10,7 +10,8 @@ module.exports = {
     version: '1.4.2',
     orientation: 'portrait',
     icon: './assets/icon.png',
-    userInterfaceStyle: 'light',
+    userInterfaceStyle: 'dark',
+    backgroundColor: '#1C2320',
     ios: {
       supportsTablet: true,
       bundleIdentifier: IS_DEV ? `${BASE_BUNDLE_ID}.dev` : BASE_BUNDLE_ID,
@@ -37,6 +38,13 @@ module.exports = {
       favicon: './assets/favicon.png',
     },
     plugins: [
+      [
+        'expo-splash-screen',
+        {
+          backgroundColor: '#1C2320',
+          image: './assets/splash-icon.png',
+        },
+      ],
       [
         'expo-image-picker',
         {

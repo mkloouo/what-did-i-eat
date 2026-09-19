@@ -177,6 +177,8 @@ edges stay.
 Added in step 1.5.0 with `npx expo install` so versions match Expo 57:
 
 - `expo-font` and `@expo-google-fonts/instrument-sans`
+- `expo-splash-screen`, so the native splash stays up while fonts load
+- `expo-system-ui`, which Android needs for a dark `userInterfaceStyle`
 - `expo-linear-gradient` for the band wash
 - `expo-image` for photo caching
 - a virtualised list, `@shopify/flash-list`, if it is compatible with this
