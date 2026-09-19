@@ -75,7 +75,7 @@ export function Scrubber({ dayKeys, activeDayKey, onSelectDay }: Props) {
 const styles = StyleSheet.create({
   rail: {
     width: RAIL_WIDTH,
-    flex: 1,
+    alignSelf: "stretch",
     position: "relative",
   },
   tick: {
