@@ -120,6 +120,7 @@ export function WallScreen() {
         <View style={styles.body}>
           <FlashList
             ref={listRef}
+            style={styles.list}
             data={items}
             keyExtractor={(item) =>
               item.type === "day" ? `day-${item.dayKey}` : item.group.id
@@ -173,6 +174,9 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     flexDirection: "row",
+  },
+  list: {
+    flex: 1,
   },
   listContent: {
     paddingBottom: theme.spacing.xl,
