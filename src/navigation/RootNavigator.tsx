@@ -12,7 +12,6 @@ import { addTag } from "../store/tagsSlice";
 import { markDefaultTagsSeeded } from "../store/appMetaSlice";
 import { DEFAULT_TAGS } from "../data/defaultTags";
 import { generateId } from "../utils/id";
-import { StatusBar } from "expo-status-bar";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -33,7 +32,6 @@ function useSeedDefaultTags() {
 
 export function RootNavigator() {
   useSeedDefaultTags();
-  StatusBar.setStyle("light");
 
   return (
     <Stack.Navigator
