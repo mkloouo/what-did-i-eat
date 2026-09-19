@@ -101,8 +101,10 @@ entry too. There is no Group screen.
 **Tag filter.** The rail shows tags as icon-only chips. Selecting one expands
 it to icon and label in brass. One tag is active at a time. The filter is
 applied to entries **before** grouping, so a filtered wall regroups the
-matching entries and everything else disappears. Day seams stay so the user
-keeps their place. Wall and Days share the filter. It is UI state and is not
+matching entries and everything else disappears. A day with no matching
+entry disappears entirely, seam included — the same rule already governing
+every day with zero entries, filtered or not. Wall and Days share the
+filter. It is UI state and is not
 persisted.
 
 **Scrubber.** A 6px rail on the right edge shows a tick per day and a thumb for
