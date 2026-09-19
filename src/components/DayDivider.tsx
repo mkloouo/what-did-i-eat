@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     borderRadius: theme.radii.pill,
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: theme.spacing.xs,
-    ...theme.shadows.card,
   },
   label: {
     ...theme.typography.subtitle,

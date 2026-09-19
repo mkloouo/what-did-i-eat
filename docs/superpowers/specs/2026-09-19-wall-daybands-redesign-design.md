@@ -51,7 +51,8 @@ Tokens replace the old palette in `theme.ts`. `shadows.card` is removed.
 | bone | `#EDE8DC` | primary text, primary button |
 | chalk | `#949E97` | secondary text |
 | brass | `#B08A4A` | the one accent: active tag, tag text, selected, thumb |
-| clay | `#C86A63` | delete only |
+| clay | `#DE7B73` | delete only; lightened from the mockup's `#C86A63` to pass 4.5:1 on wall and seam |
+| hairline | `#3A443E` | dividers, scrubber ticks, raised outlines |
 
 Contrast is checked while building, clay at small sizes first.
 

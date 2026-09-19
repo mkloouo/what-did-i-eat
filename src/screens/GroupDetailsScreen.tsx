@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
   },
   card: {
     padding: theme.spacing.sm,
-    ...theme.shadows.card,
   },
   row: {
     flexDirection: "row",
@@ -127,7 +126,7 @@ const styles = StyleSheet.create({
   },
   time: {
     ...theme.typography.subtitle,
-    fontWeight: "700",
+    fontFamily: theme.fonts.bold,
     color: theme.colors.text,
   },
   comment: {
