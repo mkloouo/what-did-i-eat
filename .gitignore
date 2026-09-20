@@ -40,5 +40,5 @@ yarn-error.*
 # Builds from EAS
 /*.apk
 
-# Pi Agent
+# agents
 .pi
