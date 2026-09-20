@@ -1,4 +1,4 @@
-import { previewGroups } from "./mergeWindowPreview";
+import { previewGroups } from "./previewGroups";
 import { Entry } from "../../types/models";
 
 function entry(id: string, iso: string): Entry {
