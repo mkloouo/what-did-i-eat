@@ -23,6 +23,20 @@ All notable changes to this project are documented here. Format loosely follows
   `createSelector` so they stop returning a new array reference on every
   render.
 
+## [1.9.0] - 2026-09-19
+
+Step 5 of the Wall redesign. Same dev build as 1.5.0 — no native changes.
+
+### Added
+
+- Days: a second way to see your timeline, one astronomical-wash band per
+  day with a mark for every photo at its true time of day. Reach it with
+  a new Wall/Days toggle in Home's header; tapping a day's band switches
+  back to Wall, scrolled to that day.
+- Settings' merge-window slider now shows a live preview: your most
+  recent entries as dots, grouped into the pills they'd actually merge
+  into at the current window.
+
 ## [1.8.1] - 2026-09-19
 
 Bugfix follow-up. Same dev build as 1.5.0 — no native changes.
