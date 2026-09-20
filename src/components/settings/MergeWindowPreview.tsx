@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useAppSelector } from "../../store/hooks";
 import { selectEntriesSortedByDate } from "../../store/selectors/groupSelectors";
-import { previewGroups } from "./mergeWindowPreview";
+import { previewGroups } from "./previewGroups";
 import { theme } from "../../theme/theme";
 
 const PREVIEW_COUNT = 10;
