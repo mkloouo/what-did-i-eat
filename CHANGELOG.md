@@ -34,7 +34,7 @@ Step 5 of the Wall redesign. Same dev build as 1.5.0 — no native changes.
   a new Wall/Days toggle in Home's header; tapping a day's band switches
   back to Wall, scrolled to that day.
 - Settings' merge-window slider now shows a live preview: your most
-  recent entries as dots, grouped into the pills they'd actually merge
+  recent entries as dots, grouped into the pills they'd roughly merge
   into at the current window.
 
 ## [1.8.1] - 2026-09-19

@@ -33,7 +33,11 @@ export function DayBand({ section, label, isToday, onPress }: Props) {
   const nowX = isToday ? dayFraction(new Date().toISOString()) : null;
 
   return (
-    <Pressable onPress={() => onPress(section.dayKey)}>
+    <Pressable
+      onPress={() => onPress(section.dayKey)}
+      accessibilityRole="button"
+      accessibilityLabel={`Open ${label} on the Wall`}
+    >
       <DaySeam label={label} />
       <View style={[styles.band, { height: bandHeight }]}>
         <LinearGradient
@@ -43,26 +47,33 @@ export function DayBand({ section, label, isToday, onPress }: Props) {
           end={{ x: 1, y: 0 }}
           style={StyleSheet.absoluteFill}
         />
-        {marks.map((mark, index) => (
-          <Image
-            key={`${mark.uri}-${index}`}
-            source={{ uri: mark.uri }}
-            style={[
-              styles.mark,
-              {
-                width: markSize,
-                height: markSize,
-                left: `${mark.x * 100}%`,
-                marginLeft: -markSize / 2,
-                bottom: MARK_GAP + mark.stack * (markSize + MARK_GAP),
-              },
-            ]}
-            contentFit="cover"
-          />
-        ))}
-        {nowX !== null ? (
-          <View style={[styles.now, { left: `${nowX * 100}%` }]} />
-        ) : null}
+        <View
+          style={[
+            styles.track,
+            { left: markSize / 2, right: markSize / 2 },
+          ]}
+        >
+          {marks.map((mark, index) => (
+            <Image
+              key={`${mark.uri}-${index}`}
+              source={{ uri: mark.uri }}
+              style={[
+                styles.mark,
+                {
+                  width: markSize,
+                  height: markSize,
+                  left: `${mark.x * 100}%`,
+                  marginLeft: -markSize / 2,
+                  bottom: MARK_GAP + mark.stack * (markSize + MARK_GAP),
+                },
+              ]}
+              contentFit="cover"
+            />
+          ))}
+          {nowX !== null ? (
+            <View style={[styles.now, { left: `${nowX * 100}%` }]} />
+          ) : null}
+        </View>
       </View>
     </Pressable>
   );
@@ -73,6 +84,11 @@ const styles = StyleSheet.create({
     marginHorizontal: theme.spacing.md,
     marginBottom: theme.spacing.lg,
     overflow: "hidden",
+  },
+  track: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
   },
   mark: {
     position: "absolute",
