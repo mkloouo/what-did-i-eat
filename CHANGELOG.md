@@ -5,6 +5,21 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-09-24
+
+Same dev build as 2.1.0 — no native changes.
+
+### Added
+
+- A second, icon-only capture button next to "Hang a new one" that opens the
+  camera immediately; on returning, New Entry is already open with that
+  shot attached, for faster tracking.
+
+### Changed
+
+- "Hang a new one" now carries a picture-frame icon instead of a camera one,
+  since the camera icon now belongs to the new button.
+
 ## [2.2.0] - 2026-09-24
 
 Cleanup pass. Same dev build as 2.1.0 — no native changes.

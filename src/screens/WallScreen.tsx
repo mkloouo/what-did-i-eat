@@ -26,9 +26,9 @@ export function WallScreen() {
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
   const [activeTagId, setActiveTagId] = useState<string | null>(null);
-  const [pendingScrollDayKey, setPendingScrollDayKey] = useState<
-    string | null
-  >(null);
+  const [pendingScrollDayKey, setPendingScrollDayKey] = useState<string | null>(
+    null,
+  );
 
   const sections = useAppSelector((state) =>
     selectFeedSections(state, activeTagId),
@@ -127,16 +127,32 @@ export function WallScreen() {
         />
       )}
 
-      <Pressable
-        onPress={() => navigation.navigate("NewEntry")}
+      <View
         style={[
-          styles.captureButton,
+          styles.captureRow,
           { marginBottom: insets.bottom + theme.spacing.md },
         ]}
       >
-        <Ionicons name="camera" size={17} color={theme.colors.daylight} />
-        <Text style={styles.captureLabel}>Hang a new one</Text>
-      </Pressable>
+        <Pressable
+          onPress={() => navigation.navigate("NewEntry")}
+          style={styles.captureButton}
+        >
+          <Ionicons
+            name="image-outline"
+            size={17}
+            color={theme.colors.daylight}
+          />
+          <Text style={styles.captureLabel}>Hang a new one</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => navigation.navigate("NewEntry", { openCamera: true })}
+          accessibilityRole="button"
+          accessibilityLabel="Take a photo now"
+          style={styles.cameraButton}
+        >
+          <Ionicons name="camera" size={20} color={theme.colors.daylight} />
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -185,13 +201,18 @@ const styles = StyleSheet.create({
     color: theme.colors.graphite,
     textAlign: "center",
   },
+  captureRow: {
+    flexDirection: "row",
+    gap: theme.spacing.sm,
+    marginHorizontal: theme.spacing.md,
+    marginTop: theme.spacing.md,
+  },
   captureButton: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: theme.spacing.sm,
-    marginHorizontal: theme.spacing.md,
-    marginTop: theme.spacing.md,
     height: 48,
     borderRadius: theme.radii.sm,
     backgroundColor: theme.colors.ink,
@@ -199,5 +220,13 @@ const styles = StyleSheet.create({
   captureLabel: {
     ...theme.typography.subtitle,
     color: theme.colors.daylight,
+  },
+  cameraButton: {
+    width: 48,
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: theme.radii.sm,
+    backgroundColor: theme.colors.ink,
   },
 });
