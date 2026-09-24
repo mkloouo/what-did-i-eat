@@ -5,6 +5,16 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [2.5.2] - 2026-09-24
+
+### Fixed
+
+- Photo viewer showing a black screen on Android: the full-screen swipe
+  viewer's image sized itself with a percentage width/height that had
+  nothing definite to resolve against inside the gallery's centered layout,
+  measuring to zero width. It now sizes itself from its own measured
+  container instead.
+
 ## [2.5.1] - 2026-09-24
 
 ### Fixed
