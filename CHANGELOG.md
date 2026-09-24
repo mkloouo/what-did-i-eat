@@ -5,6 +5,18 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [2.5.1] - 2026-09-24
+
+### Fixed
+
+- Days grid overflowing narrower phones: the row (label + five slot cells)
+  could run wider than the screen with no horizontal scroll, pushing the
+  "Late" column off the right edge. Cells now size themselves to the
+  screen width instead of a fixed ~52dp.
+- Day labels in the Days grid truncating ("Septemb...") — long month names
+  didn't fit the label column; the grid now uses an abbreviated date
+  ("Sep 22").
+
 ## [2.5.0] - 2026-09-24
 
 ### Changed
