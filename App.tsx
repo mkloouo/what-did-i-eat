@@ -29,7 +29,7 @@ export default function App() {
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <NavigationContainer theme={navigationTheme}>
-              <StatusBar style="light" />
+              <StatusBar style="dark" />
               <RootNavigator />
             </NavigationContainer>
           </PersistGate>

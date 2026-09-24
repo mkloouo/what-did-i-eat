@@ -23,7 +23,8 @@ type Props = {
 // One day: its name (DaySeam, matching the Wall's own day headers), a
 // smooth astronomical wash, and a mark per photo at its true time. Tapping
 // anywhere on the band opens the Wall scrolled to this day — there's no
-// separate Day sheet, and no hero photo, since the Wall is one tap away.
+// separate Day sheet. DaysBoard shows a hero for your single latest meal
+// above all the bands; individual bands stay hero-free.
 export function DayBand({ section, label, isToday, onPress }: Props) {
   const marks = buildDayMarks(section);
   const markSize = isToday ? TODAY_MARK_SIZE : PAST_MARK_SIZE;
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
   },
   mark: {
     position: "absolute",
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
   },
   now: {
     position: "absolute",
@@ -100,6 +101,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: 2,
     marginLeft: -1,
-    backgroundColor: theme.colors.bone,
+    backgroundColor: theme.colors.sun,
   },
 });

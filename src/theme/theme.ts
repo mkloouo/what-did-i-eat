@@ -1,27 +1,26 @@
-const base = {
-  wall: "#1C2320",
-  seam: "#252D29",
-  hairline: "#3A443E",
-  bone: "#EDE8DC",
-  chalk: "#949E97",
-  brass: "#B08A4A",
-  clay: "#DE7B73",
-} as const;
-
+// Daybands light: time of day is the app's only axis, so the palette reads
+// like daylight — see docs/superpowers/specs for the design system this was
+// pulled from. Roles, not raw swatches: `accent`/`chip`+`chipText` are the
+// only colours legible as small text/icons or filled pills at 4.5:1 against
+// `daylight`/`surface` — see theme.test.ts. `pine` and `sun` are decorative
+// only (gradients, ticks, markers), never text or a fill with text on it.
 export const colors = {
-  ...base,
-  // Legacy names, remapped so screens that have not been redesigned yet still
-  // pick up the Wall look. Each redesign step moves screens onto the names
-  // above; 2.0.0 deletes these.
-  background: base.wall,
-  surface: base.seam,
-  primary: base.brass,
-  secondary: base.hairline,
-  muted: base.chalk,
-  accentDark: base.wall,
-  text: base.bone,
-  textOnDark: base.bone,
-  danger: base.clay,
+  daylight: "#E8E3EC",
+  surface: "#DED7E6",
+  hairline: "#D2CAD8",
+  ink: "#241F33",
+  inkMuted: "#3B3550",
+  graphite: "#5A5668",
+  pine: "#2A7F62",
+  sun: "#E0A73C",
+  accent: "#1F6349",
+  chip: "#D5E2DB",
+  chipText: "#1F4436",
+  clay: "#8E3B37",
+  // A lighter clay, for danger text on the photo viewer's dark overlay chrome
+  // (the one place that keeps a dark bar / light text pairing — see its
+  // usage sites) — the plain `clay` is too dark to read there.
+  clayOnDark: "#DE7B73",
 } as const;
 
 export const spacing = {
@@ -40,12 +39,16 @@ export const radii = {
 } as const;
 
 // One family name per weight: on Android a custom font's weight comes from its
-// family name, so styles must never combine these with fontWeight.
+// family name, so styles must never combine these with fontWeight. `voice` is
+// the one place the user's own words appear (comments) — every other string
+// in the app speaks in the sans family.
 export const fonts = {
-  regular: "InstrumentSans_400Regular",
-  medium: "InstrumentSans_500Medium",
-  semibold: "InstrumentSans_600SemiBold",
-  bold: "InstrumentSans_700Bold",
+  regular: "IBMPlexSansCondensed_400Regular",
+  medium: "IBMPlexSansCondensed_500Medium",
+  semibold: "IBMPlexSansCondensed_600SemiBold",
+  bold: "IBMPlexSansCondensed_700Bold",
+  voice: "Newsreader_400Regular",
+  voiceMedium: "Newsreader_500Medium",
 } as const;
 
 export const typography = {
@@ -60,6 +63,8 @@ export const typography = {
     // readonly array that the outer `as const` would otherwise produce.
     fontVariant: ["tabular-nums"] as ["tabular-nums"],
   },
+  // The user's own words — comments, wherever they're shown or typed.
+  voice: { fontFamily: fonts.voice, fontSize: 17, lineHeight: 24 },
 } as const;
 
 export const theme = { colors, spacing, radii, fonts, typography };

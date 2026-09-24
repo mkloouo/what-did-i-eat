@@ -1,20 +1,29 @@
 import {
-  InstrumentSans_400Regular,
-  InstrumentSans_500Medium,
-  InstrumentSans_600SemiBold,
-  InstrumentSans_700Bold,
-  useFonts,
-} from "@expo-google-fonts/instrument-sans";
+  IBMPlexSansCondensed_400Regular,
+  IBMPlexSansCondensed_500Medium,
+  IBMPlexSansCondensed_600SemiBold,
+  IBMPlexSansCondensed_700Bold,
+  useFonts as useIBMPlexSansCondensedFonts,
+} from "@expo-google-fonts/ibm-plex-sans-condensed";
+import {
+  Newsreader_400Regular,
+  Newsreader_500Medium,
+  useFonts as useNewsreaderFonts,
+} from "@expo-google-fonts/newsreader";
 import { fonts } from "./theme";
 
-// True once Instrument Sans is ready. A load failure also returns true so the
+// True once both families are ready. A load failure also returns true so the
 // app still opens, falling back to the system font.
 export function useAppFonts(): boolean {
-  const [loaded, error] = useFonts({
-    [fonts.regular]: InstrumentSans_400Regular,
-    [fonts.medium]: InstrumentSans_500Medium,
-    [fonts.semibold]: InstrumentSans_600SemiBold,
-    [fonts.bold]: InstrumentSans_700Bold,
+  const [sansLoaded, sansError] = useIBMPlexSansCondensedFonts({
+    [fonts.regular]: IBMPlexSansCondensed_400Regular,
+    [fonts.medium]: IBMPlexSansCondensed_500Medium,
+    [fonts.semibold]: IBMPlexSansCondensed_600SemiBold,
+    [fonts.bold]: IBMPlexSansCondensed_700Bold,
   });
-  return loaded || error !== null;
+  const [voiceLoaded, voiceError] = useNewsreaderFonts({
+    [fonts.voice]: Newsreader_400Regular,
+    [fonts.voiceMedium]: Newsreader_500Medium,
+  });
+  return (sansLoaded || sansError !== null) && (voiceLoaded || voiceError !== null);
 }

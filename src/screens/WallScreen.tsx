@@ -6,7 +6,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../navigation/types";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
-import { selectFeedSections } from "../store/selectors/groupSelectors";
+import {
+  selectFeedSections,
+  selectLatestEntry,
+} from "../store/selectors/groupSelectors";
 import { setTimelineView } from "../store/appMetaSlice";
 import { buildWallItems } from "../utils/wallItems";
 import { WallFeed } from "../components/wall/WallFeed";
@@ -30,6 +33,7 @@ export function WallScreen() {
   const sections = useAppSelector((state) =>
     selectFeedSections(state, activeTagId),
   );
+  const latestEntry = useAppSelector(selectLatestEntry);
   const tagsById = useAppSelector((state) => state.tags);
   const wallColumns = useAppSelector((state) => state.settings.wallColumns);
   // redux-persist replaces the whole appMeta object on load, so an existing
@@ -82,7 +86,7 @@ export function WallScreen() {
             <Ionicons
               name="settings-outline"
               size={20}
-              color={theme.colors.chalk}
+              color={theme.colors.graphite}
             />
           </Pressable>
         </View>
@@ -113,7 +117,14 @@ export function WallScreen() {
           onScrolledToDay={() => setPendingScrollDayKey(null)}
         />
       ) : (
-        <DaysBoard sections={sections} onPressDay={goToWallDay} />
+        <DaysBoard
+          sections={sections}
+          latestEntry={latestEntry}
+          onPressDay={goToWallDay}
+          onPressEntry={(entryId) =>
+            navigation.navigate("EntryDetails", { entryId })
+          }
+        />
       )}
 
       <Pressable
@@ -123,7 +134,7 @@ export function WallScreen() {
           { marginBottom: insets.bottom + theme.spacing.md },
         ]}
       >
-        <Ionicons name="camera" size={17} color={theme.colors.wall} />
+        <Ionicons name="camera" size={17} color={theme.colors.daylight} />
         <Text style={styles.captureLabel}>Hang a new one</Text>
       </Pressable>
     </View>
@@ -133,7 +144,7 @@ export function WallScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.wall,
+    backgroundColor: theme.colors.daylight,
   },
   header: {
     flexDirection: "row",
@@ -144,7 +155,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...theme.typography.subtitle,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
     flexShrink: 1,
   },
   headerControls: {
@@ -167,11 +178,11 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...theme.typography.subtitle,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
   },
   emptyBody: {
     ...theme.typography.body,
-    color: theme.colors.chalk,
+    color: theme.colors.graphite,
     textAlign: "center",
   },
   captureButton: {
@@ -183,10 +194,10 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.md,
     height: 48,
     borderRadius: theme.radii.sm,
-    backgroundColor: theme.colors.bone,
+    backgroundColor: theme.colors.ink,
   },
   captureLabel: {
     ...theme.typography.subtitle,
-    color: theme.colors.wall,
+    color: theme.colors.daylight,
   },
 });

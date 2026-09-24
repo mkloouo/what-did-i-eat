@@ -37,7 +37,7 @@ export function TagChip({
       <Ionicons
         name={icon}
         size={14}
-        color={selected ? theme.colors.wall : theme.colors.chalk}
+        color={selected ? theme.colors.chipText : theme.colors.graphite}
         style={collapsed ? undefined : styles.icon}
       />
       {collapsed ? null : (
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   chip: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radii.pill,
     paddingVertical: theme.spacing.xs,
     paddingHorizontal: theme.spacing.sm,
@@ -66,17 +66,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   chipSelected: {
-    backgroundColor: theme.colors.brass,
+    backgroundColor: theme.colors.chip,
   },
   icon: {
     marginRight: theme.spacing.xs,
   },
   label: {
     ...theme.typography.caption,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
   },
   labelSelected: {
-    color: theme.colors.wall,
+    color: theme.colors.chipText,
     fontFamily: theme.fonts.semibold,
   },
 });

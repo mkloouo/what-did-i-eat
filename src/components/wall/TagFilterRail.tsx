@@ -48,7 +48,7 @@ export function TagFilterRail({ activeTagId, onSelect }: Props) {
         accessibilityLabel="Edit tags"
         style={styles.editButton}
       >
-        <Ionicons name="pencil-outline" size={14} color={theme.colors.chalk} />
+        <Ionicons name="pencil-outline" size={14} color={theme.colors.graphite} />
       </Pressable>
     </ScrollView>
   );
@@ -67,13 +67,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: theme.spacing.sm,
     paddingHorizontal: theme.spacing.md,
+    // A touch of top breathing room: without it, a selected chip's taller
+    // label row (versus the collapsed icon-only ones) can read as clipped
+    // against whatever sits directly above the rail.
+    paddingTop: theme.spacing.xs,
     paddingBottom: theme.spacing.sm,
   },
   editButton: {
     width: 30,
     height: 30,
     borderRadius: theme.radii.pill,
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
     justifyContent: "center",
     alignItems: "center",
   },

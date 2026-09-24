@@ -26,11 +26,11 @@ export function Button({
   style,
 }: Props) {
   const backgroundColor = disabled
-    ? theme.colors.seam
+    ? theme.colors.surface
     : variant === "danger"
       ? theme.colors.clay
-      : theme.colors.bone;
-  const textColor = disabled ? theme.colors.chalk : theme.colors.wall;
+      : theme.colors.ink;
+  const textColor = disabled ? theme.colors.graphite : theme.colors.daylight;
 
   return (
     <Pressable
