@@ -17,6 +17,7 @@ import { TagFilterRail } from "../components/wall/TagFilterRail";
 import { DaysBoard } from "../components/days/DaysBoard";
 import { SegmentedControl } from "../components/SegmentedControl";
 import { TimelineView } from "../types/models";
+import { takePhoto } from "../camera/cameraService";
 import { theme } from "../theme/theme";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "Home">;
@@ -145,7 +146,11 @@ export function WallScreen() {
           <Text style={styles.captureLabel}>Hang a new one</Text>
         </Pressable>
         <Pressable
-          onPress={() => navigation.navigate("NewEntry", { openCamera: true })}
+          onPress={() =>
+            takePhoto((uris) =>
+              navigation.navigate("NewEntry", { initialPhotoUris: uris }),
+            )
+          }
           accessibilityRole="button"
           accessibilityLabel="Take a photo now"
           style={styles.cameraButton}

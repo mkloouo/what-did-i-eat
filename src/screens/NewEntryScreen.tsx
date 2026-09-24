@@ -30,6 +30,7 @@ import {
   resolvePhotoUri,
 } from "../storage/photoStorage";
 import { captureCurrentLocation } from "../location/locationService";
+import { takePhoto } from "../camera/cameraService";
 import { Photo } from "../types/models";
 import { Button } from "../components/photoLayouts/Button";
 import { PhotoThumbnail } from "../components/PhotoThumbnail";
@@ -47,11 +48,12 @@ export function NewEntryScreen() {
   const route = useRoute<Route>();
 
   useEffect(() => {
-    if (route.params?.openCamera) {
-      handleTakePhoto();
+    const initialPhotoUris = route.params?.initialPhotoUris;
+    if (initialPhotoUris?.length) {
+      addPickedAssets(initialPhotoUris);
       navigation.setParams(undefined);
     }
-  }, [route.params?.openCamera]);
+  }, [route.params?.initialPhotoUris]);
 
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
@@ -146,16 +148,8 @@ export function NewEntryScreen() {
     setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
   }
 
-  async function handleTakePhoto() {
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) {
-      Alert.alert("Camera unavailable", "Camera permission was denied.");
-      return;
-    }
-    const result = await ImagePicker.launchCameraAsync({ quality: 0.8 });
-    if (!result.canceled) {
-      await addPickedAssets(result.assets.map((a) => a.uri));
-    }
+  function handleTakePhoto() {
+    return takePhoto(addPickedAssets);
   }
 
   async function handlePickFromLibrary() {

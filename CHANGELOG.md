@@ -8,6 +8,9 @@ All notable changes to this project are documented here. Format loosely follows
 ### Changed
 
 - Day wash colors to be more day-like (accredited to Gemini)
+- The icon-only capture button now opens the camera first and only then
+  opens New Entry with the shot attached; cancelling the camera keeps you on
+  Home instead of leaving an empty New Entry behind.
 
 ### Fixed
 

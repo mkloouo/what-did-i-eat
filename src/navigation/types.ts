@@ -1,6 +1,6 @@
 export type RootStackParamList = {
   Home: undefined;
-  NewEntry: { openCamera: boolean } | undefined;
+  NewEntry: { initialPhotoUris: string[] } | undefined;
   EntryDetails: { entryId: string };
   PhotoDetails: { entryId: string; photoIndex: number };
   Settings: undefined;
