@@ -10,8 +10,8 @@ module.exports = {
     version: '2.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
-    userInterfaceStyle: 'dark',
-    backgroundColor: '#1C2320',
+    userInterfaceStyle: 'light',
+    backgroundColor: '#E8E3EC',
     ios: {
       supportsTablet: true,
       bundleIdentifier: IS_DEV ? `${BASE_BUNDLE_ID}.dev` : BASE_BUNDLE_ID,
@@ -41,7 +41,7 @@ module.exports = {
       [
         'expo-splash-screen',
         {
-          backgroundColor: '#1C2320',
+          backgroundColor: '#E8E3EC',
           image: './assets/splash-icon.png',
         },
       ],

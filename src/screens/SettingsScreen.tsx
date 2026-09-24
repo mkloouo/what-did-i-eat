@@ -65,8 +65,8 @@ export function SettingsScreen() {
             maximumValue={240}
             step={15}
             value={rollingWindowMinutes}
-            minimumTrackTintColor={theme.colors.brass}
-            maximumTrackTintColor={theme.colors.chalk}
+            minimumTrackTintColor={theme.colors.accent}
+            maximumTrackTintColor={theme.colors.graphite}
             onValueChange={(value) => dispatch(setRollingWindowMinutes(value))}
           />
           <MergeWindowPreview rollingWindowMinutes={rollingWindowMinutes} />
@@ -81,8 +81,8 @@ export function SettingsScreen() {
         maximumValue={10}
         step={1}
         value={wallColumns}
-        minimumTrackTintColor={theme.colors.brass}
-        maximumTrackTintColor={theme.colors.chalk}
+        minimumTrackTintColor={theme.colors.accent}
+        maximumTrackTintColor={theme.colors.graphite}
         onValueChange={(value) => dispatch(setWallColumns(value))}
       />
 
@@ -99,7 +99,7 @@ export function SettingsScreen() {
           onValueChange={(value) => {
             dispatch(setInferDateFromFirstImportedPhoto(value));
           }}
-          trackColor={{ true: theme.colors.brass }}
+          trackColor={{ true: theme.colors.accent }}
         />
       </View>
 
@@ -116,7 +116,7 @@ export function SettingsScreen() {
           onValueChange={(value) => {
             dispatch(setCaptureLocation(value));
           }}
-          trackColor={{ true: theme.colors.brass }}
+          trackColor={{ true: theme.colors.accent }}
         />
       </View>
 
@@ -130,7 +130,7 @@ export function SettingsScreen() {
         <Ionicons
           name="chevron-forward-outline"
           size={18}
-          color={theme.colors.chalk}
+          color={theme.colors.graphite}
         />
       </Pressable>
     </ScrollView>
@@ -140,14 +140,14 @@ export function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.wall,
+    backgroundColor: theme.colors.daylight,
   },
   content: {
     padding: theme.spacing.md,
   },
   label: {
     ...theme.typography.caption,
-    color: theme.colors.chalk,
+    color: theme.colors.graphite,
     marginBottom: theme.spacing.sm,
   },
   secondLabel: {
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   },
   sliderLabel: {
     ...theme.typography.body,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
     marginBottom: theme.spacing.xs,
   },
   toggleRow: {
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   },
   toggleHint: {
     ...theme.typography.caption,
-    color: theme.colors.chalk,
+    color: theme.colors.graphite,
     marginTop: theme.spacing.xs,
   },
   navRow: {
@@ -186,6 +186,6 @@ const styles = StyleSheet.create({
   },
   navLabel: {
     ...theme.typography.body,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
   },
 });

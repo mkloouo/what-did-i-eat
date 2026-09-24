@@ -104,12 +104,12 @@ const styles = StyleSheet.create({
   tickActive: {
     height: 12,
     borderRadius: 1.5,
-    backgroundColor: theme.colors.brass,
+    backgroundColor: theme.colors.pine,
   },
   labelBubble: {
     position: "absolute",
     right: RAIL_WIDTH + theme.spacing.sm,
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: theme.spacing.xs,
     borderRadius: theme.radii.sm,
@@ -117,6 +117,6 @@ const styles = StyleSheet.create({
   },
   labelText: {
     ...theme.typography.caption,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
   },
 });

@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   label: {
     ...theme.typography.subtitle,
     fontFamily: theme.fonts.semibold,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
   },
   line: {
     flex: 1,

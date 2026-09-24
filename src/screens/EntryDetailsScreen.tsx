@@ -239,7 +239,7 @@ export function EntryDetailsScreen() {
             onFocus={handleCommentFocus}
             multiline
             placeholder="Comment"
-            placeholderTextColor={theme.colors.chalk}
+            placeholderTextColor={theme.colors.graphite}
           />
         ) : (
           <Text style={styles.comment}>{entry.comment || "No comment"}</Text>
@@ -264,7 +264,7 @@ export function EntryDetailsScreen() {
                 <Ionicons
                   name="add-outline"
                   size={14}
-                  color={theme.colors.chalk}
+                  color={theme.colors.graphite}
                 />
                 <Text style={styles.addTagLabel}>Add tag</Text>
               </Pressable>
@@ -329,7 +329,7 @@ function DetailRow({ label, value }: DetailRowProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.wall,
+    backgroundColor: theme.colors.daylight,
   },
   header: {
     flexDirection: "row",
@@ -345,11 +345,11 @@ const styles = StyleSheet.create({
   },
   headerAction: {
     ...theme.typography.subtitle,
-    color: theme.colors.brass,
+    color: theme.colors.accent,
   },
   headerTitle: {
     ...theme.typography.subtitle,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
     flex: 1,
     textAlign: "center",
   },
@@ -363,14 +363,14 @@ const styles = StyleSheet.create({
   hero: {
     width: "100%",
     aspectRatio: 1,
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
   },
   thumbSection: {
     gap: theme.spacing.xs,
   },
   photoCount: {
     ...theme.typography.caption,
-    color: theme.colors.chalk,
+    color: theme.colors.graphite,
     paddingHorizontal: theme.spacing.md,
   },
   thumbScroll: {
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   thumb: {
     width: 56,
     height: 56,
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
   },
   thumbActive: {
     opacity: 1,
@@ -395,19 +395,19 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   comment: {
-    ...theme.typography.body,
-    color: theme.colors.bone,
+    ...theme.typography.voice,
+    color: theme.colors.ink,
     paddingHorizontal: theme.spacing.md,
   },
   commentInput: {
     marginHorizontal: theme.spacing.md,
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radii.md,
     padding: theme.spacing.sm,
     minHeight: 96,
     textAlignVertical: "top",
-    color: theme.colors.bone,
-    ...theme.typography.body,
+    color: theme.colors.ink,
+    ...theme.typography.voice,
   },
   tagRow: {
     flexDirection: "row",
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   addTagChip: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radii.pill,
     paddingVertical: theme.spacing.xs,
     paddingHorizontal: theme.spacing.sm,
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
   },
   addTagLabel: {
     ...theme.typography.caption,
-    color: theme.colors.chalk,
+    color: theme.colors.graphite,
   },
   detailList: {
     marginHorizontal: theme.spacing.md,
@@ -442,11 +442,11 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     ...theme.typography.body,
-    color: theme.colors.chalk,
+    color: theme.colors.graphite,
   },
   detailValue: {
     ...theme.typography.body,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
   },
   deleteRow: {
     marginHorizontal: theme.spacing.md,
@@ -460,13 +460,13 @@ const styles = StyleSheet.create({
   },
   missing: {
     flex: 1,
-    backgroundColor: theme.colors.wall,
+    backgroundColor: theme.colors.daylight,
     alignItems: "center",
     justifyContent: "center",
     gap: theme.spacing.md,
   },
   missingText: {
     ...theme.typography.body,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
   },
 });

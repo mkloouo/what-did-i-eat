@@ -53,17 +53,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.xs,
     paddingVertical: 4,
     borderRadius: theme.radii.pill,
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
   },
   dot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: theme.colors.brass,
+    backgroundColor: theme.colors.pine,
   },
   hint: {
     ...theme.typography.caption,
-    color: theme.colors.chalk,
+    color: theme.colors.graphite,
     marginTop: theme.spacing.sm,
   },
 });

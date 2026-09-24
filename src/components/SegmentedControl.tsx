@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     gap: 2,
     padding: 2,
     borderRadius: theme.radii.md,
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
   },
   segment: {
     flex: 1,
@@ -52,14 +52,14 @@ const styles = StyleSheet.create({
     borderRadius: theme.radii.sm,
   },
   segmentActive: {
-    backgroundColor: theme.colors.bone,
+    backgroundColor: theme.colors.chip,
   },
   segmentText: {
     ...theme.typography.body,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
   },
   segmentTextActive: {
-    color: theme.colors.wall,
+    color: theme.colors.chipText,
     fontFamily: theme.fonts.semibold,
   },
 });

@@ -1,18 +1,18 @@
-import { DarkTheme, Theme } from "@react-navigation/native";
+import { DefaultTheme, Theme } from "@react-navigation/native";
 import { colors, fonts } from "./theme";
 
 // React Navigation reads header titles, tab labels and screen backgrounds from
 // this. Every fontWeight is "400" because the weight lives in the family name.
 export const navigationTheme: Theme = {
-  ...DarkTheme,
+  ...DefaultTheme,
   colors: {
-    ...DarkTheme.colors,
-    primary: colors.brass,
-    background: colors.wall,
-    card: colors.wall,
-    text: colors.bone,
+    ...DefaultTheme.colors,
+    primary: colors.accent,
+    background: colors.daylight,
+    card: colors.daylight,
+    text: colors.ink,
     border: colors.hairline,
-    notification: colors.brass,
+    notification: colors.accent,
   },
   fonts: {
     regular: { fontFamily: fonts.regular, fontWeight: "400" },

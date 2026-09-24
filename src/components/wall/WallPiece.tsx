@@ -88,18 +88,18 @@ const styles = StyleSheet.create({
   },
   time: {
     ...theme.typography.time,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
   },
   comment: {
-    ...theme.typography.body,
-    color: theme.colors.bone,
+    ...theme.typography.voice,
+    color: theme.colors.ink,
   },
   tags: {
     ...theme.typography.caption,
-    color: theme.colors.brass,
+    color: theme.colors.accent,
   },
   more: {
     ...theme.typography.caption,
-    color: theme.colors.chalk,
+    color: theme.colors.graphite,
   },
 });

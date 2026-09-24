@@ -3,18 +3,21 @@ import { contrastRatio } from "../utils/contrast";
 
 const { colors, typography, fonts } = theme;
 
-// Text pairs the app draws. Small text needs 4.5:1 (WCAG AA).
+// Text pairs the app draws. Small text needs 4.5:1 (WCAG AA). `pine` and
+// `sun` are deliberately excluded — they're decorative only (gradients,
+// ticks, markers), never text or a fill with text on it. See theme.ts.
 const TEXT_PAIRS: Array<[string, string, string]> = [
-  ["bone on wall", colors.bone, colors.wall],
-  ["bone on seam", colors.bone, colors.seam],
-  ["chalk on wall", colors.chalk, colors.wall],
-  ["chalk on seam", colors.chalk, colors.seam],
-  ["brass on wall", colors.brass, colors.wall],
-  ["clay on wall", colors.clay, colors.wall],
-  ["clay on seam", colors.clay, colors.seam],
-  ["wall on brass", colors.wall, colors.brass],
-  ["wall on bone", colors.wall, colors.bone],
-  ["wall on clay", colors.wall, colors.clay],
+  ["ink on daylight", colors.ink, colors.daylight],
+  ["ink on surface", colors.ink, colors.surface],
+  ["inkMuted on daylight", colors.inkMuted, colors.daylight],
+  ["graphite on daylight", colors.graphite, colors.daylight],
+  ["graphite on surface", colors.graphite, colors.surface],
+  ["accent on daylight", colors.accent, colors.daylight],
+  ["clay on daylight", colors.clay, colors.daylight],
+  ["clay on surface", colors.clay, colors.surface],
+  ["chipText on chip", colors.chipText, colors.chip],
+  ["daylight on ink", colors.daylight, colors.ink],
+  ["clayOnDark on ink", colors.clayOnDark, colors.ink],
 ];
 
 describe("theme contrast", () => {
@@ -30,19 +33,5 @@ describe("theme typography", () => {
       expect(families).toContain(style.fontFamily);
       expect(style).not.toHaveProperty("fontWeight");
     }
-  });
-});
-
-describe("legacy colour names", () => {
-  it("map onto the Wall tokens", () => {
-    expect(colors.background).toBe(colors.wall);
-    expect(colors.surface).toBe(colors.seam);
-    expect(colors.primary).toBe(colors.brass);
-    expect(colors.text).toBe(colors.bone);
-    expect(colors.textOnDark).toBe(colors.bone);
-    expect(colors.muted).toBe(colors.chalk);
-    expect(colors.danger).toBe(colors.clay);
-    expect(colors.accentDark).toBe(colors.wall);
-    expect(colors.secondary).toBe(colors.hairline);
   });
 });

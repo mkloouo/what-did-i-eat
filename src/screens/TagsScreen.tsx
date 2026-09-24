@@ -168,8 +168,8 @@ export function TagsScreen() {
                       size={22}
                       color={
                         draftIcon === icon
-                          ? theme.colors.brass
-                          : theme.colors.chalk
+                          ? theme.colors.accent
+                          : theme.colors.graphite
                       }
                     />
                   </Pressable>
@@ -178,7 +178,7 @@ export function TagsScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="e.g. Home cooked"
-                placeholderTextColor={theme.colors.chalk}
+                placeholderTextColor={theme.colors.graphite}
                 value={draftLabel}
                 onChangeText={setDraftLabel}
               />
@@ -221,7 +221,7 @@ export function TagsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.wall,
+    backgroundColor: theme.colors.daylight,
   },
   content: {
     padding: theme.spacing.md,
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.xs,
   },
   headerButtonText: {
-    color: theme.colors.bone,
+    color: theme.colors.ink,
     ...theme.typography.subtitle,
   },
   headerButtonTextDanger: {
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
   },
   label: {
     ...theme.typography.caption,
-    color: theme.colors.chalk,
+    color: theme.colors.graphite,
     marginBottom: theme.spacing.sm,
   },
   iconRow: {
@@ -265,11 +265,11 @@ const styles = StyleSheet.create({
     padding: theme.spacing.xs,
   },
   input: {
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radii.md,
     padding: theme.spacing.sm,
     ...theme.typography.body,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
     marginBottom: theme.spacing.sm,
   },
   formButtons: {
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
   },
   empty: {
     ...theme.typography.body,
-    color: theme.colors.chalk,
+    color: theme.colors.graphite,
     textAlign: "center",
     marginTop: theme.spacing.lg,
   },

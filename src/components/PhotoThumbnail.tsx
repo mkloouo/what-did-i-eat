@@ -21,6 +21,6 @@ export function PhotoThumbnail({ uri, size = 96 }: Props) {
 
 const styles = StyleSheet.create({
   image: {
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
   },
 });
