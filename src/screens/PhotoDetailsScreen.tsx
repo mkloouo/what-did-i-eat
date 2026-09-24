@@ -1,7 +1,6 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ImageViewing from "react-native-image-viewing";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
@@ -10,72 +9,11 @@ import { resolvePhotoUri } from "../storage/photoStorage";
 import { formatFullDateTime } from "../utils/dateFormat";
 import { Button } from "../components/photoLayouts/Button";
 import { PaginationDots } from "../components/PaginationDots";
+import { PhotoViewer } from "../components/PhotoViewer";
 import { theme } from "../theme/theme";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "PhotoDetails">;
 type Route = RouteProp<RootStackParamList, "PhotoDetails">;
-
-type PhotoDetailsHeaderProps = {
-  navigation: Nav;
-};
-
-// Rendered by ImageViewing's HeaderComponent. Kept as its own component so
-// the value passed as HeaderComponent can have a stable identity across
-// parent re-renders.
-function PhotoDetailsHeader({ navigation }: PhotoDetailsHeaderProps) {
-  const insets = useSafeAreaInsets();
-
-  return (
-    <View style={[styles.topBar, { paddingTop: insets.top }]}>
-      <Pressable
-        onPress={() => navigation.goBack()}
-        style={styles.topBarButton}
-      >
-        <Text style={styles.topBarButtonText}>Close</Text>
-      </Pressable>
-    </View>
-  );
-}
-
-type PhotoDetailsFooterProps = {
-  entryId: string;
-  imageIndex: number;
-};
-
-// Rendered by ImageViewing's FooterComponent. Keyed only by entryId, so it
-// has a stable identity across parent re-renders.
-function PhotoDetailsFooter({ entryId, imageIndex }: PhotoDetailsFooterProps) {
-  const entry = useAppSelector((state) => state.entries[entryId]);
-  const insets = useSafeAreaInsets();
-
-  if (!entry) {
-    return null;
-  }
-
-  return (
-    <View
-      style={[
-        styles.footer,
-        { paddingBottom: insets.bottom + theme.spacing.md },
-      ]}
-    >
-      {entry.photos.length > 1 ? (
-        <View style={styles.dotsWrapper}>
-          <PaginationDots
-            count={entry.photos.length}
-            activeIndex={imageIndex}
-          />
-        </View>
-      ) : null}
-      <Text style={styles.footerMeta}>
-        {formatFullDateTime(entry.createdAt)}
-      </Text>
-      {entry.location?.placeName ? (
-        <Text style={styles.footerMeta}>{entry.location.placeName}</Text>
-      ) : null}
-    </View>
-  );
-}
 
 export function PhotoDetailsScreen() {
   const navigation = useNavigation<Nav>();
@@ -84,17 +22,6 @@ export function PhotoDetailsScreen() {
 
   const entry = useAppSelector((state) => state.entries[entryId]);
   const insets = useSafeAreaInsets();
-
-  const HeaderComponent = useCallback(
-    () => <PhotoDetailsHeader navigation={navigation} />,
-    [navigation],
-  );
-  const FooterComponent = useCallback(
-    ({ imageIndex }: { imageIndex: number }) => (
-      <PhotoDetailsFooter entryId={entryId} imageIndex={imageIndex} />
-    ),
-    [entryId],
-  );
 
   if (!entry) {
     return (
@@ -111,42 +38,69 @@ export function PhotoDetailsScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <ImageViewing
-        images={entry.photos.map((photo) => ({
-          uri: resolvePhotoUri(photo.uri),
-        }))}
-        imageIndex={photoIndex}
-        visible
-        onRequestClose={() => navigation.goBack()}
-        HeaderComponent={HeaderComponent}
-        FooterComponent={FooterComponent}
-      />
-    </View>
+    <PhotoViewer
+      photos={entry.photos.map((photo) => ({
+        uri: resolvePhotoUri(photo.uri),
+      }))}
+      initialIndex={photoIndex}
+      onRequestClose={() => navigation.goBack()}
+      renderHeader={() => (
+        <View style={[styles.topBar, { paddingTop: insets.top }]}>
+          <Pressable
+            onPress={() => navigation.goBack()}
+            style={styles.topBarButton}
+          >
+            <Text style={styles.topBarButtonText}>Close</Text>
+          </Pressable>
+        </View>
+      )}
+      renderFooter={(imageIndex) => (
+        <View
+          style={[
+            styles.footer,
+            { paddingBottom: insets.bottom + theme.spacing.md },
+          ]}
+        >
+          {entry.photos.length > 1 ? (
+            <View style={styles.dotsWrapper}>
+              <PaginationDots
+                count={entry.photos.length}
+                activeIndex={imageIndex}
+              />
+            </View>
+          ) : null}
+          <Text style={styles.footerMeta}>
+            {formatFullDateTime(entry.createdAt)}
+          </Text>
+          {entry.location?.placeName ? (
+            <Text style={styles.footerMeta}>{entry.location.placeName}</Text>
+          ) : null}
+        </View>
+      )}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
   topBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: theme.spacing.md,
   },
+  // The viewer overlay always sits on a black backdrop (photo legibility, the
+  // universal viewer convention), so it keeps a dark bar / light text pairing
+  // regardless of the app's own light theme.
   topBarButton: {
     padding: theme.spacing.sm,
     borderRadius: theme.radii.lg,
-    backgroundColor: theme.colors.wall,
+    backgroundColor: theme.colors.ink,
   },
   topBarButtonText: {
-    color: theme.colors.bone,
+    color: theme.colors.daylight,
     ...theme.typography.subtitle,
   },
   footer: {
-    backgroundColor: theme.colors.wall,
+    backgroundColor: theme.colors.ink,
     padding: theme.spacing.md,
   },
   dotsWrapper: {
@@ -154,17 +108,17 @@ const styles = StyleSheet.create({
   },
   footerMeta: {
     ...theme.typography.caption,
-    color: theme.colors.bone,
+    color: theme.colors.daylight,
   },
   missing: {
     flex: 1,
-    backgroundColor: theme.colors.wall,
+    backgroundColor: theme.colors.daylight,
     alignItems: "center",
     justifyContent: "center",
     gap: theme.spacing.md,
   },
   missingText: {
     ...theme.typography.body,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
   },
 });
