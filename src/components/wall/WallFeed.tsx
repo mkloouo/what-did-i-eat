@@ -12,8 +12,12 @@ import { Scrubber } from "./Scrubber";
 import {
   WallItem,
   firstItemIndexForDay,
+  firstItemIndexForGroup,
   currentDayFromViewableItems,
 } from "../../utils/wallItems";
+// firstItemIndexForDay above still backs scrollToDay (the Scrubber's drag
+// target); the mount-time day jump it used to also serve was removed below —
+// the Days view's whole-row tap no longer exists, only its per-cell tap.
 import { Tag } from "../../types/models";
 import { theme } from "../../theme/theme";
 
@@ -24,10 +28,10 @@ type Props = {
   wallColumns: number;
   scrubberEnabled: boolean;
   onPressEntry: (entryId: string) => void;
-  // Set by a Days-view tap asking to jump to a day; cleared via
-  // onScrolledToDay once this feed has scrolled there.
-  pendingScrollDayKey: string | null;
-  onScrolledToDay: () => void;
+  // Set by a Days-view cell tap asking to jump to one specific meal;
+  // cleared via onScrolledToGroup once this feed has scrolled there.
+  pendingScrollGroupId: string | null;
+  onScrolledToGroup: () => void;
 };
 
 export function WallFeed({
@@ -37,8 +41,8 @@ export function WallFeed({
   wallColumns,
   scrubberEnabled,
   onPressEntry,
-  pendingScrollDayKey,
-  onScrolledToDay,
+  pendingScrollGroupId,
+  onScrolledToGroup,
 }: Props) {
   const [activeDayKey, setActiveDayKey] = useState<string | null>(null);
   const listRef = useRef<FlashListRef<WallItem>>(null);
@@ -62,20 +66,20 @@ export function WallFeed({
     });
   }
 
-  // A Days-view tap always mounts this feed fresh, so the jump is handled
-  // by FlashList's initial layout rather than an imperative scroll: a
-  // scrollToIndex fired on mount lands before FlashList has measured
-  // anything, and it never renders the rows at the new offset — the
-  // screen stays blank until the user scrolls. Read once, at mount, so
-  // clearing the pending key below doesn't change what FlashList got.
+  // A Days-view cell tap always mounts this feed fresh, so the jump is
+  // handled by FlashList's initial layout rather than an imperative scroll:
+  // a scrollToIndex fired on mount lands before FlashList has measured
+  // anything, and it never renders the rows at the new offset — the screen
+  // stays blank until the user scrolls. Read once, at mount, so clearing
+  // pendingScrollGroupId below doesn't change what FlashList got.
   const [initialScrollIndex] = useState(() => {
-    if (!pendingScrollDayKey) return undefined;
-    const index = firstItemIndexForDay(items, pendingScrollDayKey);
+    if (!pendingScrollGroupId) return undefined;
+    const index = firstItemIndexForGroup(items, pendingScrollGroupId);
     return index >= 0 ? index : undefined;
   });
 
   useEffect(() => {
-    if (pendingScrollDayKey) onScrolledToDay();
+    if (pendingScrollGroupId) onScrolledToGroup();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
