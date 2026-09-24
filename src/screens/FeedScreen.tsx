@@ -20,6 +20,7 @@ import { DayDivider } from "../components/DayDivider";
 import { useScrollTapGuard } from "../hooks/useScrollTapGuard";
 import { PhotoLayoutAlgorithm } from "../types/models";
 import { theme } from "../theme/theme";
+import { FabGroup } from "../components/FabGroup";
 
 type Nav = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList, "Feed">,
@@ -173,7 +174,13 @@ export function FeedScreen() {
           </View>
         </ScrollView>
       )}
-      <Fab onPress={() => navigation.navigate("NewEntry")} />
+      <FabGroup>
+        <Fab
+          variant="camera"
+          onPress={() => navigation.navigate("NewEntry", { openCamera: true })}
+        />
+        <Fab variant="add" onPress={() => navigation.navigate("NewEntry")} />
+      </FabGroup>
     </View>
   );
 }
