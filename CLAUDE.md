@@ -38,12 +38,11 @@ asking them to re-explain it. Every release ships Android **and** iOS; the mecha
 
 1. Implement and commit the feature work first, as its own commit(s) — never bundled with
    the version bump — and make sure `CHANGELOG.md`'s `[Unreleased]` section describes it.
-   The script refuses a dirty tree or an empty `[Unreleased]`.
-2. Write the GitHub release notes to a scratchpad file: a 1–2 sentence summary, short and
-   casual, matching past releases (`gh release view v<previous> --json body -q .body`). The
-   script appends a "which file to download" footer itself — don't write one.
-3. Run, with `run_in_background: true` (two native builds, well over 10 minutes):
-   `npm run release -- X.Y.Z --notes-file <notes> --co-author "<your Co-Authored-By value>"`
+   The script refuses a dirty tree or an empty `[Unreleased]`. That section becomes the
+   GitHub release notes verbatim (the script appends a "which file to download" footer), so
+   write it for users.
+2. Run, with `run_in_background: true` (two native builds, well over 10 minutes):
+   `npm run release -- X.Y.Z --co-author "<your Co-Authored-By value>"`
    plus `--pause` if the user wants to smoke-test before publishing (always pause when the
    release changes native deps or build config), and `--ios-cloud` only if the local iOS
    build fails (it has before; that runs the iOS build on EAS cloud and downloads the .ipa).
@@ -51,12 +50,13 @@ asking them to re-explain it. Every release ships Android **and** iOS; the mecha
    `gh` authed) → `tsc` + `jest` → `release vX.Y.Z` commit (CHANGELOG + `package.json` +
    `app.config.js` only) → local Android build → local iOS build → `SHA256SUMS` → annotated
    tag → `git push --atomic origin main vX.Y.Z` → draft GitHub release with all assets →
-   published. Nothing is pushed until both builds have succeeded.
-4. With `--pause`, it stops after the builds with everything in `releases/vX.Y.Z/`. Give the
+   published (notes = the `## [X.Y.Z]` CHANGELOG section). Nothing is pushed until both
+   builds have succeeded.
+3. With `--pause`, it stops after the builds with everything in `releases/vX.Y.Z/`. Give the
    user a smoke-test plan for the arm64-v8a APK (and the .ipa), then after their go-ahead:
-   `npm run release -- X.Y.Z --publish --notes-file <notes>`.
-5. If a build fails or the smoke test finds a bug: `npm run release -- X.Y.Z --abort` drops
-   the unpushed release commit (and local tag); fix, commit, re-run from step 3. If the
+   `npm run release -- X.Y.Z --publish`.
+4. If a build fails or the smoke test finds a bug: `npm run release -- X.Y.Z --abort` drops
+   the unpushed release commit (and local tag); fix, commit, re-run from step 2. If the
    publish step fails partway (e.g. an upload), re-running `--publish` resumes — it reuses
    the tag and refreshes the draft's assets.
 
