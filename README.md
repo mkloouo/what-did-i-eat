@@ -17,43 +17,34 @@ That's pretty much it.
 
 ## UI
 
-Use flat design for the design system.
-Create a design system.
+The app is "the Wall": a dark, flat, no-shadow design system (bone text,
+brass accent, Instrument Sans) where the photos are the interface, not a
+list of cards.
 
-![inspiration from google](inspiration.png)
+**Home** is a single scrolling wall of edge-to-edge photo pieces, grouped
+into meals by a rolling time window (default: photos within the same hour
+join the last group; configurable in Settings). A meal with several
+entries tiles all its photos as one piece, with time, comment and tags
+underneath. A tag filter rail below the header narrows the wall to one
+tag at a time, and a draggable day scrubber on the right edge jumps
+straight to a day.
 
-![color palette](palette.png)
+A `Wall | Days` toggle in Home's header swaps the wall for **Days**: one
+astronomical-wash band per day (night/dawn/day/dusk/night), with a mark
+for every photo at its true time. Tapping a day's band switches back to
+Wall, scrolled to that day.
 
-Four? page app.
+Settings and Tags are reached from a settings icon in Home's header
+(there's no tab bar). Settings holds the rolling-window length (with a
+live preview of how recent entries would cluster), photos-per-row for the
+wall grid, whether to infer a photo's date from its own EXIF data, and
+whether to save location with new entries.
 
-Page 1: config page
+**New entry**: take or pick photos, write a comment, tag it, save.
 
-You should be able to toggle on and off bundling.
-Bundling: is when we group all 1-day photos together instead of the default behaviour (group 1 hour interval)
-
-Page 2: endfull (xD) scroll with my days and what I ate with comments
-
-By default, the photos should stack in groups of 1 hour interval. We don't need to see the exact interval details, just see that when you've added another photo with comment, then it will join the group that was present for the last hour. The group time will update to the latest added photo time.
-
-If day bundling option is selected, the photos should stack in groups of day.
-
-Days (in both options) are separated with a divider.
-
-Page 3: logging new entry
-
-Select / Take a picture
-Write down a comment
-Add button
-
-Page 4: group details screen - on photo group press
-
-Scroll with photo items, large square photo and comment.
-
-Page 5: photo details screen - on group photo item press / photo item press
-
-When you are pressing an item (could be shown on a default version on the page 2) or an item on the group details screen.
-
-Should have information where the photo was taken, when, comment and photo. Photo should be zoomable.
+**Entry details**: the full-size photos, date/time, place, tags and
+comment for one entry, reached by tapping a piece on the Wall; tapping a
+photo there opens a plain pinch-to-zoom/swipe viewer.
 
 ## Tech side
 
