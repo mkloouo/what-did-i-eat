@@ -39,6 +39,7 @@ yarn-error.*
 
 # Builds from EAS
 /*.apk
+/*.ipa
 
 # agents
 .pi
