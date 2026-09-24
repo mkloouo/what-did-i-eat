@@ -5,6 +5,22 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-24
+
+The Wall redesign is done. Same dev build as 1.5.0 — no native changes.
+
+### Removed
+
+- The old tab bar, Feed screen, Group Details screen and invented meal
+  window titles — all replaced by Home (the Wall) across 1.6.0-1.9.0.
+- The masonry/mosaic photo layout choice, replaced in 1.7.1 by a fixed,
+  user-configurable column grid.
+
+### Changed
+
+- README's UI section rewritten to describe the Wall and Days views
+  instead of the pre-redesign four-page tab layout it still described.
+
 ## [1.4.2] - 2026-09-24
 
 ### Added
