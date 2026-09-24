@@ -9,6 +9,10 @@ All notable changes to this project are documented here. Format loosely follows
 
 - Day wash colors to be more day-like (accredited to Gemini)
 
+### Fixed
+
+- Tag filter rail different padding for some reason (used a View wrapper to fix the ScrollView behaviour)
+
 ## [2.3.0] - 2026-09-24
 
 Same dev build as 2.1.0 — no native changes.
