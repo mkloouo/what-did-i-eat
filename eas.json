@@ -23,6 +23,9 @@
     "production-apk": {
       "extends": "production",
       "distribution": "internal",
+      "env": {
+        "ANDROID_ABI_SPLITS": "1"
+      },
       "android": {
         "buildType": "apk"
       }

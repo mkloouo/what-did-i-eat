@@ -7,6 +7,10 @@ All notable changes to this project are documented here. Format loosely follows
 
 ### Changed
 
+- Much smaller Android downloads: releases now ship one APK per CPU
+  architecture (arm64-v8a, armeabi-v7a, x86, x86_64) plus a universal APK,
+  instead of a single ~99 MB APK carrying all four. Release builds also
+  shrink code with R8 and compress native libraries.
 - The app bundle only includes the 7 fonts it actually uses (Ionicons plus
   six IBM Plex Sans / Lora weights) instead of all 41 that the icon and font
   packages ship, on both Android and iOS.
