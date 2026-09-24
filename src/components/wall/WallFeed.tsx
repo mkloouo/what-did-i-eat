@@ -62,12 +62,22 @@ export function WallFeed({
     });
   }
 
+  // A Days-view tap always mounts this feed fresh, so the jump is handled
+  // by FlashList's initial layout rather than an imperative scroll: a
+  // scrollToIndex fired on mount lands before FlashList has measured
+  // anything, and it never renders the rows at the new offset — the
+  // screen stays blank until the user scrolls. Read once, at mount, so
+  // clearing the pending key below doesn't change what FlashList got.
+  const [initialScrollIndex] = useState(() => {
+    if (!pendingScrollDayKey) return undefined;
+    const index = firstItemIndexForDay(items, pendingScrollDayKey);
+    return index >= 0 ? index : undefined;
+  });
+
   useEffect(() => {
-    if (!pendingScrollDayKey) return;
-    scrollToDay(pendingScrollDayKey);
-    onScrolledToDay();
+    if (pendingScrollDayKey) onScrolledToDay();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pendingScrollDayKey, items]);
+  }, []);
 
   function handleViewableItemsChanged({
     viewableItems,
@@ -98,6 +108,7 @@ export function WallFeed({
     <View style={styles.body}>
       <FlashList
         ref={listRef}
+        initialScrollIndex={initialScrollIndex}
         style={styles.list}
         data={items}
         // The custom Scrubber is the Wall's scroll indicator when it's
