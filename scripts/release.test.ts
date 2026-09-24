@@ -456,6 +456,13 @@ describe("release.mjs", () => {
       expect(t.git(["rev-parse", "HEAD"])).toBe(t.initialHead);
     });
 
+    it.concurrent("an unknown flag, instead of running a full release", async () => {
+      const t = setup();
+      await t.expectRefused(["2.0.0", "--publish-ios-only"], 'unknown argument "--publish-ios-only"');
+      expect(t.calls("npx")).toEqual([]);
+      expect(t.calls("gh")).toEqual([]);
+    });
+
     it.concurrent("gh not being logged in", async () => {
       const t = setup();
       await t.expectRefused(["2.0.0"], "gh is not authenticated", { STUB_FAIL: "gh-auth" });

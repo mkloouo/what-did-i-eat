@@ -135,6 +135,13 @@ const option = (name) => {
   return i === -1 ? undefined : argv[i + 1];
 };
 
+// A mistyped flag must not fall through to a full release.
+const FLAGS = ['--pause', '--ios-cloud', '--upload-ios', '--upload-ios-only', '--publish', '--abort'];
+for (const [i, a] of argv.entries()) {
+  if (a === version || argv[i - 1] === '--co-author' || FLAGS.includes(a) || a === '--co-author') continue;
+  fail(`unknown argument "${a}" — see \`npm run release -- --help\``);
+}
+
 if (!version) fail('usage: npm run release -- X.Y.Z [options] — see `npm run release -- --help`');
 
 const tag = `v${version}`;
