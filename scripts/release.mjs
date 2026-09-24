@@ -2,10 +2,12 @@
 // Release script: preflight → checks → release commit → Android + iOS builds →
 // checksums → annotated tag → atomic push → draft GitHub release → publish.
 //
-//   npm run release -- X.Y.Z --notes-file notes.md [--pause] [--ios-cloud] [--co-author "Name <email>"]
-//   npm run release -- X.Y.Z --publish --notes-file notes.md
+//   npm run release -- X.Y.Z [--pause] [--ios-cloud] [--co-author "Name <email>"]
+//   npm run release -- X.Y.Z --publish
 //   npm run release -- X.Y.Z --abort
 //
+// The GitHub release notes are CHANGELOG.md's section for X.Y.Z (moved there
+// from [Unreleased] by the release commit) plus a which-file-to-download footer.
 // --pause stops after the builds (nothing pushed yet) so the artifacts can be
 // smoke-tested; --publish then picks up from there. --abort drops an unpushed
 // release commit so the release can be redone after a fix.
@@ -75,12 +77,11 @@ const option = (name) => {
   return i === -1 ? undefined : argv[i + 1];
 };
 
-if (!version) fail('usage: npm run release -- X.Y.Z [--notes-file f] [--pause] [--ios-cloud] [--co-author "Name <email>"] | --publish | --abort');
+if (!version) fail('usage: npm run release -- X.Y.Z [--pause] [--ios-cloud] [--co-author "Name <email>"] | --publish | --abort');
 
 const tag = `v${version}`;
 const outDir = path.join('releases', tag);
 const releaseSubject = `release ${tag}`;
-const notesFile = option('--notes-file');
 const coAuthor = option('--co-author');
 
 const headSubject = () => out('git', ['log', '-1', '--format=%s']);
@@ -91,11 +92,10 @@ function assertCleanMain() {
   if (out('git', ['status', '--porcelain']) !== '') fail('working tree is not clean (commit, stash or gitignore first)');
 }
 
-function assertNotes() {
-  if (!notesFile) fail('--notes-file is required to publish');
-  if (!fs.existsSync(notesFile) || fs.readFileSync(notesFile, 'utf8').trim() === '') {
-    fail(`notes file ${notesFile} is missing or empty`);
-  }
+// CHANGELOG.md's "## [name]" section; [1] is its body, up to the next "## [".
+function changelogSection(changelog, name) {
+  const heading = name.replace(/\./g, '\\.');
+  return new RegExp(`^## \\[${heading}\\][^\\n]*\\n([\\s\\S]*?)(?=^## \\[|(?![\\s\\S]))`, 'm').exec(changelog);
 }
 
 // ---------- phase 1: preflight ----------
@@ -115,9 +115,6 @@ function preflight() {
   if (succeeds('git', ['rev-parse', '-q', '--verify', `refs/tags/${tag}`])) fail(`tag ${tag} already exists locally`);
   if (out('git', ['ls-remote', '--tags', 'origin', `refs/tags/${tag}`]) !== '') fail(`tag ${tag} already exists on origin`);
   if (succeeds('gh', ['release', 'view', tag])) fail(`GitHub release ${tag} already exists`);
-
-  // Checked now so a missing notes file doesn't surface after half an hour of builds.
-  if (!flag('--pause')) assertNotes();
 }
 
 // ---------- phase 2: local checks ----------
@@ -135,7 +132,7 @@ function releaseCommit() {
   step(`Release commit (${releaseSubject})`);
 
   const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
-  const m = /## \[Unreleased\]\n([\s\S]*?)(?=^## \[|(?![\s\S]))/m.exec(changelog);
+  const m = changelogSection(changelog, 'Unreleased');
   if (!m || m[1].trim() === '') fail('CHANGELOG.md has nothing under [Unreleased]');
   const released = `## [Unreleased]\n\n## [${version}] - ${today()}\n\n${m[1].trim()}\n\n`;
   fs.writeFileSync('CHANGELOG.md', changelog.slice(0, m.index) + released + changelog.slice(m.index + m[0].length));
@@ -236,6 +233,8 @@ function verifyArtifacts() {
 }
 
 function releaseNotes() {
+  const body = changelogSection(fs.readFileSync('CHANGELOG.md', 'utf8'), version)?.[1].trim();
+  if (!body) fail(`CHANGELOG.md has no [${version}] section to use as release notes`);
   const apk = (abi) => `\`${APP}-${tag}-${abi}.apk\``;
   const footer = [
     '',
@@ -244,12 +243,11 @@ function releaseNotes() {
     `**iOS:** \`${APP}-${tag}.ipa\` · \`SHA256SUMS\` to verify downloads.`,
   ].join('\n');
   const file = path.join(outDir, 'release-notes.md');
-  fs.writeFileSync(file, fs.readFileSync(notesFile, 'utf8').trim() + '\n' + footer + '\n');
+  fs.writeFileSync(file, body + '\n' + footer + '\n');
   return file;
 }
 
 function publish() {
-  assertNotes();
   assertCleanMain();
   if (headSubject() !== releaseSubject) fail(`HEAD is not "${releaseSubject}"`);
   if (readPkgVersion() !== version) fail(`package.json version is not ${version}`);
@@ -308,7 +306,7 @@ if (flag('--abort')) {
   writeChecksums();
   if (flag('--pause')) {
     console.log(`\n⏸ Paused before publishing. Nothing is pushed yet. Artifacts are in ${outDir}/.`);
-    console.log(`  Smoke-test them, then:  npm run release -- ${version} --publish --notes-file <notes.md>`);
+    console.log(`  Smoke-test them, then:  npm run release -- ${version} --publish`);
     console.log(`  Or to redo the release: npm run release -- ${version} --abort`);
   } else {
     publish();

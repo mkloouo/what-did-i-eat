@@ -81,7 +81,6 @@ function buildTemplate(): string {
   gitIn(repo, ["commit", "-q", "-m", "init"]);
   gitIn(repo, ["remote", "add", "origin", "../origin.git"]);
   gitIn(repo, ["push", "-q", "-u", "origin", "main"]);
-  fs.writeFileSync(path.join(template, "notes.md"), "Fixed a thing.\n");
   templateHead = gitIn(repo, ["rev-parse", "HEAD"]);
   return templateHead;
 }
@@ -109,7 +108,6 @@ function setup() {
   const t = {
     tmp,
     repo,
-    notes: path.join(tmp, "notes.md"),
     initialHead,
     outDir: path.join(repo, "releases", "v2.0.0"),
 
@@ -179,7 +177,7 @@ function today() {
 describe("release.mjs", () => {
   it.concurrent("runs a full release: checks, release commit, builds, tag, push, published release", async () => {
     const t = setup();
-    const { code, output } = await t.release(["2.0.0", "--notes-file", t.notes, "--co-author", "Bot <bot@example.com>"]);
+    const { code, output } = await t.release(["2.0.0", "--co-author", "Bot <bot@example.com>"]);
     expect(output).toContain("✔ Released v2.0.0");
     expect(code).toBe(0);
 
@@ -241,7 +239,9 @@ describe("release.mjs", () => {
     expect(gh[gh.length - 2]).toEqual(["release", "edit", "v2.0.0", "--draft=false", "--latest"]);
 
     const releaseNotes = fs.readFileSync(path.join(t.outDir, "release-notes.md"), "utf8");
-    expect(releaseNotes.startsWith("Fixed a thing.\n")).toBe(true);
+    // Built from the version's CHANGELOG section only, then the footer.
+    expect(releaseNotes.startsWith("### Added\n\n- A new thing.\n\n---\n")).toBe(true);
+    expect(releaseNotes).not.toContain("An old thing.");
     expect(releaseNotes).toContain("`what-did-i-eat-v2.0.0-arm64-v8a.apk`");
     expect(releaseNotes).toContain("`what-did-i-eat-v2.0.0.ipa`");
   });
@@ -256,10 +256,11 @@ describe("release.mjs", () => {
     expect(t.git(["tag", "--list", "v2.0.0"])).toBe("");
     t.expectNothingPublished();
 
-    const published = await t.release(["2.0.0", "--publish", "--notes-file", t.notes]);
+    const published = await t.release(["2.0.0", "--publish"]);
     expect(published.code).toBe(0);
     expect(t.originGit(["rev-parse", "main"])).toBe(t.git(["rev-parse", "HEAD"]));
     expect(t.originTag()).toBe("v2.0.0");
+    expect(fs.readFileSync(path.join(t.outDir, "release-notes.md"), "utf8")).toContain("- A new thing.");
   });
 
   it.concurrent("--publish refuses artifacts changed after they were checksummed", async () => {
@@ -267,7 +268,7 @@ describe("release.mjs", () => {
     await t.release(["2.0.0", "--pause"]);
     fs.appendFileSync(path.join(t.outDir, "what-did-i-eat-v2.0.0-universal.apk"), "tampered");
 
-    const { code, output } = await t.release(["2.0.0", "--publish", "--notes-file", t.notes]);
+    const { code, output } = await t.release(["2.0.0", "--publish"]);
     expect(code).toBe(1);
     expect(output).toContain("checksum mismatch for what-did-i-eat-v2.0.0-universal.apk");
     t.expectNothingPublished();
@@ -275,11 +276,11 @@ describe("release.mjs", () => {
 
   it.concurrent("--publish resumes a release whose publish step failed partway", async () => {
     const t = setup();
-    const first = await t.release(["2.0.0", "--notes-file", t.notes], { STUB_FAIL: "gh-publish" });
+    const first = await t.release(["2.0.0"], { STUB_FAIL: "gh-publish" });
     expect(first.code).toBe(1);
     expect(t.originTag()).toBe("v2.0.0");
 
-    const resumed = await t.release(["2.0.0", "--publish", "--notes-file", t.notes]);
+    const resumed = await t.release(["2.0.0", "--publish"]);
     expect(resumed.code).toBe(0);
     const gh = t.calls("gh");
     expect(gh.filter(([, sub]) => sub === "create")).toHaveLength(1);
@@ -292,7 +293,7 @@ describe("release.mjs", () => {
 
   it.concurrent("--ios-cloud builds iOS on EAS and downloads the .ipa", async () => {
     const t = setup();
-    const { code } = await t.release(["2.0.0", "--notes-file", t.notes, "--ios-cloud"]);
+    const { code } = await t.release(["2.0.0", "--ios-cloud"]);
     expect(code).toBe(0);
     const ios = t.calls("npx").find((c) => c.includes("ios"))!;
     expect(ios).toEqual(expect.arrayContaining(["--wait", "--json"]));
@@ -314,7 +315,7 @@ describe("release.mjs", () => {
 
     it.concurrent("refuses once the release is on origin", async () => {
       const t = setup();
-      await t.release(["2.0.0", "--notes-file", t.notes]);
+      await t.release(["2.0.0"]);
       const { code, output } = await t.release(["2.0.0", "--abort"]);
       expect(code).toBe(1);
       expect(output).toContain("already on origin/main");
@@ -332,14 +333,14 @@ describe("release.mjs", () => {
     it.concurrent("a dirty working tree", async () => {
       const t = setup();
       t.write("stray.txt", "oops");
-      await t.expectRefused(["2.0.0", "--notes-file", t.notes], "working tree is not clean");
+      await t.expectRefused(["2.0.0"], "working tree is not clean");
       expect(t.calls("npx")).toEqual([]);
     });
 
     it.concurrent("a version that isn't newer", async () => {
       const t = setup();
-      await t.expectRefused(["1.2.3", "--notes-file", t.notes], "1.2.3 is not newer than the current 1.2.3");
-      await t.expectRefused(["1.0.0", "--notes-file", t.notes], "1.0.0 is not newer");
+      await t.expectRefused(["1.2.3"], "1.2.3 is not newer than the current 1.2.3");
+      await t.expectRefused(["1.0.0"], "1.0.0 is not newer");
     });
 
     it.concurrent("main being behind origin", async () => {
@@ -351,7 +352,7 @@ describe("release.mjs", () => {
       t.git(["commit", "-q", "-m", "elsewhere"], other);
       t.git(["push", "-q", "origin", "main"], other);
 
-      const { code, output } = await t.release(["2.0.0", "--notes-file", t.notes]);
+      const { code, output } = await t.release(["2.0.0"]);
       expect(code).toBe(1);
       expect(output).toContain("main is behind origin/main");
       expect(t.git(["rev-parse", "HEAD"])).toBe(t.initialHead);
@@ -360,7 +361,7 @@ describe("release.mjs", () => {
     it.concurrent("a tag that already exists locally", async () => {
       const t = setup();
       t.git(["tag", "v2.0.0"]);
-      await t.expectRefused(["2.0.0", "--notes-file", t.notes], "tag v2.0.0 already exists locally");
+      await t.expectRefused(["2.0.0"], "tag v2.0.0 already exists locally");
     });
 
     it.concurrent("a tag that already exists on origin", async () => {
@@ -373,26 +374,20 @@ describe("release.mjs", () => {
       t.git(["tag", "v2.0.0"], other);
       t.git(["push", "-q", "origin", "v2.0.0"], other);
 
-      const { code, output } = await t.release(["2.0.0", "--notes-file", t.notes]);
+      const { code, output } = await t.release(["2.0.0"]);
       expect(output).toContain("tag v2.0.0 already exists on origin");
       expect(code).toBe(1);
       expect(t.git(["rev-parse", "HEAD"])).toBe(t.initialHead);
     });
 
-    it.concurrent("missing release notes when not pausing", async () => {
-      const t = setup();
-      await t.expectRefused(["2.0.0"], "--notes-file is required");
-      expect(t.calls("npx")).toEqual([]);
-    });
-
     it.concurrent("gh not being logged in", async () => {
       const t = setup();
-      await t.expectRefused(["2.0.0", "--notes-file", t.notes], "gh is not authenticated", { STUB_FAIL: "gh-auth" });
+      await t.expectRefused(["2.0.0"], "gh is not authenticated", { STUB_FAIL: "gh-auth" });
     });
 
     it.concurrent("failing tests", async () => {
       const t = setup();
-      await t.expectRefused(["2.0.0", "--notes-file", t.notes], "`npx jest --ci` failed", { STUB_FAIL: "jest" });
+      await t.expectRefused(["2.0.0"], "`npx jest --ci` failed", { STUB_FAIL: "jest" });
       expect(t.calls("npx").some((c) => c[0] === "eas-cli")).toBe(false);
     });
 
@@ -402,14 +397,14 @@ describe("release.mjs", () => {
       t.commitAll("empty unreleased");
       t.git(["push", "-q", "origin", "main"]);
       t.initialHead = t.git(["rev-parse", "HEAD"]);
-      await t.expectRefused(["2.0.0", "--notes-file", t.notes], "CHANGELOG.md has nothing under [Unreleased]");
+      await t.expectRefused(["2.0.0"], "CHANGELOG.md has nothing under [Unreleased]");
     });
   });
 
   describe("rejects bad Android build output without publishing", () => {
     it.concurrent("a missing split APK", async () => {
       const t = setup();
-      const { code, output } = await t.release(["2.0.0", "--notes-file", t.notes], {
+      const { code, output } = await t.release(["2.0.0"], {
         STUB_SPLITS: "arm64-v8a,armeabi-v7a,x86",
       });
       expect(code).toBe(1);
@@ -420,7 +415,7 @@ describe("release.mjs", () => {
 
     it.concurrent("a split APK carrying another ABI's libs", async () => {
       const t = setup();
-      const { code, output } = await t.release(["2.0.0", "--notes-file", t.notes], {
+      const { code, output } = await t.release(["2.0.0"], {
         STUB_LEAKY_SPLIT: "arm64-v8a",
       });
       expect(code).toBe(1);
@@ -430,7 +425,7 @@ describe("release.mjs", () => {
 
     it.concurrent("a failed build", async () => {
       const t = setup();
-      const { code, output } = await t.release(["2.0.0", "--notes-file", t.notes], { STUB_FAIL: "eas-android" });
+      const { code, output } = await t.release(["2.0.0"], { STUB_FAIL: "eas-android" });
       expect(code).toBe(1);
       expect(output).toContain("--platform android");
       t.expectNothingPublished();
