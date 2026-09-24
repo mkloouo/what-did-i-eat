@@ -13,6 +13,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
+import { selectAllTags } from "../store/selectors/tagSelectors";
 import { addTag, updateTag, deleteTag } from "../store/tagsSlice";
 import { generateId } from "../utils/id";
 import { isValidTagLabel } from "../utils/tagLabel";
@@ -25,7 +26,7 @@ import { theme } from "../theme/theme";
 export function TagsScreen() {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
-  const tags = useAppSelector((state) => Object.values(state.tags));
+  const tags = useAppSelector(selectAllTags);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftIcon, setDraftIcon] = useState<TagIcon | null>(null);
