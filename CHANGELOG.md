@@ -5,6 +5,31 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-09-24
+
+Needs a new dev build (native deps: Reanimated, Worklets, and the fonts).
+
+### Added
+
+- The Daybands light palette and its two-voice type (IBM Plex Sans Condensed
+  for the app, Newsreader for your own words) replace the dark Wall look and
+  Instrument Sans everywhere.
+- Days shows a hero for your single latest meal, full width above the day
+  bands, tapping through to its Entry Details.
+
+### Changed
+
+- The Days band gradient now uses the palette's real dawn/dusk/night colours
+  instead of placeholder tones.
+- The photo viewer is rebuilt on react-native-zoom-toolkit: pinch, pan, swipe
+  between photos and swipe-down-to-dismiss, replacing a pinch gesture that
+  could stick a few millimetres in and sometimes never release.
+
+### Fixed
+
+- The tag filter rail no longer reads as clipped at the top when a chip is
+  selected.
+
 ## [2.0.0] - 2026-09-24
 
 The Wall redesign is done. Same dev build as 1.5.0 — no native changes.
