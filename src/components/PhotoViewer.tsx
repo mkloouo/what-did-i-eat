@@ -44,17 +44,23 @@ export function PhotoViewer({
   renderFooter,
 }: Props) {
   const [index, setIndex] = useState(initialIndex);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const dismissProgress = useSharedValue(0);
 
+  // Gallery centers each item with alignItems: "center" rather than
+  // stretching it, so a percentage-sized <Image> has no definite width to
+  // resolve against and measures 0 (confirmed via logging on Android).
+  // Sizing the image from the viewer's own measured layout instead sidesteps
+  // that ambiguity.
   const renderItem = useCallback(
     (photo: Photo) => (
       <Image
         source={{ uri: photo.uri }}
-        style={styles.image}
+        style={[styles.image, containerSize]}
         contentFit="contain"
       />
     ),
-    [],
+    [containerSize],
   );
 
   const keyExtractor = useCallback(
@@ -87,7 +93,13 @@ export function PhotoViewer({
   }));
 
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      onLayout={(e) => {
+        const { width, height } = e.nativeEvent.layout;
+        setContainerSize({ width, height });
+      }}
+    >
       <Gallery
         data={photos}
         renderItem={renderItem}
