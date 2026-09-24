@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FlatList, View, Text, Pressable, StyleSheet } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -12,6 +12,7 @@ import { resolvePhotoUri } from "../storage/photoStorage";
 import { useScrollTapGuard } from "../hooks/useScrollTapGuard";
 import { Entry, Tag } from "../types/models";
 import { theme } from "../theme/theme";
+import { makeSelectEntriesByIds } from "../store/selectors/groupSelectors";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "GroupDetails">;
 type Route = RouteProp<RootStackParamList, "GroupDetails">;
@@ -62,10 +63,9 @@ export function GroupDetailsScreen() {
   const route = useRoute<Route>();
   const { entryIds } = route.params;
 
+  const selectEntriesByIds = useMemo(makeSelectEntriesByIds, []);
   const entries = useAppSelector((state) =>
-    entryIds
-      .map((id) => state.entries[id])
-      .filter((entry) => entry !== undefined),
+    selectEntriesByIds(state, entryIds),
   );
   const allTags = useAppSelector((state) => state.tags);
   const { onScrollBeginDrag, onScrollEndDrag, guardedPress } =

@@ -16,6 +16,10 @@ All notable changes to this project are documented here. Format loosely follows
 - Gave the Feed and Tags tab screens friendlier titles ("What did I eat?"
   and "Let's organize a bit") while keeping short labels on the tab bar
   itself.
+- Memoized derived Redux selectors (`Object.values(state.tags)` in the Tags
+  and New Entry screens, and the entry-lookup-by-ids in Group Details) with
+  `createSelector` so they stop returning a new array reference on every
+  render.
 
 ## [v1.4.1] - 2026-09-18
 

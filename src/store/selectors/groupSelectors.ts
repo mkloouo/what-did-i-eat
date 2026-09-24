@@ -88,6 +88,15 @@ function groupEntriesWithinDay(
   return groups;
 }
 
+export const makeSelectEntriesByIds = () =>
+  createSelector(
+    [selectEntriesById, (_state: RootState, entryIds: string[]) => entryIds],
+    (entriesById, entryIds): Entry[] =>
+      entryIds
+        .map((id) => entriesById[id])
+        .filter((entry): entry is Entry => entry !== undefined),
+  );
+
 export const selectFeedSections = createSelector(
   [selectEntriesSortedByDate, selectGroupingMode, selectRollingWindowMinutes],
   (sortedEntries, groupingMode, rollingWindowMinutes): DaySection[] => {
