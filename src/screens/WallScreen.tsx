@@ -27,9 +27,9 @@ export function WallScreen() {
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
   const [activeTagId, setActiveTagId] = useState<string | null>(null);
-  const [pendingScrollDayKey, setPendingScrollDayKey] = useState<string | null>(
-    null,
-  );
+  const [pendingScrollGroupId, setPendingScrollGroupId] = useState<
+    string | null
+  >(null);
 
   const sections = useAppSelector((state) =>
     selectFeedSections(state, activeTagId),
@@ -52,8 +52,8 @@ export function WallScreen() {
     [sections],
   );
 
-  function goToWallDay(dayKey: string) {
-    setPendingScrollDayKey(dayKey);
+  function goToWallMeal(groupId: string) {
+    setPendingScrollGroupId(groupId);
     dispatch(setTimelineView("wall"));
   }
 
@@ -114,14 +114,14 @@ export function WallScreen() {
           onPressEntry={(entryId) =>
             navigation.navigate("EntryDetails", { entryId })
           }
-          pendingScrollDayKey={pendingScrollDayKey}
-          onScrolledToDay={() => setPendingScrollDayKey(null)}
+          pendingScrollGroupId={pendingScrollGroupId}
+          onScrolledToGroup={() => setPendingScrollGroupId(null)}
         />
       ) : (
         <DaysBoard
           sections={sections}
           latestEntry={latestEntry}
-          onPressDay={goToWallDay}
+          onPressCell={goToWallMeal}
           onPressEntry={(entryId) =>
             navigation.navigate("EntryDetails", { entryId })
           }
