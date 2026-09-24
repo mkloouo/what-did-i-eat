@@ -62,10 +62,12 @@ function buildTemplate(): string {
   const bin = path.join(template, "bin");
   fs.mkdirSync(path.join(repo, "scripts"), { recursive: true });
   fs.mkdirSync(bin);
-  for (const tool of ["npx", "gh"]) {
+  for (const tool of ["npx", "gh", "xcrun"]) {
     fs.copyFileSync(path.join(STUBS, `${tool}.js`), path.join(bin, tool));
     fs.chmodSync(path.join(bin, tool), 0o755);
   }
+  fs.mkdirSync(path.join(template, "keys"));
+  fs.writeFileSync(path.join(template, "keys", "AuthKey_TESTKEY.p8"), "not a real key\n");
 
   gitIn(template, ["init", "-q", "--bare", "-b", "main", "origin.git"]);
   gitIn(repo, ["init", "-q", "-b", "main"]);
@@ -103,6 +105,11 @@ function setup() {
     PATH: `${path.join(tmp, "bin")}${path.delimiter}${process.env.PATH}`,
     STUB_LOG: log,
     STUB_STATE: tmp,
+    // App Store Connect key lookup sees only the fixture's key, never the user's.
+    HOME: tmp,
+    API_PRIVATE_KEYS_DIR: path.join(tmp, "keys"),
+    ASC_API_ISSUER_ID: "test-issuer",
+    ASC_API_KEY_ID: "",
   };
 
   const t = {
@@ -137,7 +144,7 @@ function setup() {
       });
     },
 
-    calls(tool: "npx" | "gh"): string[][] {
+    calls(tool: "npx" | "gh" | "xcrun"): string[][] {
       if (!fs.existsSync(log)) return [];
       return fs
         .readFileSync(log, "utf8")
@@ -299,6 +306,75 @@ describe("release.mjs", () => {
     expect(ios).toEqual(expect.arrayContaining(["--wait", "--json"]));
     expect(ios).not.toContain("--local");
     expect(fs.readFileSync(path.join(t.outDir, "what-did-i-eat-v2.0.0.ipa"), "utf8")).toBe("cloud ipa");
+  });
+
+  it.concurrent("--help explains every mode and option without needing a version", async () => {
+    const t = setup();
+    const { code, output } = await t.release(["--help"]);
+    expect(code).toBe(0);
+    for (const opt of ["--pause", "--publish", "--abort", "--ios-cloud", "--upload-ios", "--upload-ios-only", "--co-author", "ASC_API_ISSUER_ID", "ASC_API_KEY_ID"]) {
+      expect(output).toContain(opt);
+    }
+    expect(t.calls("npx")).toEqual([]);
+  });
+
+  describe("--upload-ios", () => {
+    it.concurrent("uploads the .ipa with altool only after the GitHub release is published", async () => {
+      const t = setup();
+      const { code, output } = await t.release(["2.0.0", "--upload-ios"]);
+      expect(code).toBe(0);
+      expect(output).toContain("Uploaded what-did-i-eat-v2.0.0.ipa to App Store Connect");
+      expect(t.calls("xcrun")).toEqual([
+        [
+          "altool",
+          "--upload-package",
+          path.join("releases", "v2.0.0", "what-did-i-eat-v2.0.0.ipa"),
+          "--api-key",
+          "TESTKEY",
+          "--api-issuer",
+          "test-issuer",
+          "--show-progress",
+        ],
+      ]);
+      const log = fs.readFileSync(path.join(t.tmp, "calls.log"), "utf8").trim().split("\n");
+      expect(log.findIndex((l) => l.includes("--draft=false"))).toBeLessThan(log.findIndex((l) => l.includes("altool")));
+    });
+
+    it.concurrent("isn't done without the flag", async () => {
+      const t = setup();
+      expect((await t.release(["2.0.0"])).code).toBe(0);
+      expect(t.calls("xcrun")).toEqual([]);
+    });
+
+    it.concurrent("refuses before building when the issuer ID is missing", async () => {
+      const t = setup();
+      await t.expectRefused(["2.0.0", "--upload-ios"], "set ASC_API_ISSUER_ID", { ASC_API_ISSUER_ID: "" });
+      expect(t.calls("npx")).toEqual([]);
+    });
+
+    it.concurrent("refuses before building when the named key isn't installed", async () => {
+      const t = setup();
+      await t.expectRefused(["2.0.0", "--upload-ios"], "AuthKey_OTHER.p8 not found", { ASC_API_KEY_ID: "OTHER" });
+      expect(t.calls("npx")).toEqual([]);
+    });
+
+    it.concurrent("--upload-ios-only retries a failed upload, but never before publishing", async () => {
+      const t = setup();
+      await t.release(["2.0.0", "--pause"]);
+      const early = await t.release(["2.0.0", "--upload-ios-only"]);
+      expect(early.code).toBe(1);
+      expect(early.output).toContain("isn't on origin yet");
+      expect(t.calls("xcrun")).toEqual([]);
+
+      const failed = await t.release(["2.0.0", "--publish", "--upload-ios"], { STUB_FAIL: "altool" });
+      expect(failed.code).toBe(1);
+      expect(t.originTag()).toBe("v2.0.0");
+
+      const retried = await t.release(["2.0.0", "--upload-ios-only"]);
+      expect(retried.code).toBe(0);
+      expect(t.calls("xcrun")).toHaveLength(2);
+      expect(t.calls("gh").filter(([, sub]) => sub === "create")).toHaveLength(1);
+    });
   });
 
   describe("--abort", () => {

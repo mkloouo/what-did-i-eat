@@ -1,20 +1,12 @@
 #!/usr/bin/env node
 // Release script: preflight → checks → release commit → Android + iOS builds →
-// checksums → annotated tag → atomic push → draft GitHub release → publish.
-//
-//   npm run release -- X.Y.Z [--pause] [--ios-cloud] [--co-author "Name <email>"]
-//   npm run release -- X.Y.Z --publish
-//   npm run release -- X.Y.Z --abort
-//
-// The GitHub release notes are CHANGELOG.md's section for X.Y.Z (moved there
-// from [Unreleased] by the release commit) plus a which-file-to-download footer.
-// --pause stops after the builds (nothing pushed yet) so the artifacts can be
-// smoke-tested; --publish then picks up from there. --abort drops an unpushed
-// release commit so the release can be redone after a fix.
+// checksums → annotated tag → atomic push → draft GitHub release → publish →
+// (optionally) App Store Connect upload. `npm run release -- --help` for usage.
 
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -69,7 +61,73 @@ function today() {
 
 // ---------- args ----------
 
+const HELP = `Release What Did I Eat: Android APKs + iOS .ipa, tagged and published on GitHub.
+
+Usage:
+  npm run release -- X.Y.Z [--pause] [--ios-cloud] [--upload-ios] [--co-author "Name <email>"]
+  npm run release -- X.Y.Z --publish [--upload-ios]
+  npm run release -- X.Y.Z --upload-ios-only
+  npm run release -- X.Y.Z --abort
+  npm run release -- --help
+
+Modes:
+  (default)           Full release, in order:
+                        1. preflight: on main, clean tree, not behind origin/main, X.Y.Z newer
+                           than package.json, no vX.Y.Z tag/GitHub release yet, gh authed
+                        2. npx tsc --noEmit, npx jest --ci
+                        3. "release vX.Y.Z" commit: CHANGELOG.md's [Unreleased] section moves
+                           under "## [X.Y.Z] - <today>"; version bumped in package.json and
+                           app.config.js
+                        4. local Android build (eas production-apk): one APK per ABI plus a
+                           universal APK, checked and renamed
+                        5. local iOS build (eas production)
+                        6. SHA256SUMS
+                        7. publish (see --publish)
+                      Nothing is pushed until both builds have succeeded.
+  --publish           Publish an already-built release: verify artifacts against SHA256SUMS,
+                      annotated tag, git push --atomic origin main vX.Y.Z, draft GitHub
+                      release with all assets, then mark it published and latest. Safe to
+                      re-run if it failed partway (reuses the tag, refreshes the draft).
+  --upload-ios-only   Only upload the built .ipa to App Store Connect (e.g. to retry a
+                      failed --upload-ios after the GitHub release is out).
+  --abort             Drop the unpushed "release vX.Y.Z" commit (and local tag) so the
+                      release can be redone after a fix. Refuses once it's on origin.
+
+Options:
+  --pause             Stop after the builds, before anything is pushed, so the artifacts
+                      in releases/vX.Y.Z/ can be smoke-tested; then run --publish.
+  --ios-cloud         Build iOS on EAS cloud and download the .ipa, instead of locally.
+  --upload-ios        After publishing, upload the .ipa to App Store Connect (TestFlight)
+                      with \`xcrun altool --upload-package\`, locally — no EAS Submit queue.
+                      The credentials are checked before anything is built.
+  --co-author "N <e>" Add a Co-Authored-By trailer to the release commit.
+  -h, --help          Show this help.
+
+Release notes:
+  The GitHub release body is CHANGELOG.md's "## [X.Y.Z]" section, verbatim, plus a
+  footer saying which file to download. Write [Unreleased] for users.
+
+App Store Connect upload (--upload-ios, --upload-ios-only):
+  Needs an App Store Connect API key (App Manager role) saved as AuthKey_<KEY_ID>.p8 in
+  one of: $API_PRIVATE_KEYS_DIR, ~/.appstoreconnect/private_keys, ~/.private_keys,
+  ~/private_keys, ./private_keys.
+    ASC_API_ISSUER_ID   Issuer ID from App Store Connect → Users and Access →
+                        Integrations (required).
+    ASC_API_KEY_ID      Key ID; optional when exactly one AuthKey_*.p8 is installed.
+  Uploading uses up the build number, so it only runs after the GitHub release is out.
+  Distributing to testers or submitting for review stays in App Store Connect.
+
+Output:
+  releases/vX.Y.Z/ (gitignored): ${APP}-vX.Y.Z-<abi>.apk for arm64-v8a, armeabi-v7a,
+  x86, x86_64 and universal; ${APP}-vX.Y.Z.ipa; SHA256SUMS; release-notes.md.
+`;
+
 const argv = process.argv.slice(2);
+if (argv.includes('--help') || argv.includes('-h')) {
+  process.stdout.write(HELP);
+  process.exit(0);
+}
+
 const version = argv.find((a) => !a.startsWith('--') && parseVersion(a));
 const flag = (name) => argv.includes(name);
 const option = (name) => {
@@ -77,7 +135,7 @@ const option = (name) => {
   return i === -1 ? undefined : argv[i + 1];
 };
 
-if (!version) fail('usage: npm run release -- X.Y.Z [--pause] [--ios-cloud] [--co-author "Name <email>"] | --publish | --abort');
+if (!version) fail('usage: npm run release -- X.Y.Z [options] — see `npm run release -- --help`');
 
 const tag = `v${version}`;
 const outDir = path.join('releases', tag);
@@ -90,6 +148,31 @@ const readPkgVersion = () => JSON.parse(fs.readFileSync('package.json', 'utf8'))
 function assertCleanMain() {
   if (out('git', ['branch', '--show-current']) !== 'main') fail('not on main');
   if (out('git', ['status', '--porcelain']) !== '') fail('working tree is not clean (commit, stash or gitignore first)');
+}
+
+const uploadIos = flag('--upload-ios') || flag('--upload-ios-only');
+
+// App Store Connect API credentials, found where altool itself looks for the key.
+function ascCredentials() {
+  const dirs = [process.env.API_PRIVATE_KEYS_DIR, '~/.appstoreconnect/private_keys', '~/.private_keys', '~/private_keys', './private_keys']
+    .filter(Boolean)
+    .map((d) => d.replace(/^~(?=\/)/, os.homedir()));
+  const keys = dirs.flatMap((d) => (fs.existsSync(d) ? fs.readdirSync(d) : []))
+    .map((f) => /^AuthKey_(.+)\.p8$/.exec(f)?.[1])
+    .filter(Boolean);
+  const issuer = process.env.ASC_API_ISSUER_ID;
+  let key = process.env.ASC_API_KEY_ID;
+  if (!key) {
+    const unique = [...new Set(keys)];
+    if (unique.length !== 1) {
+      fail(`--upload-ios: set ASC_API_KEY_ID (found ${unique.length ? unique.join(', ') : 'no AuthKey_*.p8'} in ${dirs.join(', ')})`);
+    }
+    key = unique[0];
+  } else if (!keys.includes(key)) {
+    fail(`--upload-ios: AuthKey_${key}.p8 not found in ${dirs.join(', ')}`);
+  }
+  if (!issuer) fail('--upload-ios: set ASC_API_ISSUER_ID (App Store Connect → Users and Access → Integrations)');
+  return { key, issuer };
 }
 
 // CHANGELOG.md's "## [name]" section; [1] is its body, up to the next "## [".
@@ -115,6 +198,7 @@ function preflight() {
   if (succeeds('git', ['rev-parse', '-q', '--verify', `refs/tags/${tag}`])) fail(`tag ${tag} already exists locally`);
   if (out('git', ['ls-remote', '--tags', 'origin', `refs/tags/${tag}`]) !== '') fail(`tag ${tag} already exists on origin`);
   if (succeeds('gh', ['release', 'view', tag])) fail(`GitHub release ${tag} already exists`);
+  if (uploadIos) ascCredentials();
 }
 
 // ---------- phase 2: local checks ----------
@@ -248,6 +332,7 @@ function releaseNotes() {
 }
 
 function publish() {
+  if (uploadIos) ascCredentials();
   assertCleanMain();
   if (headSubject() !== releaseSubject) fail(`HEAD is not "${releaseSubject}"`);
   if (readPkgVersion() !== version) fail(`package.json version is not ${version}`);
@@ -275,6 +360,23 @@ function publish() {
   }
   run('gh', ['release', 'edit', tag, '--draft=false', '--latest']);
   console.log(`\n✔ Released ${tag}: ${out('gh', ['release', 'view', tag, '--json', 'url', '-q', '.url'])}`);
+  if (uploadIos) uploadToAppStoreConnect();
+}
+
+// ---------- phase 6: App Store Connect upload ----------
+
+function uploadToAppStoreConnect() {
+  const { key, issuer } = ascCredentials();
+  // The upload uses up the build number, so only ever upload a released build.
+  if (out('git', ['ls-remote', '--tags', 'origin', `refs/tags/${tag}`]) === '') fail(`${tag} isn't on origin yet — run --publish first`);
+  const ipa = path.join(outDir, `${APP}-${tag}.ipa`);
+  if (!fs.existsSync(ipa)) fail(`${ipa} missing`);
+  const [hash] = fs.readFileSync(path.join(outDir, 'SHA256SUMS'), 'utf8').split('\n').find((l) => l.endsWith(`  ${path.basename(ipa)}`))?.split(/\s+/) ?? [];
+  if (sha256(ipa) !== hash) fail(`checksum mismatch for ${path.basename(ipa)}`);
+
+  step(`App Store Connect upload (key ${key})`);
+  run('xcrun', ['altool', '--upload-package', ipa, '--api-key', key, '--api-issuer', issuer, '--show-progress']);
+  console.log(`\n✔ Uploaded ${path.basename(ipa)} to App Store Connect — it shows up in TestFlight once processed.`);
 }
 
 // ---------- abort ----------
@@ -293,6 +395,8 @@ function abort() {
 
 if (flag('--abort')) {
   abort();
+} else if (flag('--upload-ios-only')) {
+  uploadToAppStoreConnect();
 } else if (flag('--publish')) {
   publish();
 } else {
@@ -306,7 +410,7 @@ if (flag('--abort')) {
   writeChecksums();
   if (flag('--pause')) {
     console.log(`\n⏸ Paused before publishing. Nothing is pushed yet. Artifacts are in ${outDir}/.`);
-    console.log(`  Smoke-test them, then:  npm run release -- ${version} --publish`);
+    console.log(`  Smoke-test them, then:  npm run release -- ${version} --publish${uploadIos ? ' --upload-ios' : ''}`);
     console.log(`  Or to redo the release: npm run release -- ${version} --abort`);
   } else {
     publish();
