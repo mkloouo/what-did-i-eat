@@ -16,6 +16,15 @@ All notable changes to this project are documented here. Format loosely follows
   the band growing taller. Tapping a cell now jumps the Wall straight to
   that meal.
 
+### Fixed
+
+- Cyrillic text (comments, and anywhere else it appears) no longer falls
+  back to the system font mid-string — both app typefaces had zero
+  Cyrillic glyphs in any weight. The UI font is now the regular-width IBM
+  Plex Sans (was the condensed cut, which never had Cyrillic), and the
+  comment/"voice" font is now Lora (was Newsreader, which has no Cyrillic
+  in any cut on Google Fonts).
+
 ## [2.4.0] - 2026-09-24
 
 ### Changed
