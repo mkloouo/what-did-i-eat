@@ -1,7 +1,9 @@
 import {
   buildWallItems,
   firstItemIndexForDay,
+  firstItemIndexForGroup,
   currentDayFromViewableItems,
+  WallItem,
 } from "./wallItems";
 import { DaySection, EntryGroup } from "../store/selectors/groupSelectors";
 
@@ -63,6 +65,24 @@ describe("firstItemIndexForDay", () => {
 
   it("returns -1 for a day that isn't in the list", () => {
     expect(firstItemIndexForDay(items, "2026-03-01")).toBe(-1);
+  });
+});
+
+describe("firstItemIndexForGroup", () => {
+  it("finds the index of the piece item for a given group id", () => {
+    const items: WallItem[] = [
+      { type: "day", dayKey: "2026-03-05", label: "Today" },
+      { type: "piece", group: group("g1", "2026-03-05") },
+      { type: "piece", group: group("g2", "2026-03-05") },
+    ];
+    expect(firstItemIndexForGroup(items, "g2")).toBe(2);
+  });
+
+  it("returns -1 when no piece has that group id", () => {
+    const items: WallItem[] = [
+      { type: "day", dayKey: "2026-03-05", label: "Today" },
+    ];
+    expect(firstItemIndexForGroup(items, "missing")).toBe(-1);
   });
 });
 

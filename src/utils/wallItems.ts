@@ -32,6 +32,18 @@ export function firstItemIndexForDay(
   );
 }
 
+// The index of a specific meal's own piece item, for scrolling the Wall
+// straight to it — the per-cell tap target the Days grid uses, since
+// (unlike the old per-photo marks) a cell always maps to exactly one meal.
+export function firstItemIndexForGroup(
+  items: WallItem[],
+  groupId: string,
+): number {
+  return items.findIndex(
+    (item) => item.type === "piece" && item.group.id === groupId,
+  );
+}
+
 // Given the indices FlashList currently reports as on screen, finds which
 // day's seam governs the topmost of them — the nearest "day" item at or
 // before it — so the scrubber can highlight where the user actually is.
