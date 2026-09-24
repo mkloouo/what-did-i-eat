@@ -14,12 +14,13 @@ import * as ImagePicker from "expo-image-picker";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ImageViewing from "react-native-image-viewing";
 import { RootStackParamList } from "../navigation/types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { selectAllTags } from "../store/selectors/tagSelectors";
 import { TagChip } from "../components/TagChip";
 import { addEntry } from "../store/entriesSlice";
 import { generateId } from "../utils/id";
@@ -140,9 +141,19 @@ function ViewerFooter({
 }
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "NewEntry">;
+type Route = RouteProp<RootStackParamList, "NewEntry">;
 
 export function NewEntryScreen() {
   const navigation = useNavigation<Nav>();
+  const route = useRoute<Route>();
+
+  useEffect(() => {
+    if (route.params?.openCamera) {
+      handleTakePhoto();
+      navigation.setParams(undefined);
+    }
+  }, [route.params?.openCamera]);
+
   const dispatch = useAppDispatch();
 
   const [photos, setPhotos] = useState<Photo[]>([]);
@@ -154,7 +165,7 @@ export function NewEntryScreen() {
   const [androidTempDate, setAndroidTempDate] = useState<Date | null>(null);
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const scrollRef = useRef<ScrollView>(null);
-  const tags = useAppSelector((state) => Object.values(state.tags));
+  const tags = useAppSelector(selectAllTags);
   const inferDateFromFirstImportedPhoto = useAppSelector(
     (state) => state.settings.inferDateFromFirstImportedPhoto,
   );

@@ -40,20 +40,20 @@ export function TabNavigator() {
             size={size}
           />
         ),
-        tabBarLabelStyle: { display: "none" },
       })}
     >
       <Tab.Screen
         name="Feed"
         component={FeedScreen}
         options={{
-          title: "Feed",
+          title: "What did I eat?",
+          tabBarLabel: "Feed",
         }}
       />
       <Tab.Screen
         name="Tags"
         component={TagsScreen}
-        options={{ title: "Tags" }}
+        options={{ title: "Let's organize a bit", tabBarLabel: "Tags" }}
       />
       <Tab.Screen
         name="Settings"

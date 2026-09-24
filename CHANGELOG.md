@@ -5,6 +5,18 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Added
+
+- Split the Feed FAB into two stacked buttons: a camera button that opens a
+  new entry with the camera launched immediately, and an add button that
+  opens a blank new entry as before.
+
+### Changed
+
+- Gave the Feed and Tags tab screens friendlier titles ("What did I eat?"
+  and "Let's organize a bit") while keeping short labels on the tab bar
+  itself.
+
 ## [v1.4.1] - 2026-09-18
 
 ### Changed
