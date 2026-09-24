@@ -7,7 +7,7 @@ module.exports = {
   expo: {
     name: IS_DEV ? `${BASE_NAME} (Dev)` : BASE_NAME,
     slug: 'what-did-i-eat',
-    version: '1.4.1',
+    version: '1.4.2',
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'light',

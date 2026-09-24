@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-09-24
+
 ### Added
 
 - Split the Feed FAB into two stacked buttons: a camera button that opens a
