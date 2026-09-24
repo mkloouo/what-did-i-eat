@@ -5,6 +5,10 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Changed
+
+- Day wash colors to be more day-like (accredited to Gemini)
+
 ## [2.3.0] - 2026-09-24
 
 Same dev build as 2.1.0 — no native changes.
