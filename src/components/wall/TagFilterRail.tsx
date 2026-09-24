@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, ScrollView, StyleSheet } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -23,34 +23,40 @@ export function TagFilterRail({ activeTagId, onSelect }: Props) {
   const tags = useAppSelector((state) => Object.values(state.tags));
 
   return (
-    <ScrollView
-      horizontal
-      style={styles.scroll}
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.content}
-    >
-      {tags.map((tag) => {
-        const selected = tag.id === activeTagId;
-        return (
-          <TagChip
-            key={tag.id}
-            icon={tag.icon}
-            label={tag.label}
-            selected={selected}
-            iconOnly
-            onPress={() => onSelect(selected ? null : tag.id)}
-          />
-        );
-      })}
-      <Pressable
-        onPress={() => navigation.navigate("Tags")}
-        accessibilityRole="button"
-        accessibilityLabel="Edit tags"
-        style={styles.editButton}
+    <View>
+      <ScrollView
+        horizontal
+        style={styles.scroll}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.content}
       >
-        <Ionicons name="pencil-outline" size={14} color={theme.colors.graphite} />
-      </Pressable>
-    </ScrollView>
+        {tags.map((tag) => {
+          const selected = tag.id === activeTagId;
+          return (
+            <TagChip
+              key={tag.id}
+              icon={tag.icon}
+              label={tag.label}
+              selected={selected}
+              iconOnly
+              onPress={() => onSelect(selected ? null : tag.id)}
+            />
+          );
+        })}
+        <Pressable
+          onPress={() => navigation.navigate("Tags")}
+          accessibilityRole="button"
+          accessibilityLabel="Edit tags"
+          style={styles.editButton}
+        >
+          <Ionicons
+            name="pencil-outline"
+            size={14}
+            color={theme.colors.graphite}
+          />
+        </Pressable>
+      </ScrollView>
+    </View>
   );
 }
 
