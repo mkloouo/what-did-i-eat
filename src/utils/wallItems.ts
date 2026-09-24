@@ -1,8 +1,8 @@
 import { DaySection, EntryGroup } from "../store/selectors/groupSelectors";
 import { dayLabel } from "./dateFormat";
 
-export type WallDayItem = { type: "day"; dayKey: string; label: string };
-export type WallPieceItem = { type: "piece"; group: EntryGroup };
+type WallDayItem = { type: "day"; dayKey: string; label: string };
+type WallPieceItem = { type: "piece"; group: EntryGroup };
 export type WallItem = WallDayItem | WallPieceItem;
 
 // The Wall is one flat, virtualised list: a day seam item followed by one

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -37,11 +37,6 @@ export function WallScreen() {
   const latestEntry = useAppSelector(selectLatestEntry);
   const tagsById = useAppSelector((state) => state.tags);
   const wallColumns = useAppSelector((state) => state.settings.wallColumns);
-  // redux-persist replaces the whole appMeta object on load, so an existing
-  // install without this key would read undefined — never trust it raw.
-  const scrubberEnabled = useAppSelector(
-    (state) => state.appMeta.scrubberEnabled ?? true,
-  );
   const timelineView = useAppSelector(
     (state) => state.appMeta.timelineView ?? "wall",
   );
@@ -110,7 +105,6 @@ export function WallScreen() {
           dayKeys={dayKeys}
           tagsById={tagsById}
           wallColumns={wallColumns}
-          scrubberEnabled={scrubberEnabled}
           onPressEntry={(entryId) =>
             navigation.navigate("EntryDetails", { entryId })
           }

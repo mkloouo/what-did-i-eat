@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import {
   PanGestureHandler,

@@ -2,17 +2,15 @@
 // like daylight — see docs/superpowers/specs for the design system this was
 // pulled from. Roles, not raw swatches: `accent`/`chip`+`chipText` are the
 // only colours legible as small text/icons or filled pills at 4.5:1 against
-// `daylight`/`surface` — see theme.test.ts. `pine` and `sun` are decorative
-// only (gradients, ticks, markers), never text or a fill with text on it.
+// `daylight`/`surface` — see theme.test.ts. `pine` is decorative only
+// (gradients, ticks, markers), never text or a fill with text on it.
 export const colors = {
   daylight: "#E8E3EC",
   surface: "#DED7E6",
   hairline: "#D2CAD8",
   ink: "#241F33",
-  inkMuted: "#3B3550",
   graphite: "#5A5668",
   pine: "#2A7F62",
-  sun: "#E0A73C",
   accent: "#1F6349",
   chip: "#D5E2DB",
   chipText: "#1F4436",
@@ -23,7 +21,7 @@ export const colors = {
   clayOnDark: "#DE7B73",
 } as const;
 
-export const spacing = {
+const spacing = {
   xs: 4,
   sm: 8,
   md: 16,
@@ -31,7 +29,7 @@ export const spacing = {
   xl: 32,
 } as const;
 
-export const radii = {
+const radii = {
   sm: 2,
   md: 3,
   lg: 4,
@@ -55,8 +53,7 @@ export const fonts = {
   voiceMedium: "Lora_500Medium",
 } as const;
 
-export const typography = {
-  title: { fontFamily: fonts.semibold, fontSize: 22 },
+const typography = {
   subtitle: { fontFamily: fonts.semibold, fontSize: 16 },
   body: { fontFamily: fonts.regular, fontSize: 15 },
   caption: { fontFamily: fonts.regular, fontSize: 13 },
@@ -72,4 +69,3 @@ export const typography = {
 } as const;
 
 export const theme = { colors, spacing, radii, fonts, typography };
-export type Theme = typeof theme;

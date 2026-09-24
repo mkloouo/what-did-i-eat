@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Pressable, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { theme } from "../theme/theme";

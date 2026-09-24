@@ -3,7 +3,7 @@
 // aligned without either one owning shared layout state.
 export const LABEL_WIDTH = 64;
 export const GUTTER = 8;
-export const COLUMN_COUNT = 5;
+const COLUMN_COUNT = 5;
 
 const MAX_CELL_SIZE = 52;
 const MIN_CELL_SIZE = 36;

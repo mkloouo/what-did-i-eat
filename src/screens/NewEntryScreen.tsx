@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -219,7 +219,7 @@ export function NewEntryScreen() {
   }
 
   function handleIOSDateTimeChange(
-    event: DateTimePickerEvent,
+    _event: DateTimePickerEvent,
     selected?: Date,
   ) {
     if (selected) {

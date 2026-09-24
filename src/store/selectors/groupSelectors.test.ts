@@ -35,7 +35,6 @@ function stateFrom(
     tags: {},
     appMeta: {
       hasSeededDefaultTags: true,
-      scrubberEnabled: false,
       timelineView: "wall",
     },
   };

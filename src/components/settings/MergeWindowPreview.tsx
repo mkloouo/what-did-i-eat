@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useAppSelector } from "../../store/hooks";
 import { selectEntriesSortedByDate } from "../../store/selectors/groupSelectors";
