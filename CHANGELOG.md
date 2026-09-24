@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-09-24
+
 ### Changed
 
 - Much smaller Android downloads: releases now ship one APK per CPU
