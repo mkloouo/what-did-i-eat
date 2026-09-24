@@ -5,6 +5,17 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-09-24
+
+### Changed
+
+- Days view redesigned: replaced the per-photo timeline band with a
+  fixed-height grid, one row per day and five time-of-day slot columns
+  (Morning/Midday/Afternoon/Evening/Late). Each cell shows its meal(s) as a
+  small photo mosaic that gets finer with how much was logged, instead of
+  the band growing taller. Tapping a cell now jumps the Wall straight to
+  that meal.
+
 ## [2.4.0] - 2026-09-24
 
 ### Changed
