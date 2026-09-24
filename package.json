@@ -3,7 +3,8 @@
   "version": "2.0.0",
   "main": "index.ts",
   "dependencies": {
-    "@expo-google-fonts/instrument-sans": "^0.4.2",
+    "@expo-google-fonts/ibm-plex-sans-condensed": "^0.4.1",
+    "@expo-google-fonts/newsreader": "^0.4.1",
     "@expo/vector-icons": "^15.1.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "9.1.0",
@@ -27,9 +28,11 @@
     "react": "19.2.3",
     "react-native": "0.86.3",
     "react-native-gesture-handler": "~2.32.0",
-    "react-native-image-viewing": "^0.2.2",
+    "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-worklets": "0.10.1",
+    "react-native-zoom-toolkit": "^5.1.1",
     "react-redux": "^9.3.0",
     "redux-persist": "^6.0.0"
   },
