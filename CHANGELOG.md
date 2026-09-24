@@ -5,6 +5,12 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Changed
+
+- The app bundle only includes the 7 fonts it actually uses (Ionicons plus
+  six IBM Plex Sans / Lora weights) instead of all 41 that the icon and font
+  packages ship, on both Android and iOS.
+
 ## [2.5.2] - 2026-09-24
 
 ### Fixed
