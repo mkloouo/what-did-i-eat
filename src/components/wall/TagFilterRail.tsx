@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/types";
 import { useAppSelector } from "../../store/hooks";
+import { selectAllTags } from "../../store/selectors/tagSelectors";
 import { TagChip } from "../TagChip";
 import { theme } from "../../theme/theme";
 
@@ -20,7 +21,7 @@ type Props = {
 // how a first-time user reaches the Tags screen to create one.
 export function TagFilterRail({ activeTagId, onSelect }: Props) {
   const navigation = useNavigation<Nav>();
-  const tags = useAppSelector((state) => Object.values(state.tags));
+  const tags = useAppSelector(selectAllTags);
 
   return (
     <View>

@@ -15,6 +15,9 @@ All notable changes to this project are documented here. Format loosely follows
 ### Fixed
 
 - Tag filter rail different padding for some reason (used a View wrapper to fix the ScrollView behaviour)
+- Tag filter rail no longer re-renders on every store update — it read tags
+  through an unmemoized `Object.values` selector; it now uses the memoized
+  `selectAllTags`.
 
 ## [2.3.0] - 2026-09-24
 
