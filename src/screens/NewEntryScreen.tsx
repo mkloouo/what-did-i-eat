@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   Platform,
+  Modal,
   KeyboardAvoidingView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -17,7 +18,6 @@ import DateTimePicker, {
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ImageViewing from "react-native-image-viewing";
 import { RootStackParamList } from "../navigation/types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { selectAllTags } from "../store/selectors/tagSelectors";
@@ -30,109 +30,14 @@ import {
   resolvePhotoUri,
 } from "../storage/photoStorage";
 import { captureCurrentLocation } from "../location/locationService";
-import { Photo, Tag } from "../types/models";
+import { Photo } from "../types/models";
 import { Button } from "../components/photoLayouts/Button";
 import { PhotoThumbnail } from "../components/PhotoThumbnail";
 import { PaginationDots } from "../components/PaginationDots";
+import { PhotoViewer } from "../components/PhotoViewer";
 import { formatFullDateTime } from "../utils/dateFormat";
 import { parseExifDateTime } from "../utils/exifDate";
 import { theme } from "../theme/theme";
-
-type ViewerState = {
-  photos: Photo[];
-  comment: string;
-  setComment: (comment: string) => void;
-  selectedTagIds: string[];
-  toggleTag: (id: string) => void;
-  tags: Tag[];
-  removePhoto: (id: string) => void;
-  closeViewer: () => void;
-};
-
-// Read via a ref instead of props/closures so the component reference handed
-// to ImageViewing's HeaderComponent/FooterComponent never changes identity —
-// a new reference each render would make ImageViewing remount the subtree,
-// dropping the comment TextInput's focus on every keystroke.
-function ViewerHeader({
-  imageIndex,
-  viewerStateRef,
-}: {
-  imageIndex: number;
-  viewerStateRef: React.MutableRefObject<ViewerState>;
-}) {
-  const insets = useSafeAreaInsets();
-  const { photos, removePhoto, closeViewer } = viewerStateRef.current;
-  const photo = photos[imageIndex];
-
-  return (
-    <View style={[styles.viewerTopBar, { paddingTop: insets.top }]}>
-      <Pressable onPress={closeViewer} style={styles.viewerTopBarButton}>
-        <Text style={styles.viewerTopBarButtonText}>Close</Text>
-      </Pressable>
-      {photo ? (
-        <Pressable
-          onPress={() => {
-            removePhoto(photo.id);
-            closeViewer();
-          }}
-          style={styles.viewerTopBarButton}
-        >
-          <Text
-            style={[styles.viewerTopBarButtonText, styles.viewerRemoveText]}
-          >
-            Remove
-          </Text>
-        </Pressable>
-      ) : null}
-    </View>
-  );
-}
-
-function ViewerFooter({
-  imageIndex,
-  viewerStateRef,
-}: {
-  imageIndex: number;
-  viewerStateRef: React.MutableRefObject<ViewerState>;
-}) {
-  const insets = useSafeAreaInsets();
-  const { photos, comment, setComment, selectedTagIds, toggleTag, tags } =
-    viewerStateRef.current;
-
-  return (
-    <View
-      style={[
-        styles.viewerFooter,
-        { paddingBottom: insets.bottom + theme.spacing.md },
-      ]}
-    >
-      <View style={styles.dotsWrapper}>
-        <PaginationDots count={photos.length} activeIndex={imageIndex} />
-      </View>
-      {tags.length > 0 ? (
-        <View style={styles.tagRow}>
-          {tags.map((tag) => (
-            <TagChip
-              key={tag.id}
-              icon={tag.icon}
-              label={tag.label}
-              selected={selectedTagIds.includes(tag.id)}
-              onPress={() => toggleTag(tag.id)}
-            />
-          ))}
-        </View>
-      ) : null}
-      <TextInput
-        style={styles.viewerCommentInput}
-        placeholder="What did you eat?"
-        placeholderTextColor={theme.colors.chalk}
-        value={comment}
-        onChangeText={setComment}
-        multiline
-      />
-    </View>
-  );
-}
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "NewEntry">;
 type Route = RouteProp<RootStackParamList, "NewEntry">;
@@ -149,6 +54,7 @@ export function NewEntryScreen() {
   }, [route.params?.openCamera]);
 
   const dispatch = useAppDispatch();
+  const insets = useSafeAreaInsets();
 
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [comment, setComment] = useState("");
@@ -340,34 +246,6 @@ export function NewEntryScreen() {
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const closeViewer = () => setViewerIndex(null);
 
-  const viewerStateRef = useRef<ViewerState>({
-    photos,
-    comment,
-    setComment,
-    selectedTagIds,
-    toggleTag,
-    tags,
-    removePhoto,
-    closeViewer,
-  });
-  viewerStateRef.current = {
-    photos,
-    comment,
-    setComment,
-    selectedTagIds,
-    toggleTag,
-    tags,
-    removePhoto,
-    closeViewer,
-  };
-
-  const BoundViewerHeader = useRef((props: { imageIndex: number }) => (
-    <ViewerHeader {...props} viewerStateRef={viewerStateRef} />
-  )).current;
-  const BoundViewerFooter = useRef((props: { imageIndex: number }) => (
-    <ViewerFooter {...props} viewerStateRef={viewerStateRef} />
-  )).current;
-
   async function handleAdd() {
     if (photos.length === 0) return;
     setSaving(true);
@@ -484,7 +362,7 @@ export function NewEntryScreen() {
         <TextInput
           style={styles.commentInput}
           placeholder="What did you eat?"
-          placeholderTextColor={theme.colors.chalk}
+          placeholderTextColor={theme.colors.graphite}
           value={comment}
           onChangeText={setComment}
           onFocus={handleCommentFocus}
@@ -498,20 +376,93 @@ export function NewEntryScreen() {
           loading={saving}
         />
 
-        {viewerIndex !== null ? (
-          <ImageViewing
-            images={photos.map((photo) => ({
+      </ScrollView>
+      {viewerIndex !== null ? (
+        <Modal
+          visible
+          animationType="fade"
+          onRequestClose={closeViewer}
+          statusBarTranslucent
+        >
+          <PhotoViewer
+            photos={photos.map((photo) => ({
               uri: resolvePhotoUri(photo.uri),
             }))}
-            imageIndex={viewerIndex}
-            visible
+            initialIndex={viewerIndex}
             onRequestClose={closeViewer}
-            onImageIndexChange={setViewerIndex}
-            HeaderComponent={BoundViewerHeader}
-            FooterComponent={BoundViewerFooter}
+            onIndexChange={setViewerIndex}
+            renderHeader={(imageIndex) => {
+              const photo = photos[imageIndex];
+              return (
+                <View
+                  style={[styles.viewerTopBar, { paddingTop: insets.top }]}
+                >
+                  <Pressable
+                    onPress={closeViewer}
+                    style={styles.viewerTopBarButton}
+                  >
+                    <Text style={styles.viewerTopBarButtonText}>Close</Text>
+                  </Pressable>
+                  {photo ? (
+                    <Pressable
+                      onPress={() => {
+                        removePhoto(photo.id);
+                        closeViewer();
+                      }}
+                      style={styles.viewerTopBarButton}
+                    >
+                      <Text
+                        style={[
+                          styles.viewerTopBarButtonText,
+                          styles.viewerRemoveText,
+                        ]}
+                      >
+                        Remove
+                      </Text>
+                    </Pressable>
+                  ) : null}
+                </View>
+              );
+            }}
+            renderFooter={(imageIndex) => (
+              <View
+                style={[
+                  styles.viewerFooter,
+                  { paddingBottom: insets.bottom + theme.spacing.md },
+                ]}
+              >
+                <View style={styles.dotsWrapper}>
+                  <PaginationDots
+                    count={photos.length}
+                    activeIndex={imageIndex}
+                  />
+                </View>
+                {tags.length > 0 ? (
+                  <View style={styles.tagRow}>
+                    {tags.map((tag) => (
+                      <TagChip
+                        key={tag.id}
+                        icon={tag.icon}
+                        label={tag.label}
+                        selected={selectedTagIds.includes(tag.id)}
+                        onPress={() => toggleTag(tag.id)}
+                      />
+                    ))}
+                  </View>
+                ) : null}
+                <TextInput
+                  style={styles.viewerCommentInput}
+                  placeholder="What did you eat?"
+                  placeholderTextColor={theme.colors.graphite}
+                  value={comment}
+                  onChangeText={setComment}
+                  multiline
+                />
+              </View>
+            )}
           />
-        ) : null}
-      </ScrollView>
+        </Modal>
+      ) : null}
     </KeyboardAvoidingView>
   );
 }
@@ -519,7 +470,7 @@ export function NewEntryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.wall,
+    backgroundColor: theme.colors.daylight,
   },
   scroll: {
     flex: 1,
@@ -544,18 +495,18 @@ const styles = StyleSheet.create({
   thumbnailWrapper: {},
   hint: {
     ...theme.typography.caption,
-    color: theme.colors.chalk,
+    color: theme.colors.graphite,
     marginBottom: theme.spacing.md,
   },
   dateTimeRow: {
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radii.md,
     padding: theme.spacing.md,
     marginBottom: theme.spacing.md,
   },
   dateTimeLabel: {
     ...theme.typography.body,
-    color: theme.colors.bone,
+    color: theme.colors.ink,
   },
   iosPicker: {
     marginBottom: theme.spacing.md,
@@ -567,13 +518,13 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   commentInput: {
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radii.md,
     padding: theme.spacing.md,
     minHeight: 96,
     textAlignVertical: "top",
-    ...theme.typography.body,
-    color: theme.colors.bone,
+    ...theme.typography.voice,
+    color: theme.colors.ink,
     marginBottom: theme.spacing.md,
   },
   viewerTopBar: {
@@ -584,27 +535,30 @@ const styles = StyleSheet.create({
   viewerTopBarButton: {
     padding: theme.spacing.sm,
   },
+  // The viewer overlay always sits on a black backdrop (photo legibility, the
+  // universal viewer convention), so it keeps a dark bar / light text pairing
+  // regardless of the app's own light theme.
   viewerTopBarButtonText: {
-    color: theme.colors.bone,
+    color: theme.colors.daylight,
     ...theme.typography.subtitle,
   },
   viewerRemoveText: {
-    color: theme.colors.clay,
+    color: theme.colors.clayOnDark,
   },
   viewerFooter: {
-    backgroundColor: theme.colors.wall,
+    backgroundColor: theme.colors.ink,
     padding: theme.spacing.md,
   },
   dotsWrapper: {
     marginBottom: theme.spacing.sm,
   },
   viewerCommentInput: {
-    backgroundColor: theme.colors.seam,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radii.md,
     padding: theme.spacing.sm,
     minHeight: 64,
     textAlignVertical: "top",
-    ...theme.typography.body,
-    color: theme.colors.bone,
+    ...theme.typography.voice,
+    color: theme.colors.ink,
   },
 });
