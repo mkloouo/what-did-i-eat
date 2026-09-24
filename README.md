@@ -17,9 +17,10 @@ That's pretty much it.
 
 ## UI
 
-The app is "the Wall": a dark, flat, no-shadow design system (bone text,
-brass accent, Instrument Sans) where the photos are the interface, not a
-list of cards.
+The app is "the Wall": a flat, no-shadow design system where the photos are
+the interface, not a list of cards. It wears "Daybands light" — a bright,
+lavender-tinted ground with a dark-green accent — set in IBM Plex Sans
+Condensed, with Newsreader (a serif) reserved for your own typed words.
 
 **Home** is a single scrolling wall of edge-to-edge photo pieces, grouped
 into meals by a rolling time window (default: photos within the same hour
@@ -29,10 +30,10 @@ underneath. A tag filter rail below the header narrows the wall to one
 tag at a time, and a draggable day scrubber on the right edge jumps
 straight to a day.
 
-A `Wall | Days` toggle in Home's header swaps the wall for **Days**: one
-astronomical-wash band per day (night/dawn/day/dusk/night), with a mark
-for every photo at its true time. Tapping a day's band switches back to
-Wall, scrolled to that day.
+A `Wall | Days` toggle in Home's header swaps the wall for **Days**: a hero
+photo for your latest meal, then one astronomical-wash band per day
+(night/dawn/day/dusk/night), with a mark for every photo at its true time.
+Tapping a day's band switches back to Wall, scrolled to that day.
 
 Settings and Tags are reached from a settings icon in Home's header
 (there's no tab bar). Settings holds the rolling-window length (with a

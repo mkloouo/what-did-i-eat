@@ -5,6 +5,16 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-09-24
+
+Cleanup pass. Same dev build as 2.1.0 — no native changes.
+
+### Changed
+
+- README's UI section updated for the Daybands light palette, the new
+  typefaces, and the Days hero photo — it still described the old dark Wall
+  look and Instrument Sans.
+
 ## [2.1.0] - 2026-09-24
 
 Needs a new dev build (native deps: Reanimated, Worklets, and the fonts).
