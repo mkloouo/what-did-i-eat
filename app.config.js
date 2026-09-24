@@ -1,4 +1,6 @@
 const IS_DEV = process.env.APP_VARIANT === 'development' || process.env.APP_VARIANT === 'preview';
+// Set by eas.json's production-apk profile: per-ABI APKs + a universal one.
+const ABI_SPLITS = process.env.ANDROID_ABI_SPLITS === '1';
 
 const BASE_BUNDLE_ID = 'com.mkloouo.whatdidieat';
 const BASE_NAME = 'What Did I Eat';
@@ -59,6 +61,17 @@ module.exports = {
         },
       ],
       '@react-native-community/datetimepicker',
+      [
+        'expo-build-properties',
+        {
+          android: {
+            enableMinifyInReleaseBuilds: true,
+            enableShrinkResourcesInReleaseBuilds: true,
+            useLegacyPackaging: true,
+          },
+        },
+      ],
+      ...(ABI_SPLITS ? ['./plugins/withAbiSplits'] : []),
     ],
     extra: {
       eas: {
