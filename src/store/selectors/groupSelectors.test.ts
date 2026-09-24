@@ -1,4 +1,4 @@
-import { selectFeedSections } from "./groupSelectors";
+import { selectFeedSections, selectLatestEntry } from "./groupSelectors";
 import { RootState } from "../rootState";
 import { Entry, GroupingMode } from "../../types/models";
 import { resolvePhotoUri } from "../../storage/photoStorage";
@@ -210,5 +210,22 @@ describe("selectFeedSections with a tag filter", () => {
     const state = stateFrom([e1]);
 
     expect(selectFeedSections(state, null)).toEqual(selectFeedSections(state));
+  });
+});
+
+describe("selectLatestEntry", () => {
+  it("returns the entry with the most recent createdAt, regardless of insertion order", () => {
+    const e1 = entry("a", "2026-03-05T12:00:00.000Z");
+    const e2 = entry("b", "2026-03-05T14:00:00.000Z");
+    const e3 = entry("c", "2026-03-05T09:00:00.000Z");
+    const state = stateFrom([e1, e2, e3]);
+
+    expect(selectLatestEntry(state)?.id).toBe("b");
+  });
+
+  it("returns null when there are no entries", () => {
+    const state = stateFrom([]);
+
+    expect(selectLatestEntry(state)).toBeNull();
   });
 });

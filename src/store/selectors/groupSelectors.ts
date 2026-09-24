@@ -86,6 +86,13 @@ function groupEntriesWithinDay(
   return groups;
 }
 
+// The Days view's hero: your single most recent entry, independent of any
+// tag filter (the filter is Wall-only UI state, never applied to the hero).
+export const selectLatestEntry = createSelector(
+  [selectEntriesSortedByDate],
+  (sorted): Entry | null => sorted[sorted.length - 1] ?? null,
+);
+
 export const selectFeedSections = createSelector(
   [
     selectEntriesSortedByDate,
