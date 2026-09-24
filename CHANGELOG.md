@@ -18,6 +18,7 @@ All notable changes to this project are documented here. Format loosely follows
 - Tag filter rail no longer re-renders on every store update — it read tags
   through an unmemoized `Object.values` selector; it now uses the memoized
   `selectAllTags`.
+- Wall feed not rendering on switch from Days view
 
 ## [2.3.0] - 2026-09-24
 
