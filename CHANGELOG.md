@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [v1.4.1] - 2026-09-18
+
 ### Changed
 
 - Reformatted everything with prettier.
