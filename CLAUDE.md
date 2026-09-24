@@ -35,6 +35,7 @@ Specific pitfalls seen repeatedly in this project's history:
 When the user asks to "release" a new version (or says "release vX.Y.Z"), do this without
 asking them to re-explain it. Every release ships Android **and** iOS; the mechanics live in
 `scripts/release.mjs` (`npm run release -- …`) — use it, don't redo its steps by hand.
+`npm run release -- --help` documents every mode and option.
 
 1. Implement and commit the feature work first, as its own commit(s) — never bundled with
    the version bump — and make sure `CHANGELOG.md`'s `[Unreleased]` section describes it.
@@ -46,6 +47,11 @@ asking them to re-explain it. Every release ships Android **and** iOS; the mecha
    plus `--pause` if the user wants to smoke-test before publishing (always pause when the
    release changes native deps or build config), and `--ios-cloud` only if the local iOS
    build fails (it has before; that runs the iOS build on EAS cloud and downloads the .ipa).
+   Add `--upload-ios` when the user wants the build in App Store Connect/TestFlight: after
+   the GitHub release is published it uploads the .ipa locally with `xcrun altool` (no EAS
+   Submit queue). It needs `ASC_API_ISSUER_ID` set and the API key in
+   `~/.appstoreconnect/private_keys/`, both checked before building; retry a failed upload
+   alone with `--upload-ios-only`.
    The script: preflight (on `main`, clean, not behind `origin/main`, tag/release don't exist,
    `gh` authed) → `tsc` + `jest` → `release vX.Y.Z` commit (CHANGELOG + `package.json` +
    `app.config.js` only) → local Android build → local iOS build → `SHA256SUMS` → annotated
@@ -54,7 +60,7 @@ asking them to re-explain it. Every release ships Android **and** iOS; the mecha
    builds have succeeded.
 3. With `--pause`, it stops after the builds with everything in `releases/vX.Y.Z/`. Give the
    user a smoke-test plan for the arm64-v8a APK (and the .ipa), then after their go-ahead:
-   `npm run release -- X.Y.Z --publish`.
+   `npm run release -- X.Y.Z --publish` (plus `--upload-ios` if it was given before).
 4. If a build fails or the smoke test finds a bug: `npm run release -- X.Y.Z --abort` drops
    the unpushed release commit (and local tag); fix, commit, re-run from step 2. If the
    publish step fails partway (e.g. an upload), re-running `--publish` resumes — it reuses
