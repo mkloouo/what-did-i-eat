@@ -1,19 +1,28 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import { SLOT_LABELS } from "./timeSlots";
-import { CELL_SIZE, GUTTER, LABEL_WIDTH } from "./DayGridRow";
+import { computeCellSize, GUTTER, LABEL_WIDTH } from "./gridLayout";
 import { theme } from "../../theme/theme";
 
 // The pinned header above every day row, naming the five time-of-day slot
 // columns so they stay legible while the board scrolls (DaysBoard makes
-// this row sticky via FlatList's stickyHeaderIndices).
+// this row sticky via FlatList's stickyHeaderIndices). Uses the same
+// computeCellSize call as DayGridRow, with the same window width, so its
+// columns line up with every row's cells.
 export function SlotHeaderRow() {
+  const { width } = useWindowDimensions();
+  const cellSize = computeCellSize(width, theme.spacing.md);
+
   return (
     <View style={styles.row}>
       <View style={styles.labelCol} />
       <View style={styles.cells}>
         {SLOT_LABELS.map((slotLabel) => (
-          <Text key={slotLabel} style={styles.slot} numberOfLines={1}>
+          <Text
+            key={slotLabel}
+            style={[styles.slot, { width: cellSize }]}
+            numberOfLines={1}
+          >
             {slotLabel}
           </Text>
         ))}
@@ -41,7 +50,6 @@ const styles = StyleSheet.create({
   slot: {
     ...theme.typography.caption,
     color: theme.colors.graphite,
-    width: CELL_SIZE,
     textAlign: "center",
   },
 });

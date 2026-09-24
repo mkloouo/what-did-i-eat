@@ -1,13 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import { DaySection } from "../../store/selectors/groupSelectors";
 import { buildDayGrid } from "./dayGrid";
 import { DayGridCell } from "./DayGridCell";
+import { computeCellSize, GUTTER, LABEL_WIDTH } from "./gridLayout";
 import { theme } from "../../theme/theme";
-
-export const CELL_SIZE = 52;
-export const GUTTER = 8;
-export const LABEL_WIDTH = 64;
 
 type Props = {
   section: DaySection;
@@ -18,9 +15,14 @@ type Props = {
 // One day, one row, fixed height — it never grows for a busier day. Each of
 // the five slot cells shows its meal(s) as a density mosaic (DayGridCell);
 // tapping a cell jumps the Wall to that specific meal, since a cell always
-// maps to exactly one meal (or an ordered few, oldest tapped first).
+// maps to exactly one meal (or an ordered few, oldest tapped first). Cell
+// size comes from computeCellSize (gridLayout.ts) rather than a fixed
+// constant, so the row always fits the screen width instead of running
+// five fixed-~52dp cells off the right edge on a narrower phone.
 export function DayGridRow({ section, label, onPressCell }: Props) {
   const cells = buildDayGrid(section);
+  const { width } = useWindowDimensions();
+  const cellSize = computeCellSize(width, theme.spacing.md);
 
   return (
     <View style={styles.row}>
@@ -34,7 +36,7 @@ export function DayGridRow({ section, label, onPressCell }: Props) {
           <DayGridCell
             key={cell.slotIndex}
             cell={cell}
-            size={CELL_SIZE}
+            size={cellSize}
             onPress={() => {
               const target = cell.meals[0];
               if (target) onPressCell(target.id);

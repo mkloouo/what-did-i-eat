@@ -1,6 +1,7 @@
 import {
   dayKeyOf,
   dayLabel,
+  dayLabelShort,
   formatTime,
   formatFullDateTime,
   formatDuration,
@@ -44,6 +45,29 @@ describe("dayLabel", () => {
     expect(label).not.toBe("Today");
     expect(label).not.toBe("Yesterday");
     expect(label.length).toBeGreaterThan(0);
+  });
+});
+
+describe("dayLabelShort", () => {
+  const now = new Date(2026, 2, 5, 12, 0, 0);
+
+  it('labels today as "Today"', () => {
+    expect(dayLabelShort(dayKeyOf(now.toISOString()), now)).toBe("Today");
+  });
+
+  it('labels yesterday as "Yesterday"', () => {
+    const yesterday = new Date(2026, 2, 4, 9, 0, 0);
+    expect(dayLabelShort(dayKeyOf(yesterday.toISOString()), now)).toBe(
+      "Yesterday",
+    );
+  });
+
+  it("abbreviates the month for older days, unlike dayLabel's full month name", () => {
+    const older = new Date(2026, 1, 20, 9, 0, 0);
+    const key = dayKeyOf(older.toISOString());
+    const short = dayLabelShort(key, now);
+    const long = dayLabel(key, now);
+    expect(short.length).toBeLessThan(long.length);
   });
 });
 

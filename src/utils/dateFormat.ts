@@ -25,6 +25,29 @@ export function dayLabel(dayKey: string, now: Date = new Date()): string {
   });
 }
 
+// Same Today/Yesterday special-casing as dayLabel, but an abbreviated month
+// ("Sep 22" instead of "September 22") for older days — for callers with a
+// narrow, fixed-width label column, like the Days grid's day-label column,
+// where the full month name gets clipped.
+export function dayLabelShort(dayKey: string, now: Date = new Date()): string {
+  const todayKey = dayKeyOf(now.toISOString());
+
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const yesterdayKey = dayKeyOf(yesterday.toISOString());
+
+  if (dayKey === todayKey) return "Today";
+  if (dayKey === yesterdayKey) return "Yesterday";
+
+  const [year, month, day] = dayKey.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: date.getFullYear() === now.getFullYear() ? undefined : "numeric",
+  });
+}
+
 export function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString(undefined, {
     hour: "numeric",

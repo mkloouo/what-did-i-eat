@@ -2,7 +2,7 @@ import React from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { DaySection } from "../../store/selectors/groupSelectors";
 import { Entry } from "../../types/models";
-import { dayLabel } from "../../utils/dateFormat";
+import { dayLabelShort } from "../../utils/dateFormat";
 import { DayGridRow } from "./DayGridRow";
 import { SlotHeaderRow } from "./SlotHeaderRow";
 import { DaysHero } from "./DaysHero";
@@ -59,7 +59,7 @@ export function DaysBoard({
         return (
           <DayGridRow
             section={item.section}
-            label={dayLabel(item.section.dayKey)}
+            label={dayLabelShort(item.section.dayKey)}
             onPressCell={onPressCell}
           />
         );
