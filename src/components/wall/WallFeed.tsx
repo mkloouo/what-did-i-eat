@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   FlashList,
@@ -26,7 +26,6 @@ type Props = {
   dayKeys: string[];
   tagsById: Record<string, Tag>;
   wallColumns: number;
-  scrubberEnabled: boolean;
   onPressEntry: (entryId: string) => void;
   // Set by a Days-view cell tap asking to jump to one specific meal;
   // cleared via onScrolledToGroup once this feed has scrolled there.
@@ -39,7 +38,6 @@ export function WallFeed({
   dayKeys,
   tagsById,
   wallColumns,
-  scrubberEnabled,
   onPressEntry,
   pendingScrollGroupId,
   onScrolledToGroup,
@@ -115,10 +113,9 @@ export function WallFeed({
         initialScrollIndex={initialScrollIndex}
         style={styles.list}
         data={items}
-        // The custom Scrubber is the Wall's scroll indicator when it's
-        // on; the native one would just double up on the same edge.
-        // Falls back to the native one if the Scrubber's ever off.
-        showsVerticalScrollIndicator={!scrubberEnabled}
+        // The custom Scrubber is the Wall's scroll indicator; the native
+        // one would just double up on the same edge.
+        showsVerticalScrollIndicator={false}
         keyExtractor={(item) =>
           item.type === "day" ? `day-${item.dayKey}` : item.group.id
         }
@@ -135,13 +132,11 @@ export function WallFeed({
         // happened.
         maintainVisibleContentPosition={{ disabled: true }}
       />
-      {scrubberEnabled ? (
-        <Scrubber
-          dayKeys={dayKeys}
-          activeDayKey={activeDayKey}
-          onSelectDay={scrollToDay}
-        />
-      ) : null}
+      <Scrubber
+        dayKeys={dayKeys}
+        activeDayKey={activeDayKey}
+        onSelectDay={scrollToDay}
+      />
     </View>
   );
 }

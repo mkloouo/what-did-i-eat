@@ -1,4 +1,3 @@
-import React from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { DaySection } from "../../store/selectors/groupSelectors";
 import { Entry } from "../../types/models";

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { EntryGroup } from "../../store/selectors/groupSelectors";
 import { entryForPhotoIndex } from "../../utils/entryForPhotoIndex";

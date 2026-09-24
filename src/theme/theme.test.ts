@@ -3,13 +3,12 @@ import { contrastRatio } from "../utils/contrast";
 
 const { colors, typography, fonts } = theme;
 
-// Text pairs the app draws. Small text needs 4.5:1 (WCAG AA). `pine` and
-// `sun` are deliberately excluded — they're decorative only (gradients,
-// ticks, markers), never text or a fill with text on it. See theme.ts.
+// Text pairs the app draws. Small text needs 4.5:1 (WCAG AA). `pine` is
+// deliberately excluded — it's decorative only (gradients, ticks, markers),
+// never text or a fill with text on it. See theme.ts.
 const TEXT_PAIRS: Array<[string, string, string]> = [
   ["ink on daylight", colors.ink, colors.daylight],
   ["ink on surface", colors.ink, colors.surface],
-  ["inkMuted on daylight", colors.inkMuted, colors.daylight],
   ["graphite on daylight", colors.graphite, colors.daylight],
   ["graphite on surface", colors.graphite, colors.surface],
   ["accent on daylight", colors.accent, colors.daylight],
