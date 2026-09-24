@@ -30,38 +30,55 @@ Specific pitfalls seen repeatedly in this project's history:
   `rtk git status` (not bare `rtk status`) — a typo'd subcommand errors, it doesn't fall
   back to anything.
 
-## Android release process
+## Release process
 
-When the user asks to "release" a new Android version (or says "release vX.Y.Z"), do this
-without asking them to re-explain it:
+When the user asks to "release" a new version (or says "release vX.Y.Z"), do this without
+asking them to re-explain it. Every release ships Android **and** iOS; the mechanics live in
+`scripts/release.mjs` (`npm run release -- …`) — use it, don't redo its steps by hand.
 
 1. Implement and commit the feature work first, as its own commit(s) — never bundled with
-   the version bump.
-2. Move `CHANGELOG.md`'s `[Unreleased]` section content under a new `## [X.Y.Z] -
-   YYYY-MM-DD` heading (leave `[Unreleased]` empty above it, ready for the next round).
-   Bump the version string in both `package.json` and `app.config.js` (the `version` field
-   — this file replaced the old static `app.json`, see notes below) to the new `X.Y.Z`.
-   Commit `CHANGELOG.md` + these two files together, alone, with message `release vX.Y.Z`.
-3. Build the APK locally: `npx eas-cli build --platform android --profile production-apk
-   --local --non-interactive`. This takes several minutes (native Gradle build) — run it
-   with `run_in_background: true` on the Bash tool rather than blocking or polling. It
-   writes `build-<timestamp>.apk` into the repo root; note the exact filename from the
-   build's final "You can find the build artifacts in ..." line — don't guess it.
-4. `git tag vX.Y.Z` on the release commit, then `git push origin vX.Y.Z`.
-5. `gh release create vX.Y.Z build-<timestamp>.apk --title "vX.Y.Z" --notes "<1-2 sentence
-   summary of what shipped>"` — short and casual, matching the style of past releases
-   (check `gh release view v<previous> --json body -q .body` for tone if unsure).
-6. `git push origin main` last, pushing both the feature commit(s) and the release commit.
+   the version bump — and make sure `CHANGELOG.md`'s `[Unreleased]` section describes it.
+   The script refuses a dirty tree or an empty `[Unreleased]`.
+2. Write the GitHub release notes to a scratchpad file: a 1–2 sentence summary, short and
+   casual, matching past releases (`gh release view v<previous> --json body -q .body`). The
+   script appends a "which file to download" footer itself — don't write one.
+3. Run, with `run_in_background: true` (two native builds, well over 10 minutes):
+   `npm run release -- X.Y.Z --notes-file <notes> --co-author "<your Co-Authored-By value>"`
+   plus `--pause` if the user wants to smoke-test before publishing (always pause when the
+   release changes native deps or build config), and `--ios-cloud` only if the local iOS
+   build fails (it has before; that runs the iOS build on EAS cloud and downloads the .ipa).
+   The script: preflight (on `main`, clean, not behind `origin/main`, tag/release don't exist,
+   `gh` authed) → `tsc` + `jest` → `release vX.Y.Z` commit (CHANGELOG + `package.json` +
+   `app.config.js` only) → local Android build → local iOS build → `SHA256SUMS` → annotated
+   tag → `git push --atomic origin main vX.Y.Z` → draft GitHub release with all assets →
+   published. Nothing is pushed until both builds have succeeded.
+4. With `--pause`, it stops after the builds with everything in `releases/vX.Y.Z/`. Give the
+   user a smoke-test plan for the arm64-v8a APK (and the .ipa), then after their go-ahead:
+   `npm run release -- X.Y.Z --publish --notes-file <notes>`.
+5. If a build fails or the smoke test finds a bug: `npm run release -- X.Y.Z --abort` drops
+   the unpushed release commit (and local tag); fix, commit, re-run from step 3. If the
+   publish step fails partway (e.g. an upload), re-running `--publish` resumes — it reuses
+   the tag and refreshes the draft's assets.
 
 Notes:
 
-- `eas.json`'s `production-apk` profile (not `production`) is the one that emits an APK
-  (`android.buildType: apk`); `production` alone builds an AAB.
-- The built `build-*.apk` files are never committed to git — they're only ever attached as
-  GitHub release assets. Leftover ones in the working tree from past releases are harmless
-  clutter, not something to clean up unprompted.
+- Android ships as 5 APKs per release: one per ABI in `reactNativeArchitectures`
+  (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`) plus a universal one. That comes from
+  `plugins/withAbiSplits.js` (Gradle ABI splits), which `app.config.js` only applies when
+  `ANDROID_ABI_SPLITS=1` — set only on `eas.json`'s `production-apk` profile. With several
+  outputs the local EAS build writes a `.tar.gz`, which the script unpacks, checks (one split
+  per ABI of the universal APK, each holding only its own `lib/<abi>/`) and renames to
+  `what-did-i-eat-vX.Y.Z-<abi>.apk`. All splits share one versionCode — fine for sideloading.
+- Release builds run R8 + resource shrinking and compress native libs (`expo-build-properties`
+  in `app.config.js`). R8 can strip classes a library only reaches by reflection; a crash
+  that appears only in release builds is the first thing to suspect there.
+- `eas.json`'s `production-apk` profile (not `production`) is the one that emits APKs
+  (`android.buildType: apk`); `production` alone builds an AAB. iOS uses `production`.
+- Build output lands in the gitignored `releases/vX.Y.Z/` and is only ever attached to GitHub
+  releases. Leftover `build-*.apk`/`.ipa` files in the repo root from older releases are
+  harmless clutter, not something to clean up unprompted.
 - `appVersionSource` is `"remote"` in `eas.json`, so EAS manages the Android `versionCode`
-  itself (`production.autoIncrement: true`); the `app.config.js`/`package.json` version bump
+  and iOS `buildNumber` itself (`production.autoIncrement: true`); the `app.config.js`/`package.json` version bump
   is just the human-readable version string, not what EAS uses for versionCode.
 - `app.config.js` (not `app.json`) is the source of truth for Expo config — it's a dynamic
   config that reads `APP_VARIANT` from the environment. `eas.json` sets `APP_VARIANT` to
