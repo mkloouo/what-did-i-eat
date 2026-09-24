@@ -41,14 +41,18 @@ export const radii = {
 // One family name per weight: on Android a custom font's weight comes from its
 // family name, so styles must never combine these with fontWeight. `voice` is
 // the one place the user's own words appear (comments) — every other string
-// in the app speaks in the sans family.
+// in the app speaks in the sans family. Both families were chosen (over the
+// condensed IBM Plex Sans cut and Newsreader, respectively) specifically
+// because their official static files include Cyrillic glyphs — the earlier
+// choices had none, in any weight, so Cyrillic text fell back to the system
+// font mid-string.
 export const fonts = {
-  regular: "IBMPlexSansCondensed_400Regular",
-  medium: "IBMPlexSansCondensed_500Medium",
-  semibold: "IBMPlexSansCondensed_600SemiBold",
-  bold: "IBMPlexSansCondensed_700Bold",
-  voice: "Newsreader_400Regular",
-  voiceMedium: "Newsreader_500Medium",
+  regular: "IBMPlexSans_400Regular",
+  medium: "IBMPlexSans_500Medium",
+  semibold: "IBMPlexSans_600SemiBold",
+  bold: "IBMPlexSans_700Bold",
+  voice: "Lora_400Regular",
+  voiceMedium: "Lora_500Medium",
 } as const;
 
 export const typography = {
