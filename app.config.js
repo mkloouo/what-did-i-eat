@@ -84,6 +84,8 @@ module.exports = {
       ...(ABI_SPLITS ? ['./plugins/withAbiSplits'] : []),
     ],
     extra: {
+      // Read at runtime via expo-constants (src/utils/appVariant.ts).
+      appVariant: process.env.APP_VARIANT ?? 'production',
       eas: {
         projectId: '6b4cc56c-be5b-4e46-bc51-630d756403d8',
       },

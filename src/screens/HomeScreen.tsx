@@ -16,6 +16,7 @@ import { SegmentedControl } from "../components/SegmentedControl";
 import { TimelineView } from "../types/models";
 import { takePhoto } from "../camera/cameraService";
 import { theme } from "../theme/theme";
+import { DevMenuWord } from "../dev/DevMenuWord";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "Home">;
 
@@ -92,7 +93,12 @@ export function HomeScreen() {
         <View style={styles.empty}>
           <Text style={styles.emptyTitle}>Nothing here yet</Text>
           <Text style={styles.emptyBody}>
-            Photograph the next thing you eat.
+            Photograph the next{" "}
+            <DevMenuWord
+              word="thing"
+              onDataChanged={() => setActiveTagId(null)}
+            />{" "}
+            you eat.
           </Text>
         </View>
       ) : timelineView === "line" ? (
