@@ -5,7 +5,9 @@ import {
   TextInput,
   Pressable,
   ScrollView,
+  FlatList,
   StyleSheet,
+  useWindowDimensions,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -41,8 +43,10 @@ type Route = RouteProp<RootStackParamList, "EntryDetails">;
 export function EntryDetailsScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
-  const { entryId } = route.params;
+  const { entryId, photoIndex = 0 } = route.params;
   const insets = useSafeAreaInsets();
+  // The hero spans the screen edge to edge, so each page is one window wide.
+  const { width: heroWidth } = useWindowDimensions();
 
   const dispatch = useAppDispatch();
   const entry = useAppSelector((state) => state.entries[entryId]);
@@ -54,8 +58,9 @@ export function EntryDetailsScreen() {
     entry?.tagIds ?? [],
   );
   const [showTagPicker, setShowTagPicker] = useState(false);
-  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+  const [activePhotoIndex, setActivePhotoIndex] = useState(photoIndex);
   const scrollRef = useRef<ScrollView>(null);
+  const pagerRef = useRef<FlatList<string>>(null);
 
   // The built-in "scroll focused input into view" behavior doesn't
   // reliably reveal this input (last in a long, variable-height scroll
@@ -141,8 +146,15 @@ export function EntryDetailsScreen() {
     (tag) => !draftTagIds.includes(tag.id),
   );
   const photoUris = entry.photos.map((photo) => resolvePhotoUri(photo.uri));
-  const heroIndex = Math.min(activePhotoIndex, photoUris.length - 1);
-  const heroUri = photoUris[heroIndex];
+  const heroIndex = Math.max(
+    0,
+    Math.min(activePhotoIndex, photoUris.length - 1),
+  );
+
+  function showPhoto(index: number) {
+    setActivePhotoIndex(index);
+    pagerRef.current?.scrollToIndex({ index, animated: true });
+  }
 
   return (
     <KeyboardAvoidingView
@@ -184,20 +196,44 @@ export function EntryDetailsScreen() {
         style={styles.scroll}
         contentContainerStyle={styles.content}
       >
-        <Pressable
-          onPress={() =>
-            navigation.navigate("PhotoDetails", {
-              entryId: entry.id,
-              photoIndex: heroIndex,
-            })
+        <FlatList
+          ref={pagerRef}
+          // Remount on width change (rotation, iPad split view) so the
+          // pages and initial offset are laid out for the new width.
+          key={heroWidth}
+          data={photoUris}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          initialScrollIndex={heroIndex}
+          getItemLayout={(_, index) => ({
+            length: heroWidth,
+            offset: heroWidth * index,
+            index,
+          })}
+          keyExtractor={(uri, index) => uri + index}
+          onMomentumScrollEnd={(event) =>
+            setActivePhotoIndex(
+              Math.round(event.nativeEvent.contentOffset.x / heroWidth),
+            )
           }
-        >
-          <Image
-            source={{ uri: heroUri }}
-            style={styles.hero}
-            contentFit="cover"
-          />
-        </Pressable>
+          renderItem={({ item: uri, index }) => (
+            <Pressable
+              onPress={() =>
+                navigation.navigate("PhotoDetails", {
+                  entryId: entry.id,
+                  photoIndex: index,
+                })
+              }
+            >
+              <Image
+                source={{ uri }}
+                style={[styles.hero, { width: heroWidth }]}
+                contentFit="cover"
+              />
+            </Pressable>
+          )}
+        />
 
         {photoUris.length > 1 ? (
           <View style={styles.thumbSection}>
@@ -213,7 +249,7 @@ export function EntryDetailsScreen() {
               {photoUris.map((uri, index) => (
                 <Pressable
                   key={uri + index}
-                  onPress={() => setActivePhotoIndex(index)}
+                  onPress={() => showPhoto(index)}
                 >
                   <Image
                     source={{ uri }}

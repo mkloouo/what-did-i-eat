@@ -22,7 +22,7 @@ type Props = {
   joinsOlder: boolean;
   tagsById: Record<string, Tag>;
   wallColumns: number;
-  onPressEntry: (entryId: string) => void;
+  onPressEntry: (entryId: string, photoIndex?: number) => void;
 };
 
 // One entry on the Line: its time in the left gutter, a dot on the spine,
@@ -64,7 +64,7 @@ export function LineEntryRow({
           photosByEntry={[photos]}
           columns={wallColumns}
           cornerRadius={theme.radii.sm}
-          onPhotoPress={open}
+          onPhotoPress={(index) => onPressEntry(entry.id, index)}
         />
         {entry.comment ? (
           <Text style={styles.comment} numberOfLines={3}>
