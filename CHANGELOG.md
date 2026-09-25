@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-09-25
+
 ### Changed
 
 - The Wall is now the Line: a timeline where every entry has its own dot,

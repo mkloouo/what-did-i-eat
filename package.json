@@ -1,6 +1,6 @@
 {
   "name": "what-did-i-eat",
-  "version": "2.6.0",
+  "version": "3.0.0",
   "main": "index.ts",
   "dependencies": {
     "@expo-google-fonts/ibm-plex-sans": "^0.4.1",
