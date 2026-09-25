@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types";
 import { theme } from "../theme/theme";
-import { WallScreen } from "../screens/WallScreen";
+import { HomeScreen } from "../screens/HomeScreen";
 import { NewEntryScreen } from "../screens/NewEntryScreen";
 import { EntryDetailsScreen } from "../screens/EntryDetailsScreen";
 import { PhotoDetailsScreen } from "../screens/PhotoDetailsScreen";
@@ -44,7 +44,7 @@ export function RootNavigator() {
     >
       <Stack.Screen
         name="Home"
-        component={WallScreen}
+        component={HomeScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen

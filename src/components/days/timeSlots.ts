@@ -6,6 +6,11 @@ export const SLOT_LABELS = [
   "Late",
 ] as const;
 
+// What the Days header actually prints: its columns are ~50dp wide, which
+// cut the full names off mid-word ("Morni…", "After…"). The full names stay
+// as each header's accessibility label.
+export const SLOT_SHORT_LABELS = ["Morn", "Mid", "Aft", "Eve", "Late"] as const;
+
 export type SlotIndex = 0 | 1 | 2 | 3 | 4;
 
 // Placeholder bounds lifted from the round-2 mockup, not a locked decision
@@ -25,8 +30,4 @@ export function slotIndexForHour(hour: number): SlotIndex {
     if (hour >= start && hour < end) return i as SlotIndex;
   }
   return 4;
-}
-
-export function slotUpperBoundHour(slotIndex: SlotIndex): number | null {
-  return slotIndex === 4 ? null : SLOT_BOUNDS[slotIndex].end;
 }

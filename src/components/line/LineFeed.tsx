@@ -6,44 +6,43 @@ import {
   ListRenderItemInfo,
   ViewToken,
 } from "@shopify/flash-list";
-import { WallPiece } from "./WallPiece";
+import { LineEntryRow } from "./LineEntryRow";
+import { LineGap } from "./LineGap";
 import { DaySeam } from "./DaySeam";
 import { Scrubber } from "./Scrubber";
 import {
-  WallItem,
+  LineItem,
   firstItemIndexForDay,
-  firstItemIndexForGroup,
+  itemIndexForEntry,
   currentDayFromViewableItems,
-} from "../../utils/wallItems";
-// firstItemIndexForDay above still backs scrollToDay (the Scrubber's drag
-// target); the mount-time day jump it used to also serve was removed below —
-// the Days view's whole-row tap no longer exists, only its per-cell tap.
+  lineItemKey,
+} from "../../utils/lineItems";
 import { Tag } from "../../types/models";
 import { theme } from "../../theme/theme";
 
 type Props = {
-  items: WallItem[];
+  items: LineItem[];
   dayKeys: string[];
   tagsById: Record<string, Tag>;
   wallColumns: number;
   onPressEntry: (entryId: string) => void;
-  // Set by a Days-view cell tap asking to jump to one specific meal;
-  // cleared via onScrolledToGroup once this feed has scrolled there.
-  pendingScrollGroupId: string | null;
-  onScrolledToGroup: () => void;
+  // Set by a Days-view cell tap asking to jump to one specific entry;
+  // cleared via onScrolledToEntry once this feed has scrolled there.
+  pendingScrollEntryId: string | null;
+  onScrolledToEntry: () => void;
 };
 
-export function WallFeed({
+export function LineFeed({
   items,
   dayKeys,
   tagsById,
   wallColumns,
   onPressEntry,
-  pendingScrollGroupId,
-  onScrolledToGroup,
+  pendingScrollEntryId,
+  onScrolledToEntry,
 }: Props) {
   const [activeDayKey, setActiveDayKey] = useState<string | null>(null);
-  const listRef = useRef<FlashListRef<WallItem>>(null);
+  const listRef = useRef<FlashListRef<LineItem>>(null);
 
   function scrollToDay(dayKey: string) {
     const index = firstItemIndexForDay(items, dayKey);
@@ -69,22 +68,22 @@ export function WallFeed({
   // a scrollToIndex fired on mount lands before FlashList has measured
   // anything, and it never renders the rows at the new offset — the screen
   // stays blank until the user scrolls. Read once, at mount, so clearing
-  // pendingScrollGroupId below doesn't change what FlashList got.
+  // pendingScrollEntryId below doesn't change what FlashList got.
   const [initialScrollIndex] = useState(() => {
-    if (!pendingScrollGroupId) return undefined;
-    const index = firstItemIndexForGroup(items, pendingScrollGroupId);
+    if (!pendingScrollEntryId) return undefined;
+    const index = itemIndexForEntry(items, pendingScrollEntryId);
     return index >= 0 ? index : undefined;
   });
 
   useEffect(() => {
-    if (pendingScrollGroupId) onScrolledToGroup();
+    if (pendingScrollEntryId) onScrolledToEntry();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleViewableItemsChanged({
     viewableItems,
   }: {
-    viewableItems: ViewToken<WallItem>[];
+    viewableItems: ViewToken<LineItem>[];
   }) {
     const indices = viewableItems
       .map((token) => token.index)
@@ -92,13 +91,14 @@ export function WallFeed({
     setActiveDayKey(currentDayFromViewableItems(items, indices));
   }
 
-  function renderItem({ item }: ListRenderItemInfo<WallItem>) {
-    if (item.type === "day") {
-      return <DaySeam label={item.label} />;
-    }
+  function renderItem({ item }: ListRenderItemInfo<LineItem>) {
+    if (item.type === "day") return <DaySeam label={item.label} />;
+    if (item.type === "gap") return <LineGap label={item.label} />;
     return (
-      <WallPiece
-        group={item.group}
+      <LineEntryRow
+        entry={item.entry}
+        joinsNewer={item.joinsNewer}
+        joinsOlder={item.joinsOlder}
         tagsById={tagsById}
         wallColumns={wallColumns}
         onPressEntry={onPressEntry}
@@ -113,12 +113,10 @@ export function WallFeed({
         initialScrollIndex={initialScrollIndex}
         style={styles.list}
         data={items}
-        // The custom Scrubber is the Wall's scroll indicator; the native
+        // The custom Scrubber is the Line's scroll indicator; the native
         // one would just double up on the same edge.
         showsVerticalScrollIndicator={false}
-        keyExtractor={(item) =>
-          item.type === "day" ? `day-${item.dayKey}` : item.group.id
-        }
+        keyExtractor={lineItemKey}
         getItemType={(item) => item.type}
         renderItem={renderItem}
         onViewableItemsChanged={handleViewableItemsChanged}

@@ -5,6 +5,29 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Changed
+
+- The Wall is now the Line: a timeline where every entry has its own dot,
+  with its time on the left and its own photos, note and tags right next to
+  it. No more rows of times and notes that don't say which photo they
+  belong to. Entries within an hour of each other share one line; a longer
+  gap breaks it and says how long it was ("1 h 53 m earlier"). The
+  "Photos per row" setting still applies.
+- Days places every entry in the Morning / Midday / Afternoon / Evening /
+  Late cell of its own time, so evening food no longer ends up under
+  Afternoon (or a whole day under one cell). Tapping a cell jumps to that
+  time on the Line.
+- Days column headers are shortened (Morn, Mid, Aft, Eve, Late) so they
+  fit instead of being cut off.
+- The capture button now says "Add a new one".
+
+### Removed
+
+- The "What counts as one meal" and "Merge photos taken within" settings.
+  Nothing is merged any more, so they had nothing left to control.
+- The latest-entry banner at the top of Days; the grid now starts right
+  under the tag filter.
+
 ## [2.6.0] - 2026-09-24
 
 ### Changed

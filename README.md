@@ -22,24 +22,23 @@ in my phone's gallery, and I had nowhere to write what the meal actually was. So
 does three things:
 
 - keeps your food photos in their own place, apart from your gallery
-- groups them into meals and days automatically
-- lets you add a note and tags to each meal
+- lays them out on a timeline and by time of day automatically
+- lets you add a note and tags to each entry
 
 ## What it does
 
-- **The Wall.** Your home screen is one scrolling wall of photos. Photos taken close
-  together are grouped into one meal automatically. Each meal shows its time, your note
-  and its tags.
+- **The Line.** Your home screen is a timeline. Each entry sits on its own dot with its
+  time, its photos, your note and its tags, so every word stays next to the photo it's
+  about. Entries close together in time share one line; a long gap breaks it and says how
+  long it was.
 - **Days.** Switch to Days to see one row per day, with photos placed under Morning,
   Midday, Afternoon, Evening or Late. It shows your eating patterns at a glance. Tap a cell
-  to jump to that meal on the Wall.
+  to jump to that time on the Line.
 - **Quick logging.** Take a photo or pick some from your library, add tags like *Home
   cooked* or *Sweet treat*, write a line if you want, and save.
-- **Tags and filters.** Filter the Wall by tag, and edit the tag list to fit how you eat.
+- **Tags and filters.** Filter the Line by tag, and edit the tag list to fit how you eat.
 - **Backfill old meals.** When you import from your gallery, the app can date the entry
   from the photo itself.
-- **Your choice of grouping.** Decide how close together photos need to be to count as
-  one meal, or group by whole day instead.
 
 <p align="center">
   <img src="docs/screenshots/settings.jpg" alt="Settings: what counts as one meal, merge window slider, photos per row, use the photo's own date, save location" width="220">

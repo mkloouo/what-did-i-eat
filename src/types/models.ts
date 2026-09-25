@@ -18,13 +18,13 @@ export type Entry = {
   tagIds?: string[];
 };
 
-export type GroupingMode = "rolling" | "day";
-
-export type TimelineView = "wall" | "days";
+// Versions before the Line replaced the Wall stored "wall" here; readers
+// treat anything other than "days" as "line", so no migration is needed.
+export type TimelineView = "line" | "days";
 
 export type Settings = {
-  groupingMode: GroupingMode;
-  rollingWindowMinutes: number;
+  // Photos per row on the Line. Keeps its Wall-era key so the value people
+  // already chose survives the rename.
   wallColumns: number;
   inferDateFromFirstImportedPhoto: boolean;
   captureLocation: boolean;

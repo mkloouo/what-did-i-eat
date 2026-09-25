@@ -5,7 +5,7 @@ type Props = {
   label: string;
 };
 
-// A day's own name and a hairline — nothing else. No count: the Wall never
+// A day's own name and a hairline — nothing else. No count: the Line never
 // tells you how many meals you logged, only which day you're looking at.
 export function DaySeam({ label }: Props) {
   return (
