@@ -3,6 +3,7 @@ import reducer, {
   updateEntryComment,
   updateEntryTags,
   deleteEntry,
+  replaceEntryPhoto,
 } from "./entriesSlice";
 import { Entry } from "../types/models";
 
@@ -66,5 +67,46 @@ describe("entriesSlice", () => {
     const initial = { e1: sampleEntry };
     const state = reducer(initial, deleteEntry({ id: "e1" }));
     expect(state).toEqual({});
+  });
+
+  it("replaceEntryPhoto swaps the photo in place, keeping its position", () => {
+    const initial = {
+      e1: {
+        ...sampleEntry,
+        photos: [
+          { id: "p1", uri: "photos/p1.jpg" },
+          { id: "p2", uri: "photos/p2.jpg" },
+        ],
+      },
+    };
+    const state = reducer(
+      initial,
+      replaceEntryPhoto({
+        entryId: "e1",
+        photoId: "p1",
+        photo: { id: "p3", uri: "photos/p3.jpg" },
+      }),
+    );
+    expect(state.e1.photos).toEqual([
+      { id: "p3", uri: "photos/p3.jpg" },
+      { id: "p2", uri: "photos/p2.jpg" },
+    ]);
+  });
+
+  it("replaceEntryPhoto is a no-op for an unknown entry or photo", () => {
+    const initial = { e1: sampleEntry };
+    const photo = { id: "p9", uri: "photos/p9.jpg" };
+    expect(
+      reducer(
+        initial,
+        replaceEntryPhoto({ entryId: "missing", photoId: "p1", photo }),
+      ),
+    ).toEqual(initial);
+    expect(
+      reducer(
+        initial,
+        replaceEntryPhoto({ entryId: "e1", photoId: "missing", photo }),
+      ),
+    ).toEqual(initial);
   });
 });

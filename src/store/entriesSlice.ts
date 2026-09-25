@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Entry } from "../types/models";
+import { Entry, Photo } from "../types/models";
 
 export type EntriesState = Record<string, Entry>;
 
@@ -30,12 +30,28 @@ const entriesSlice = createSlice({
         entry.tagIds = action.payload.tagIds;
       }
     },
+    replaceEntryPhoto(
+      state,
+      action: PayloadAction<{ entryId: string; photoId: string; photo: Photo }>,
+    ) {
+      const photos = state[action.payload.entryId]?.photos;
+      const index =
+        photos?.findIndex((photo) => photo.id === action.payload.photoId) ?? -1;
+      if (photos && index !== -1) {
+        photos[index] = action.payload.photo;
+      }
+    },
     deleteEntry(state, action: PayloadAction<{ id: string }>) {
       delete state[action.payload.id];
     },
   },
 });
 
-export const { addEntry, updateEntryComment, updateEntryTags, deleteEntry } =
-  entriesSlice.actions;
+export const {
+  addEntry,
+  updateEntryComment,
+  updateEntryTags,
+  replaceEntryPhoto,
+  deleteEntry,
+} = entriesSlice.actions;
 export default entriesSlice.reducer;
