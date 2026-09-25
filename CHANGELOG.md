@@ -13,6 +13,15 @@ All notable changes to this project are documented here. Format loosely follows
 - The privacy policy now mentions that place names are looked up by your
   phone's built-in location service (Apple or Google).
 
+### Developer
+
+These don't change anything in the app you install.
+
+- Development builds have a hidden menu that fills the app with a few days
+  of sample meals from picked photos, for App Store screenshots.
+- New npm scripts for prebuilding, building release-mode development builds
+  on simulators and emulators, and taking simulator screenshots.
+
 ## [3.1.0] - 2026-09-25
 
 ### Added
