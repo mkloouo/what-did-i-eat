@@ -5,6 +5,12 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Added
+
+- Crop photos to a square: open any photo, while adding an entry or in one
+  you've already saved, and tap Crop.
+- Add new matching splash screen and icon.
+
 ## [3.0.0] - 2026-09-25
 
 ### Changed

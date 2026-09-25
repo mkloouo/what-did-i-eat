@@ -31,6 +31,7 @@ import {
 } from "../storage/photoStorage";
 import { captureCurrentLocation } from "../location/locationService";
 import { takePhoto } from "../camera/cameraService";
+import { cropPhotoSquare } from "../camera/cropService";
 import { Photo } from "../types/models";
 import { Button } from "../components/photoLayouts/Button";
 import { PhotoThumbnail } from "../components/PhotoThumbnail";
@@ -237,6 +238,21 @@ export function NewEntryScreen() {
     setPhotos((current) => current.filter((p) => p.id !== id));
   }
 
+  async function handleCropPhoto(photo: Photo) {
+    try {
+      const cropped = await cropPhotoSquare(photo);
+      if (!cropped) return;
+      setPhotos((current) =>
+        current.map((p) => (p.id === photo.id ? cropped : p)),
+      );
+      deletePhotoFile(photo.uri).catch(() => {
+        // Best-effort cleanup of the uncropped file; nothing to do if it fails.
+      });
+    } catch {
+      Alert.alert("Could not crop photo", "Please try again.");
+    }
+  }
+
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const closeViewer = () => setViewerIndex(null);
 
@@ -398,22 +414,30 @@ export function NewEntryScreen() {
                     <Text style={styles.viewerTopBarButtonText}>Close</Text>
                   </Pressable>
                   {photo ? (
-                    <Pressable
-                      onPress={() => {
-                        removePhoto(photo.id);
-                        closeViewer();
-                      }}
-                      style={styles.viewerTopBarButton}
-                    >
-                      <Text
-                        style={[
-                          styles.viewerTopBarButtonText,
-                          styles.viewerRemoveText,
-                        ]}
+                    <View style={styles.viewerTopBarActions}>
+                      <Pressable
+                        onPress={() => handleCropPhoto(photo)}
+                        style={styles.viewerTopBarButton}
                       >
-                        Remove
-                      </Text>
-                    </Pressable>
+                        <Text style={styles.viewerTopBarButtonText}>Crop</Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={() => {
+                          removePhoto(photo.id);
+                          closeViewer();
+                        }}
+                        style={styles.viewerTopBarButton}
+                      >
+                        <Text
+                          style={[
+                            styles.viewerTopBarButtonText,
+                            styles.viewerRemoveText,
+                          ]}
+                        >
+                          Remove
+                        </Text>
+                      </Pressable>
+                    </View>
                   ) : null}
                 </View>
               );
@@ -525,6 +549,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: theme.spacing.md,
+  },
+  viewerTopBarActions: {
+    flexDirection: "row",
+    gap: theme.spacing.sm,
   },
   viewerTopBarButton: {
     padding: theme.spacing.sm,

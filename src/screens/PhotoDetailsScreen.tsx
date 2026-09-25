@@ -1,10 +1,13 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, Alert } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
-import { useAppSelector } from "../store/hooks";
-import { resolvePhotoUri } from "../storage/photoStorage";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { replaceEntryPhoto } from "../store/entriesSlice";
+import { deletePhotoFile, resolvePhotoUri } from "../storage/photoStorage";
+import { cropPhotoSquare } from "../camera/cropService";
+import { Photo } from "../types/models";
 import { formatFullDateTime } from "../utils/dateFormat";
 import { Button } from "../components/photoLayouts/Button";
 import { PaginationDots } from "../components/PaginationDots";
@@ -21,6 +24,22 @@ export function PhotoDetailsScreen() {
 
   const entry = useAppSelector((state) => state.entries[entryId]);
   const insets = useSafeAreaInsets();
+  const dispatch = useAppDispatch();
+
+  async function handleCropPhoto(photo: Photo) {
+    try {
+      const cropped = await cropPhotoSquare(photo);
+      if (!cropped) return;
+      dispatch(
+        replaceEntryPhoto({ entryId, photoId: photo.id, photo: cropped }),
+      );
+      deletePhotoFile(photo.uri).catch(() => {
+        // Best-effort cleanup of the uncropped file; nothing to do if it fails.
+      });
+    } catch {
+      Alert.alert("Could not crop photo", "Please try again.");
+    }
+  }
 
   if (!entry) {
     return (
@@ -43,16 +62,27 @@ export function PhotoDetailsScreen() {
       }))}
       initialIndex={photoIndex}
       onRequestClose={() => navigation.goBack()}
-      renderHeader={() => (
-        <View style={[styles.topBar, { paddingTop: insets.top }]}>
-          <Pressable
-            onPress={() => navigation.goBack()}
-            style={styles.topBarButton}
-          >
-            <Text style={styles.topBarButtonText}>Close</Text>
-          </Pressable>
-        </View>
-      )}
+      renderHeader={(imageIndex) => {
+        const photo = entry.photos[imageIndex];
+        return (
+          <View style={[styles.topBar, { paddingTop: insets.top }]}>
+            <Pressable
+              onPress={() => navigation.goBack()}
+              style={styles.topBarButton}
+            >
+              <Text style={styles.topBarButtonText}>Close</Text>
+            </Pressable>
+            {photo ? (
+              <Pressable
+                onPress={() => handleCropPhoto(photo)}
+                style={styles.topBarButton}
+              >
+                <Text style={styles.topBarButtonText}>Crop</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        );
+      }}
       renderFooter={(imageIndex) => (
         <View
           style={[

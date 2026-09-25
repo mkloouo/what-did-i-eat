@@ -24,9 +24,8 @@ module.exports = {
     android: {
       package: IS_DEV ? `${BASE_BUNDLE_ID}.dev` : BASE_BUNDLE_ID,
       adaptiveIcon: {
-        backgroundColor: '#C9E6EE',
+        backgroundColor: '#FCF5E4',
         foregroundImage: './assets/android-icon-foreground.png',
-        backgroundImage: './assets/android-icon-background.png',
         monochromeImage: './assets/android-icon-monochrome.png',
       },
       predictiveBackGestureEnabled: false,
@@ -44,7 +43,14 @@ module.exports = {
         'expo-splash-screen',
         {
           backgroundColor: '#FFFCF3',
+          // Android 12+ masks the splash image to a 192dp circle inside a 288dp canvas,
+          // so it gets the icon art; iOS has no such mask and shows the full poster.
           image: './assets/splash-icon.png',
+          imageWidth: 150,
+          ios: {
+            image: './assets/splash-poster.png',
+            imageWidth: 330,
+          },
         },
       ],
       [
