@@ -1,4 +1,4 @@
-import { slotIndexForHour, slotUpperBoundHour, SLOT_LABELS } from "./timeSlots";
+import { slotIndexForHour, SLOT_LABELS, SLOT_SHORT_LABELS } from "./timeSlots";
 
 describe("slotIndexForHour", () => {
   it("names five slots in the spec's order", () => {
@@ -57,15 +57,8 @@ describe("slotIndexForHour", () => {
   });
 });
 
-describe("slotUpperBoundHour", () => {
-  it("returns each non-Late slot's own closing hour", () => {
-    expect(slotUpperBoundHour(0)).toBe(8.5);
-    expect(slotUpperBoundHour(1)).toBe(11.5);
-    expect(slotUpperBoundHour(2)).toBe(16.5);
-    expect(slotUpperBoundHour(3)).toBe(21.5);
-  });
-
-  it("returns null for Late, which wraps and has no own upper boundary", () => {
-    expect(slotUpperBoundHour(4)).toBeNull();
+describe("SLOT_SHORT_LABELS", () => {
+  it("has one short header label per slot", () => {
+    expect(SLOT_SHORT_LABELS).toHaveLength(SLOT_LABELS.length);
   });
 });

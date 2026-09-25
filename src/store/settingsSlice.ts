@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { GroupingMode, Settings } from "../types/models";
+import { Settings } from "../types/models";
 
 const MIN_WALL_COLUMNS = 3;
 const MAX_WALL_COLUMNS = 10;
@@ -9,8 +9,6 @@ function clampWallColumns(value: number): number {
 }
 
 const initialState: Settings = {
-  groupingMode: "rolling",
-  rollingWindowMinutes: 60,
   wallColumns: 4,
   inferDateFromFirstImportedPhoto: false,
   captureLocation: true,
@@ -20,12 +18,6 @@ const settingsSlice = createSlice({
   name: "settings",
   initialState,
   reducers: {
-    setGroupingMode(state, action: PayloadAction<GroupingMode>) {
-      state.groupingMode = action.payload;
-    },
-    setRollingWindowMinutes(state, action: PayloadAction<number>) {
-      state.rollingWindowMinutes = action.payload;
-    },
     setWallColumns(state, action: PayloadAction<number>) {
       state.wallColumns = clampWallColumns(action.payload);
     },
@@ -39,8 +31,6 @@ const settingsSlice = createSlice({
 });
 
 export const {
-  setGroupingMode,
-  setRollingWindowMinutes,
   setWallColumns,
   setInferDateFromFirstImportedPhoto,
   setCaptureLocation,

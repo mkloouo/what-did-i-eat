@@ -3,7 +3,7 @@ import { TimelineView } from "../types/models";
 
 export type AppMetaState = {
   hasSeededDefaultTags: boolean;
-  // Home's Wall/Days toggle. Not a Settings row (the spec keeps Settings at
+  // Home's Line/Days toggle. Not a Settings row (the spec keeps Settings at
   // exactly five), so it lives here like other persisted UI state that
   // isn't a real user-facing setting.
   timelineView: TimelineView;
@@ -11,7 +11,7 @@ export type AppMetaState = {
 
 const initialState: AppMetaState = {
   hasSeededDefaultTags: false,
-  timelineView: "wall",
+  timelineView: "line",
 };
 
 const appMetaSlice = createSlice({

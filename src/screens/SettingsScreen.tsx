@@ -13,27 +13,17 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import {
-  setGroupingMode,
-  setRollingWindowMinutes,
   setWallColumns,
   setInferDateFromFirstImportedPhoto,
   setCaptureLocation,
 } from "../store/settingsSlice";
-import { SegmentedControl } from "../components/SegmentedControl";
 import { theme } from "../theme/theme";
-import { GroupingMode } from "../types/models";
-import { formatDuration } from "../utils/dateFormat";
-import { MergeWindowPreview } from "../components/settings/MergeWindowPreview";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "Settings">;
 
 export function SettingsScreen() {
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
-  const groupingMode = useAppSelector((state) => state.settings.groupingMode);
-  const rollingWindowMinutes = useAppSelector(
-    (state) => state.settings.rollingWindowMinutes,
-  );
   const wallColumns = useAppSelector((state) => state.settings.wallColumns);
   const inferDateFromFirstImportedPhoto = useAppSelector(
     (state) => state.settings.inferDateFromFirstImportedPhoto,
@@ -44,37 +34,7 @@ export function SettingsScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.label}>What counts as one meal</Text>
-      <SegmentedControl
-        value={groupingMode}
-        options={[
-          { value: "rolling", label: "Photos close in time" },
-          { value: "day", label: "A whole day" },
-        ]}
-        onChange={(value) => dispatch(setGroupingMode(value as GroupingMode))}
-      />
-
-      {groupingMode === "rolling" ? (
-        <View style={styles.sliderRow}>
-          <Text style={styles.sliderLabel}>
-            Merge photos taken within: {formatDuration(rollingWindowMinutes)}
-          </Text>
-          <Slider
-            minimumValue={30}
-            maximumValue={240}
-            step={15}
-            value={rollingWindowMinutes}
-            minimumTrackTintColor={theme.colors.accent}
-            maximumTrackTintColor={theme.colors.graphite}
-            onValueChange={(value) => dispatch(setRollingWindowMinutes(value))}
-          />
-          <MergeWindowPreview rollingWindowMinutes={rollingWindowMinutes} />
-        </View>
-      ) : null}
-
-      <Text style={[styles.label, styles.secondLabel]}>
-        Photos per row: {wallColumns}
-      </Text>
+      <Text style={styles.label}>Photos per row: {wallColumns}</Text>
       <Slider
         minimumValue={3}
         maximumValue={10}
@@ -148,17 +108,6 @@ const styles = StyleSheet.create({
     ...theme.typography.caption,
     color: theme.colors.graphite,
     marginBottom: theme.spacing.sm,
-  },
-  secondLabel: {
-    marginTop: theme.spacing.lg,
-  },
-  sliderRow: {
-    marginTop: theme.spacing.md,
-  },
-  sliderLabel: {
-    ...theme.typography.body,
-    color: theme.colors.ink,
-    marginBottom: theme.spacing.xs,
   },
   toggleRow: {
     flexDirection: "row",

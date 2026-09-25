@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
-import { SLOT_LABELS } from "./timeSlots";
+import { SLOT_LABELS, SLOT_SHORT_LABELS } from "./timeSlots";
 import { computeCellSize, GUTTER, LABEL_WIDTH } from "./gridLayout";
 import { theme } from "../../theme/theme";
 
@@ -16,13 +16,14 @@ export function SlotHeaderRow() {
     <View style={styles.row}>
       <View style={styles.labelCol} />
       <View style={styles.cells}>
-        {SLOT_LABELS.map((slotLabel) => (
+        {SLOT_SHORT_LABELS.map((shortLabel, index) => (
           <Text
-            key={slotLabel}
+            key={shortLabel}
             style={[styles.slot, { width: cellSize }]}
             numberOfLines={1}
+            accessibilityLabel={SLOT_LABELS[index]}
           >
-            {slotLabel}
+            {shortLabel}
           </Text>
         ))}
       </View>

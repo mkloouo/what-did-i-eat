@@ -1,61 +1,44 @@
-import { DaySection, EntryGroup } from "../../store/selectors/groupSelectors";
+import { DaySection } from "../../store/selectors/feedSelectors";
+import { Entry } from "../../types/models";
 import { minuteOfDay } from "../../utils/dateFormat";
-import { slotIndexForHour, slotUpperBoundHour, SlotIndex } from "./timeSlots";
+import { slotIndexForHour, SlotIndex } from "./timeSlots";
 
 export type SlotCell = {
   slotIndex: SlotIndex;
-  meals: EntryGroup[];
+  // Oldest first.
+  entries: Entry[];
   photoCount: number;
-  hasSpillover: boolean;
 };
 
-function hourOf(iso: string): number {
-  return minuteOfDay(iso) / 60;
-}
-
-function mealHasSpillover(group: EntryGroup, slotIndex: SlotIndex): boolean {
-  const upper = slotUpperBoundHour(slotIndex);
-  if (upper === null) return false;
-  return hourOf(group.timeTo) > upper;
-}
-
-function photoCountOf(group: EntryGroup): number {
-  return group.photosByEntry.reduce((sum, photos) => sum + photos.length, 0);
-}
-
-// One row's worth of data: the day's groups bucketed into the five
-// time-of-day slots by `slotIndexForHour` on each meal's *start* time, so a
-// long sitting never splits across two cells. `section.groups` arrives
+// One row's worth of data: the day's entries bucketed into the five
+// time-of-day slots, each by its own time — so what a cell shows never
+// depends on how close together entries were. `section.entries` arrives
 // newest-first from selectFeedSections; iterating a reversed copy keeps
-// `meals` (and, via cellPhotos, every photo) in oldest-first order per cell.
+// each cell's entries (and, via cellPhotos, every photo) oldest-first.
 export function buildDayGrid(section: DaySection): SlotCell[] {
   const cells: SlotCell[] = [0, 1, 2, 3, 4].map((slotIndex) => ({
     slotIndex: slotIndex as SlotIndex,
-    meals: [],
+    entries: [],
     photoCount: 0,
-    hasSpillover: false,
   }));
 
-  const oldestFirst = [...section.groups].reverse();
-  for (const group of oldestFirst) {
-    const slotIndex = slotIndexForHour(hourOf(group.timeFrom));
-    const cell = cells[slotIndex];
-    cell.meals.push(group);
-    cell.photoCount += photoCountOf(group);
-    if (mealHasSpillover(group, slotIndex)) cell.hasSpillover = true;
+  for (const entry of [...section.entries].reverse()) {
+    const cell = cells[slotIndexForHour(minuteOfDay(entry.createdAt) / 60)];
+    cell.entries.push(entry);
+    cell.photoCount += entry.photos.length;
   }
 
   return cells;
 }
 
-// Every photo across a cell's meal(s), oldest-first — the order the density
-// mosaic tiles them in.
+// Every photo across a cell's entries, oldest-first — the order the density
+// mosaic tiles them in. Stored (relative) paths; the cell resolves them.
 export function cellPhotos(cell: SlotCell): string[] {
-  const photos: string[] = [];
-  for (const group of cell.meals) {
-    for (let i = group.entries.length - 1; i >= 0; i--) {
-      photos.push(...group.photosByEntry[i]);
-    }
-  }
-  return photos;
+  return cell.entries.flatMap((entry) => entry.photos.map((p) => p.uri));
+}
+
+// Where a cell tap lands on the Line: the slot's newest entry, which the
+// Line (newest first) shows at the top of the slot, with the rest below it.
+export function cellTargetEntryId(cell: SlotCell): string | null {
+  return cell.entries[cell.entries.length - 1]?.id ?? null;
 }

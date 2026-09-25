@@ -6,14 +6,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { RootStackParamList } from "../navigation/types";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
-import {
-  selectFeedSections,
-  selectLatestEntry,
-} from "../store/selectors/groupSelectors";
+import { selectFeedSections } from "../store/selectors/feedSelectors";
 import { setTimelineView } from "../store/appMetaSlice";
-import { buildWallItems } from "../utils/wallItems";
-import { WallFeed } from "../components/wall/WallFeed";
-import { TagFilterRail } from "../components/wall/TagFilterRail";
+import { buildLineItems } from "../utils/lineItems";
+import { LineFeed } from "../components/line/LineFeed";
+import { TagFilterRail } from "../components/line/TagFilterRail";
 import { DaysBoard } from "../components/days/DaysBoard";
 import { SegmentedControl } from "../components/SegmentedControl";
 import { TimelineView } from "../types/models";
@@ -22,34 +19,35 @@ import { theme } from "../theme/theme";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "Home">;
 
-export function WallScreen() {
+export function HomeScreen() {
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
   const [activeTagId, setActiveTagId] = useState<string | null>(null);
-  const [pendingScrollGroupId, setPendingScrollGroupId] = useState<
+  const [pendingScrollEntryId, setPendingScrollEntryId] = useState<
     string | null
   >(null);
 
   const sections = useAppSelector((state) =>
     selectFeedSections(state, activeTagId),
   );
-  const latestEntry = useAppSelector(selectLatestEntry);
   const tagsById = useAppSelector((state) => state.tags);
   const wallColumns = useAppSelector((state) => state.settings.wallColumns);
-  const timelineView = useAppSelector(
-    (state) => state.appMeta.timelineView ?? "wall",
+  // Anything but "days" is the Line — including "wall", which versions
+  // before the Line replaced the Wall persisted here.
+  const timelineView: TimelineView = useAppSelector((state) =>
+    state.appMeta.timelineView === "days" ? "days" : "line",
   );
 
-  const items = useMemo(() => buildWallItems(sections), [sections]);
+  const items = useMemo(() => buildLineItems(sections), [sections]);
   const dayKeys = useMemo(
     () => sections.map((section) => section.dayKey),
     [sections],
   );
 
-  function goToWallMeal(groupId: string) {
-    setPendingScrollGroupId(groupId);
-    dispatch(setTimelineView("wall"));
+  function goToLineEntry(entryId: string) {
+    setPendingScrollEntryId(entryId);
+    dispatch(setTimelineView("line"));
   }
 
   return (
@@ -65,7 +63,7 @@ export function WallScreen() {
             <SegmentedControl
               value={timelineView}
               options={[
-                { value: "wall", label: "Wall" },
+                { value: "line", label: "Line" },
                 { value: "days", label: "Days" },
               ]}
               onChange={(value) =>
@@ -92,15 +90,13 @@ export function WallScreen() {
 
       {sections.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>
-            Nothing {timelineView === "wall" ? "on the wall" : "here"} yet
-          </Text>
+          <Text style={styles.emptyTitle}>Nothing here yet</Text>
           <Text style={styles.emptyBody}>
             Photograph the next thing you eat.
           </Text>
         </View>
-      ) : timelineView === "wall" ? (
-        <WallFeed
+      ) : timelineView === "line" ? (
+        <LineFeed
           items={items}
           dayKeys={dayKeys}
           tagsById={tagsById}
@@ -108,18 +104,11 @@ export function WallScreen() {
           onPressEntry={(entryId) =>
             navigation.navigate("EntryDetails", { entryId })
           }
-          pendingScrollGroupId={pendingScrollGroupId}
-          onScrolledToGroup={() => setPendingScrollGroupId(null)}
+          pendingScrollEntryId={pendingScrollEntryId}
+          onScrolledToEntry={() => setPendingScrollEntryId(null)}
         />
       ) : (
-        <DaysBoard
-          sections={sections}
-          latestEntry={latestEntry}
-          onPressCell={goToWallMeal}
-          onPressEntry={(entryId) =>
-            navigation.navigate("EntryDetails", { entryId })
-          }
-        />
+        <DaysBoard sections={sections} onPressCell={goToLineEntry} />
       )}
 
       <View
@@ -137,7 +126,7 @@ export function WallScreen() {
             size={17}
             color={theme.colors.daylight}
           />
-          <Text style={styles.captureLabel}>Hang a new one</Text>
+          <Text style={styles.captureLabel}>Add a new one</Text>
         </Pressable>
         <Pressable
           onPress={() =>
