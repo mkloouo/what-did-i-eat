@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [3.3.0] - 2026-09-25
+
 ### Added
 
 - Swipe left and right through an entry's photos on its details screen.
