@@ -4,6 +4,7 @@ import reducer, {
   updateEntryTags,
   deleteEntry,
   replaceEntryPhoto,
+  clearEntries,
 } from "./entriesSlice";
 import { Entry } from "../types/models";
 
@@ -108,5 +109,10 @@ describe("entriesSlice", () => {
         replaceEntryPhoto({ entryId: "e1", photoId: "missing", photo }),
       ),
     ).toEqual(initial);
+  });
+
+  it("clearEntries removes every entry", () => {
+    const initial = { e1: sampleEntry, e2: { ...sampleEntry, id: "e2" } };
+    expect(reducer(initial, clearEntries())).toEqual({});
   });
 });

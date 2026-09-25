@@ -44,6 +44,9 @@ const entriesSlice = createSlice({
     deleteEntry(state, action: PayloadAction<{ id: string }>) {
       delete state[action.payload.id];
     },
+    clearEntries() {
+      return {};
+    },
   },
 });
 
@@ -53,5 +56,6 @@ export const {
   updateEntryTags,
   replaceEntryPhoto,
   deleteEntry,
+  clearEntries,
 } = entriesSlice.actions;
 export default entriesSlice.reducer;
