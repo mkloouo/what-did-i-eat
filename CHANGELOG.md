@@ -12,6 +12,8 @@ All notable changes to this project are documented here. Format loosely follows
   access it never used.
 - The privacy policy now mentions that place names are looked up by your
   phone's built-in location service (Apple or Google).
+- On iPad, Days now spans the whole screen instead of staying phone-sized
+  in the corner.
 
 ### Developer
 
