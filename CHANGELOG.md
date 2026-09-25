@@ -5,7 +5,14 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Added
+
+- Swipe left and right through an entry's photos on its details screen.
+
 ### Changed
+
+- Tapping a photo on the Line opens the entry on that photo instead of
+  always starting from the first one.
 
 - The iPhone location prompt now says what the location is for, and the app
   no longer asks for (or lists) microphone, motion or "always" location

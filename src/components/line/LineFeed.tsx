@@ -25,7 +25,7 @@ type Props = {
   dayKeys: string[];
   tagsById: Record<string, Tag>;
   wallColumns: number;
-  onPressEntry: (entryId: string) => void;
+  onPressEntry: (entryId: string, photoIndex?: number) => void;
   // Set by a Days-view cell tap asking to jump to one specific entry;
   // cleared via onScrolledToEntry once this feed has scrolled there.
   pendingScrollEntryId: string | null;

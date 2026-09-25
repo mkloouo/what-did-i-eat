@@ -107,8 +107,8 @@ export function HomeScreen() {
           dayKeys={dayKeys}
           tagsById={tagsById}
           wallColumns={wallColumns}
-          onPressEntry={(entryId) =>
-            navigation.navigate("EntryDetails", { entryId })
+          onPressEntry={(entryId, photoIndex) =>
+            navigation.navigate("EntryDetails", { entryId, photoIndex })
           }
           pendingScrollEntryId={pendingScrollEntryId}
           onScrolledToEntry={() => setPendingScrollEntryId(null)}
