@@ -13,8 +13,13 @@ describe("computeCellSize", () => {
     expect(rowWidth).toBeLessThanOrEqual(360);
   });
 
-  it("caps cell size on a very wide screen instead of growing indefinitely", () => {
-    expect(computeCellSize(900, 16)).toBe(52);
+  it("grows cells to fill a wide screen like an iPad", () => {
+    // iPad Pro 13" portrait is 1032pt wide.
+    const size = computeCellSize(1032, 16);
+    const rowWidth = 2 * 16 + LABEL_WIDTH + GUTTER + 5 * size + 4 * GUTTER;
+    expect(size).toBeGreaterThan(52);
+    expect(rowWidth).toBeLessThanOrEqual(1032);
+    expect(1032 - rowWidth).toBeLessThan(5);
   });
 
   it("never shrinks below a minimum tappable size", () => {
