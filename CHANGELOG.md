@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-09-25
+
 ### Added
 
 - Crop photos to a square: open any photo, while adding an entry or in one
