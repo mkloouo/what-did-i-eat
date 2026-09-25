@@ -16,6 +16,8 @@ const TEXT_PAIRS: Array<[string, string, string]> = [
   ["clay on surface", colors.clay, colors.surface],
   ["chipText on chip", colors.chipText, colors.chip],
   ["daylight on ink", colors.daylight, colors.ink],
+  ["daylight on primary", colors.daylight, colors.primary],
+  ["accent on surface", colors.accent, colors.surface],
   ["clayOnDark on ink", colors.clayOnDark, colors.ink],
 ];
 

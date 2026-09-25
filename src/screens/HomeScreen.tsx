@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     gap: theme.spacing.sm,
     height: 48,
     borderRadius: theme.radii.sm,
-    backgroundColor: theme.colors.ink,
+    backgroundColor: theme.colors.primary,
   },
   captureLabel: {
     ...theme.typography.subtitle,
@@ -215,6 +215,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: theme.radii.sm,
-    backgroundColor: theme.colors.ink,
+    backgroundColor: theme.colors.primary,
   },
 });
