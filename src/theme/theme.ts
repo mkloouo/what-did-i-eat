@@ -1,20 +1,23 @@
-// Daybands light: time of day is the app's only axis, so the palette reads
-// like daylight — see docs/superpowers/specs for the design system this was
-// pulled from. Roles, not raw swatches: `accent`/`chip`+`chipText` are the
-// only colours legible as small text/icons or filled pills at 4.5:1 against
-// `daylight`/`surface` — see theme.test.ts. `pine` is decorative only
-// (gradients, ticks, markers), never text or a fill with text on it.
+// Citrus: a sunny cream ground with orange for everything that's "yours" —
+// the Line's spine, tags, and the filled buttons. Roles, not raw swatches:
+// `accent`/`chip`+`chipText` are the only colours legible as small
+// text/icons or filled pills at 4.5:1 against `daylight`/`surface`, and
+// `primary` is the fill behind `daylight` button labels — see theme.test.ts.
+// `pine` (the name predates Citrus; it's the bright orange now) is
+// decorative only (the spine, dots, markers), never text or a fill with
+// text on it.
 export const colors = {
-  daylight: "#E8E3EC",
-  surface: "#DED7E6",
-  hairline: "#D2CAD8",
-  ink: "#241F33",
-  graphite: "#5A5668",
-  pine: "#2A7F62",
-  accent: "#1F6349",
-  chip: "#D5E2DB",
-  chipText: "#1F4436",
-  clay: "#8E3B37",
+  daylight: "#FFFCF3",
+  surface: "#FFF3D1",
+  hairline: "#F3E4B8",
+  ink: "#2A2417",
+  graphite: "#675C43",
+  pine: "#F59E0B",
+  accent: "#A84B00",
+  primary: "#A84B00",
+  chip: "#FFE8B0",
+  chipText: "#7A3E00",
+  clay: "#B42318",
   // A lighter clay, for danger text on the photo viewer's dark overlay chrome
   // (the one place that keeps a dark bar / light text pairing — see its
   // usage sites) — the plain `clay` is too dark to read there.

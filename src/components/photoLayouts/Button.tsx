@@ -28,7 +28,7 @@ export function Button({
     ? theme.colors.surface
     : variant === "danger"
       ? theme.colors.clay
-      : theme.colors.ink;
+      : theme.colors.primary;
   const textColor = disabled ? theme.colors.graphite : theme.colors.daylight;
 
   return (

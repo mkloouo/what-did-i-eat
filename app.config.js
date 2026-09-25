@@ -13,7 +13,7 @@ module.exports = {
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'light',
-    backgroundColor: '#E8E3EC',
+    backgroundColor: '#FFFCF3',
     ios: {
       supportsTablet: true,
       bundleIdentifier: IS_DEV ? `${BASE_BUNDLE_ID}.dev` : BASE_BUNDLE_ID,
@@ -43,7 +43,7 @@ module.exports = {
       [
         'expo-splash-screen',
         {
-          backgroundColor: '#E8E3EC',
+          backgroundColor: '#FFFCF3',
           image: './assets/splash-icon.png',
         },
       ],

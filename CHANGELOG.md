@@ -20,6 +20,10 @@ All notable changes to this project are documented here. Format loosely follows
 - Days column headers are shortened (Morn, Mid, Aft, Eve, Late) so they
   fit instead of being cut off.
 - The capture button now says "Add a new one".
+- A brighter look: the grey-lavender palette is replaced by "Citrus", a
+  sunny cream background with orange for the Line, tags and buttons. The
+  "Add a new one", camera and other main buttons are now orange instead
+  of near-black.
 
 ### Removed
 
