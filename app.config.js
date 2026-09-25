@@ -58,12 +58,16 @@ module.exports = {
         {
           photosPermission: 'What Did I Eat uses your photo library to attach food photos to entries.',
           cameraPermission: 'What Did I Eat uses your camera to take food photos for entries.',
+          microphonePermission: false,
         },
       ],
       [
         'expo-location',
         {
-          locationAlwaysAndWhenInUsePermission: 'What Did I Eat uses your location to note where each food photo was taken.',
+          locationWhenInUsePermission: 'What Did I Eat uses your location to note where each food photo was taken.',
+          locationAlwaysAndWhenInUsePermission: false,
+          locationAlwaysPermission: false,
+          motionUsagePermission: false,
         },
       ],
       '@react-native-community/datetimepicker',
