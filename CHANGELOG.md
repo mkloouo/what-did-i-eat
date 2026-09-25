@@ -5,6 +5,14 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Changed
+
+- The iPhone location prompt now says what the location is for, and the app
+  no longer asks for (or lists) microphone, motion or "always" location
+  access it never used.
+- The privacy policy now mentions that place names are looked up by your
+  phone's built-in location service (Apple or Google).
+
 ## [3.1.0] - 2026-09-25
 
 ### Added
