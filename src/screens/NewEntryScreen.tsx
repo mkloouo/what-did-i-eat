@@ -17,6 +17,7 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { RootStackParamList } from "../navigation/types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -58,6 +59,7 @@ export function NewEntryScreen() {
 
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
+  const headerHeight = useHeaderHeight();
 
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [comment, setComment] = useState("");
@@ -278,10 +280,14 @@ export function NewEntryScreen() {
     }
   }
 
+  // KeyboardAvoidingView compares its parent-relative frame against the
+  // keyboard's absolute screen position, so under a native header it must
+  // be told the header height or it only avoids part of the keyboard.
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={headerHeight}
     >
       <ScrollView
         ref={scrollRef}

@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { selectAllTags } from "../store/selectors/tagSelectors";
 import { addTag, updateTag, deleteTag } from "../store/tagsSlice";
@@ -24,6 +25,7 @@ import { theme } from "../theme/theme";
 
 export function TagsScreen() {
   const navigation = useNavigation();
+  const headerHeight = useHeaderHeight();
   const dispatch = useAppDispatch();
   const tags = useAppSelector(selectAllTags);
 
@@ -144,6 +146,8 @@ export function TagsScreen() {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      // The view sits below the native header; see NewEntryScreen.
+      keyboardVerticalOffset={headerHeight}
     >
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.form}>
