@@ -5,6 +5,10 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Developer
+
+- Remove unused co-author flag in release script
+
 ## [3.3.1] - 2026-09-26
 
 ### Fixed

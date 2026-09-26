@@ -184,12 +184,12 @@ function today() {
 describe("release.mjs", () => {
   it.concurrent("runs a full release: checks, release commit, builds, tag, push, published release", async () => {
     const t = setup();
-    const { code, output } = await t.release(["2.0.0", "--co-author", "Bot <bot@example.com>"]);
+    const { code, output } = await t.release(["2.0.0"]);
     expect(output).toContain("✔ Released v2.0.0");
     expect(code).toBe(0);
 
-    // Release commit: only the three version files, with the trailer.
-    expect(t.git(["log", "-1", "--format=%B"])).toBe("release v2.0.0\n\nCo-Authored-By: Bot <bot@example.com>");
+    // Release commit: only the three version files, no trailer.
+    expect(t.git(["log", "-1", "--format=%B"])).toBe("release v2.0.0");
     expect(t.git(["show", "--name-only", "--format=", "HEAD"]).split("\n").sort()).toEqual([
       "CHANGELOG.md",
       "app.config.js",
@@ -312,7 +312,7 @@ describe("release.mjs", () => {
     const t = setup();
     const { code, output } = await t.release(["--help"]);
     expect(code).toBe(0);
-    for (const opt of ["--pause", "--publish", "--abort", "--ios-cloud", "--upload-ios", "--upload-ios-only", "--co-author", "ASC_API_ISSUER_ID", "ASC_API_KEY_ID"]) {
+    for (const opt of ["--pause", "--publish", "--abort", "--ios-cloud", "--upload-ios", "--upload-ios-only", "ASC_API_ISSUER_ID", "ASC_API_KEY_ID"]) {
       expect(output).toContain(opt);
     }
     expect(t.calls("npx")).toEqual([]);

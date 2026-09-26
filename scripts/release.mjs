@@ -64,7 +64,7 @@ function today() {
 const HELP = `Release What Did I Eat: Android APKs + iOS .ipa, tagged and published on GitHub.
 
 Usage:
-  npm run release -- X.Y.Z [--pause] [--ios-cloud] [--upload-ios] [--co-author "Name <email>"]
+  npm run release -- X.Y.Z [--pause] [--ios-cloud] [--upload-ios]
   npm run release -- X.Y.Z --publish [--upload-ios]
   npm run release -- X.Y.Z --upload-ios-only
   npm run release -- X.Y.Z --abort
@@ -100,7 +100,6 @@ Options:
   --upload-ios        After publishing, upload the .ipa to App Store Connect (TestFlight)
                       with \`xcrun altool --upload-package\`, locally — no EAS Submit queue.
                       The credentials are checked before anything is built.
-  --co-author "N <e>" Add a Co-Authored-By trailer to the release commit.
   -h, --help          Show this help.
 
 Release notes:
@@ -130,15 +129,11 @@ if (argv.includes('--help') || argv.includes('-h')) {
 
 const version = argv.find((a) => !a.startsWith('--') && parseVersion(a));
 const flag = (name) => argv.includes(name);
-const option = (name) => {
-  const i = argv.indexOf(name);
-  return i === -1 ? undefined : argv[i + 1];
-};
 
 // A mistyped flag must not fall through to a full release.
 const FLAGS = ['--pause', '--ios-cloud', '--upload-ios', '--upload-ios-only', '--publish', '--abort'];
-for (const [i, a] of argv.entries()) {
-  if (a === version || argv[i - 1] === '--co-author' || FLAGS.includes(a) || a === '--co-author') continue;
+for (const a of argv) {
+  if (a === version || FLAGS.includes(a)) continue;
   fail(`unknown argument "${a}" — see \`npm run release -- --help\``);
 }
 
@@ -147,7 +142,6 @@ if (!version) fail('usage: npm run release -- X.Y.Z [options] — see `npm run r
 const tag = `v${version}`;
 const outDir = path.join('releases', tag);
 const releaseSubject = `release ${tag}`;
-const coAuthor = option('--co-author');
 
 const headSubject = () => out('git', ['log', '-1', '--format=%s']);
 const readPkgVersion = () => JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
@@ -237,8 +231,7 @@ function releaseCommit() {
   bump('app.config.js', /version: '\d+\.\d+\.\d+'/);
 
   run('git', ['add', 'CHANGELOG.md', 'package.json', 'app.config.js']);
-  const message = coAuthor ? `${releaseSubject}\n\nCo-Authored-By: ${coAuthor}` : releaseSubject;
-  run('git', ['commit', '--quiet', '-m', message]);
+  run('git', ['commit', '--quiet', '-m', releaseSubject]);
 }
 
 // ---------- phase 4: builds ----------

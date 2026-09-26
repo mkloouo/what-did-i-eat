@@ -43,7 +43,7 @@ asking them to re-explain it. Every release ships Android **and** iOS; the mecha
    GitHub release notes verbatim (the script appends a "which file to download" footer), so
    write it for users.
 2. Run, with `run_in_background: true` (two native builds, well over 10 minutes):
-   `npm run release -- X.Y.Z --co-author "<your Co-Authored-By value>"`
+   `npm run release -- X.Y.Z`
    plus `--pause` if the user wants to smoke-test before publishing (always pause when the
    release changes native deps or build config), and `--ios-cloud` only if the local iOS
    build fails (it has before; that runs the iOS build on EAS cloud and downloads the .ipa).
