@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [3.3.1] - 2026-09-26
+
 ### Fixed
 
 - The keyboard no longer covers the note field and Add button on New Entry
