@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import Animated, {
   runOnJS,
@@ -117,12 +117,18 @@ export function PhotoViewer({
         </Animated.View>
       ) : null}
       {renderFooter ? (
-        <Animated.View
-          style={[styles.overlayBottom, chromeStyle]}
+        // Lifts the footer (it can hold a TextInput) above the keyboard.
+        // It's bottom-anchored in a full-screen container, so its frame
+        // bottom is the screen bottom and no offset is needed.
+        <KeyboardAvoidingView
+          behavior="padding"
+          style={styles.overlayBottom}
           pointerEvents="box-none"
         >
-          {renderFooter(index)}
-        </Animated.View>
+          <Animated.View style={chromeStyle} pointerEvents="box-none">
+            {renderFooter(index)}
+          </Animated.View>
+        </KeyboardAvoidingView>
       ) : null}
     </View>
   );

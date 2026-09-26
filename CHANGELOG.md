@@ -5,6 +5,13 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Fixed
+
+- The keyboard no longer covers the note field and Add button on New Entry
+  (or the label field on Tags) — the screen now scrolls far enough to show
+  them. The note field in the full-screen photo viewer also moves up above
+  the keyboard.
+
 ## [3.3.0] - 2026-09-25
 
 ### Added
