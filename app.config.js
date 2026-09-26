@@ -19,6 +19,8 @@ module.exports = {
       bundleIdentifier: IS_DEV ? `${BASE_BUNDLE_ID}.dev` : BASE_BUNDLE_ID,
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
+        NSMotionUsageDescription:
+          'This app does not use motion data. This permission is required by a library dependency and is never accessed.',
       },
     },
     android: {

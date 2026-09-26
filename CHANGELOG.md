@@ -5,6 +5,10 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Changed
+
+- Explained why we have motion data request (Apple)
+
 ### Developer
 
 - Remove unused co-author flag in release script
