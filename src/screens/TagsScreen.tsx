@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -24,6 +25,7 @@ import { Button } from "../components/photoLayouts/Button";
 import { theme } from "../theme/theme";
 
 export function TagsScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const headerHeight = useHeaderHeight();
   const dispatch = useAppDispatch();
@@ -84,12 +86,12 @@ export function TagsScreen() {
 
   function confirmDeleteSelected() {
     Alert.alert(
-      "Delete tags?",
-      `${selectedIds.length} tag${selectedIds.length === 1 ? "" : "s"} will be removed.`,
+      t("tags.confirmDeleteTitle"),
+      t("tags.confirmDeleteBody", { count: selectedIds.length }),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("common.delete"),
           style: "destructive",
           onPress: () => {
             selectedIds.forEach((id) => dispatch(deleteTag({ id })));
@@ -114,7 +116,7 @@ export function TagsScreen() {
         isSelecting ? (
           <View style={styles.headerButtonRow}>
             <Pressable onPress={cancelSelecting} style={styles.headerButton}>
-              <Text style={styles.headerButtonText}>Cancel</Text>
+              <Text style={styles.headerButtonText}>{t("common.cancel")}</Text>
             </Pressable>
             <Pressable
               onPress={confirmDeleteSelected}
@@ -128,17 +130,17 @@ export function TagsScreen() {
                   selectedIds.length === 0 && styles.headerButtonTextDisabled,
                 ]}
               >
-                Delete{selectedIds.length > 0 ? ` (${selectedIds.length})` : ""}
+                {t("tags.deleteCount", { count: selectedIds.length })}
               </Text>
             </Pressable>
           </View>
         ) : (
           <Pressable onPress={startSelecting} style={styles.headerButton}>
-            <Text style={styles.headerButtonText}>Select</Text>
+            <Text style={styles.headerButtonText}>{t("tags.select")}</Text>
           </Pressable>
         ),
     });
-  }, [navigation, isSelecting, selectedIds]);
+  }, [navigation, isSelecting, selectedIds, t]);
 
   const isEditingForm = editingId !== null;
 
@@ -153,10 +155,10 @@ export function TagsScreen() {
         <View style={styles.form}>
           <Text style={styles.label}>
             {editingId === "new"
-              ? "Add a tag"
+              ? t("tags.addTagHeading")
               : editingId
-                ? "Edit tag"
-                : "Tags"}
+                ? t("tags.editTagHeading")
+                : t("tags.tagsHeading")}
           </Text>
           {isEditingForm ? (
             <>
@@ -181,29 +183,31 @@ export function TagsScreen() {
               </View>
               <TextInput
                 style={styles.input}
-                placeholder="e.g. Home cooked"
+                placeholder={t("tags.labelPlaceholder")}
                 placeholderTextColor={theme.colors.graphite}
                 value={draftLabel}
                 onChangeText={setDraftLabel}
               />
               <View style={styles.formButtons}>
-                <Button label="Cancel" variant="danger" onPress={cancelEdit} />
                 <Button
-                  label="Save"
+                  label={t("common.cancel")}
+                  variant="danger"
+                  onPress={cancelEdit}
+                />
+                <Button
+                  label={t("common.save")}
                   onPress={saveDraft}
                   disabled={!draftIcon || !isValidTagLabel(draftLabel)}
                 />
               </View>
             </>
           ) : (
-            <Button label="Add tag" onPress={startAdd} />
+            <Button label={t("tags.addTagButton")} onPress={startAdd} />
           )}
         </View>
 
         {tags.length === 0 ? (
-          <Text style={styles.empty}>
-            No tags yet — add your first one above.
-          </Text>
+          <Text style={styles.empty}>{t("tags.emptyList")}</Text>
         ) : (
           <View style={styles.chipsWrap}>
             {tags.map((tag) => (

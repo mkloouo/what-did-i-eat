@@ -1,4 +1,5 @@
 import { View, Pressable, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Image } from "expo-image";
 import { SlotCell, cellPhotos } from "./dayGrid";
 import { densityColumns, sampleSpread } from "./mosaicSample";
@@ -22,6 +23,7 @@ type Props = {
 // the cell, it only makes the grid inside it finer (up to 4x4, capped at 16
 // photos via a spread sample rather than "first 16").
 export function DayGridCell({ cell, size, onPress }: Props) {
+  const { t } = useTranslation();
   const columns = densityColumns(cell.photoCount);
   const hasEntries = cell.entries.length > 0;
 
@@ -31,7 +33,9 @@ export function DayGridCell({ cell, size, onPress }: Props) {
       disabled={!hasEntries}
       accessibilityRole="button"
       accessibilityLabel={
-        hasEntries ? "Show this time on the Line" : "Nothing in this slot"
+        hasEntries
+          ? t("days.cellHasEntriesAccessibilityLabel")
+          : t("days.cellEmptyAccessibilityLabel")
       }
       style={[styles.cell, { width: size, height: size }]}
     >

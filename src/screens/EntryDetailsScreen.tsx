@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { Image } from "expo-image";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
@@ -41,6 +42,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList, "EntryDetails">;
 type Route = RouteProp<RootStackParamList, "EntryDetails">;
 
 export function EntryDetailsScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { entryId, photoIndex = 0 } = route.params;
@@ -103,12 +105,12 @@ export function EntryDetailsScreen() {
   function confirmDelete() {
     if (!entry) return;
     Alert.alert(
-      "Delete entry?",
-      "This removes the photo(s) and comment permanently.",
+      t("entryDetails.confirmDeleteTitle"),
+      t("entryDetails.confirmDeleteBody"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("common.delete"),
           style: "destructive",
           onPress: async () => {
             await Promise.allSettled(
@@ -130,8 +132,11 @@ export function EntryDetailsScreen() {
           { paddingTop: insets.top, paddingBottom: insets.bottom },
         ]}
       >
-        <Text style={styles.missingText}>This entry no longer exists.</Text>
-        <Button label="Back" onPress={() => navigation.navigate("Home")} />
+        <Text style={styles.missingText}>{t("entryDetails.missingText")}</Text>
+        <Button
+          label={t("common.back")}
+          onPress={() => navigation.navigate("Home")}
+        />
       </View>
     );
   }
@@ -169,13 +174,13 @@ export function EntryDetailsScreen() {
       >
         {isEditing ? (
           <Pressable onPress={cancelEdit} style={styles.headerSideButton}>
-            <Text style={styles.headerAction}>Cancel</Text>
+            <Text style={styles.headerAction}>{t("common.cancel")}</Text>
           </Pressable>
         ) : (
           <IconButton
             name="chevron-back-outline"
             onPress={() => navigation.goBack()}
-            accessibilityLabel="Back"
+            accessibilityLabel={t("entryDetails.backAccessibilityLabel")}
           />
         )}
         <Text style={styles.headerTitle} numberOfLines={1}>
@@ -186,7 +191,7 @@ export function EntryDetailsScreen() {
           style={styles.headerSideButton}
         >
           <Text style={styles.headerAction}>
-            {isEditing ? "Save" : "Edit"}
+            {isEditing ? t("common.save") : t("common.edit")}
           </Text>
         </Pressable>
       </View>
@@ -238,7 +243,10 @@ export function EntryDetailsScreen() {
         {photoUris.length > 1 ? (
           <View style={styles.thumbSection}>
             <Text style={styles.photoCount}>
-              {heroIndex + 1} of {photoUris.length}
+              {t("entryDetails.photoCount", {
+                current: heroIndex + 1,
+                total: photoUris.length,
+              })}
             </Text>
             <ScrollView
               horizontal
@@ -274,11 +282,13 @@ export function EntryDetailsScreen() {
             onChangeText={setDraftComment}
             onFocus={handleCommentFocus}
             multiline
-            placeholder="Comment"
+            placeholder={t("entryDetails.commentPlaceholder")}
             placeholderTextColor={theme.colors.graphite}
           />
         ) : (
-          <Text style={styles.comment}>{entry.comment || "No comment"}</Text>
+          <Text style={styles.comment}>
+            {entry.comment || t("entryDetails.noComment")}
+          </Text>
         )}
 
         {isEditing ? (
@@ -302,7 +312,7 @@ export function EntryDetailsScreen() {
                   size={14}
                   color={theme.colors.graphite}
                 />
-                <Text style={styles.addTagLabel}>Add tag</Text>
+                <Text style={styles.addTagLabel}>{t("entryDetails.addTag")}</Text>
               </Pressable>
             ) : null}
           </View>
@@ -329,22 +339,25 @@ export function EntryDetailsScreen() {
 
         <View style={styles.detailList}>
           <DetailRow
-            label="Taken"
+            label={t("entryDetails.detailTaken")}
             value={formatFullDateTime(entry.createdAt)}
           />
           {entry.location?.placeName ? (
-            <DetailRow label="Place" value={entry.location.placeName} />
+            <DetailRow
+              label={t("entryDetails.detailPlace")}
+              value={entry.location.placeName}
+            />
           ) : null}
           <DetailRow
-            label="Photos"
-            value={`${entry.photos.length} photo${
-              entry.photos.length === 1 ? "" : "s"
-            }`}
+            label={t("entryDetails.detailPhotosLabel")}
+            value={t("entryDetails.detailPhotos", {
+              count: entry.photos.length,
+            })}
           />
         </View>
 
         <Pressable onPress={confirmDelete} style={styles.deleteRow}>
-          <Text style={styles.deleteLabel}>Delete entry</Text>
+          <Text style={styles.deleteLabel}>{t("entryDetails.deleteEntry")}</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>

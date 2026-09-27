@@ -1,0 +1,99 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "close": "Close",
+    "crop": "Crop",
+    "add": "Add"
+  },
+  "navigation": {
+    "newEntryTitle": "New Entry",
+    "settingsTitle": "Settings",
+    "tagsTitle": "Tags"
+  },
+  "home": {
+    "title": "What did I eat",
+    "segmentedLine": "Line",
+    "segmentedDays": "Days",
+    "settingsAccessibilityLabel": "Settings",
+    "emptyTitle": "Nothing here yet",
+    "emptyBodyBefore": "Photograph the next",
+    "emptyBodyWord": "thing",
+    "emptyBodyAfter": "you eat.",
+    "addNewOne": "Add a new one",
+    "takePhotoNowAccessibilityLabel": "Take a photo now"
+  },
+  "newEntry": {
+    "takePhoto": "Take photo",
+    "chooseFromLibrary": "Choose from library",
+    "addPhotoHint": "Add at least one photo. Tap a thumbnail to preview it, long-press to remove it.",
+    "commentPlaceholder": "What did you eat?",
+    "addButton": "Add",
+    "viewerRemove": "Remove",
+    "alerts": {
+      "somePhotosFailedTitle": "Some photos could not be saved",
+      "somePhotosFailedBody": "Some photos failed to save, but the successful ones have been added.",
+      "saveFailedTitle": "Could not save photo",
+      "saveFailedBody": "Something went wrong saving that photo. Please try again.",
+      "libraryUnavailableTitle": "Photo library unavailable",
+      "libraryUnavailableBody": "Photo library permission was denied.",
+      "cropFailedTitle": "Could not crop photo",
+      "cropFailedBody": "Please try again."
+    }
+  },
+  "entryDetails": {
+    "missingText": "This entry no longer exists.",
+    "commentPlaceholder": "Comment",
+    "noComment": "No comment",
+    "addTag": "Add tag",
+    "detailTaken": "Taken",
+    "detailPlace": "Place",
+    "detailPhotosLabel": "Photos",
+    "detailPhotos_one": "{{count}} photo",
+    "detailPhotos_other": "{{count}} photos",
+    "photoCount": "{{current}} of {{total}}",
+    "deleteEntry": "Delete entry",
+    "confirmDeleteTitle": "Delete entry?",
+    "confirmDeleteBody": "This removes the photo(s) and comment permanently.",
+    "backAccessibilityLabel": "Back"
+  },
+  "photoDetails": {
+    "missingText": "This entry no longer exists."
+  },
+  "tags": {
+    "addTagHeading": "Add a tag",
+    "editTagHeading": "Edit tag",
+    "tagsHeading": "Tags",
+    "labelPlaceholder": "e.g. Home cooked",
+    "addTagButton": "Add tag",
+    "emptyList": "No tags yet — add your first one above.",
+    "select": "Select",
+    "deleteCount_one": "Delete",
+    "deleteCount_other": "Delete ({{count}})",
+    "confirmDeleteTitle": "Delete tags?",
+    "confirmDeleteBody_one": "{{count}} tag will be removed.",
+    "confirmDeleteBody_other": "{{count}} tags will be removed."
+  },
+  "settings": {
+    "photosPerRow": "Photos per row: {{count}}",
+    "useOwnDateLabel": "Use the photo's own date",
+    "useOwnDateHint": "When importing from the gallery, set the entry's date from the first photo you pick — handy for backfilling old meals.",
+    "saveLocationLabel": "Save where you were",
+    "saveLocationHint": "When off, new entries are saved without capturing your current location.",
+    "editTags": "Edit tags",
+    "editTagsAccessibilityLabel": "Edit tags"
+  },
+  "lineFeed": {
+    "entryAccessibilityLabel": "Entry at {{time}}"
+  },
+  "days": {
+    "cellHasEntriesAccessibilityLabel": "Show this time on the Line",
+    "cellEmptyAccessibilityLabel": "Nothing in this slot"
+  },
+  "tagFilterRail": {
+    "editTagsAccessibilityLabel": "Edit tags"
+  }
+}

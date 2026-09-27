@@ -1,4 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -19,6 +20,7 @@ type Props = {
 // The trailing Edit button always shows, even with no tags yet, since it's
 // how a first-time user reaches the Tags screen to create one.
 export function TagFilterRail({ activeTagId, onSelect }: Props) {
+  const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
   const tags = useAppSelector(selectAllTags);
 
@@ -46,7 +48,7 @@ export function TagFilterRail({ activeTagId, onSelect }: Props) {
         <Pressable
           onPress={() => navigation.navigate("Tags")}
           accessibilityRole="button"
-          accessibilityLabel="Edit tags"
+          accessibilityLabel={t("tagFilterRail.editTagsAccessibilityLabel")}
           style={styles.editButton}
         >
           <Ionicons

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,6 +22,7 @@ import { DevMenuWord } from "../dev/DevMenuWord";
 type Nav = NativeStackNavigationProp<RootStackParamList, "Home">;
 
 export function HomeScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
@@ -57,15 +59,15 @@ export function HomeScreen() {
         style={[styles.header, { paddingTop: insets.top + theme.spacing.sm }]}
       >
         <Text style={styles.title} numberOfLines={1}>
-          What did I eat
+          {t("home.title")}
         </Text>
         <View style={styles.headerControls}>
           <View style={styles.toggleWrap}>
             <SegmentedControl
               value={timelineView}
               options={[
-                { value: "line", label: "Line" },
-                { value: "days", label: "Days" },
+                { value: "line", label: t("home.segmentedLine") },
+                { value: "days", label: t("home.segmentedDays") },
               ]}
               onChange={(value) =>
                 dispatch(setTimelineView(value as TimelineView))
@@ -75,7 +77,7 @@ export function HomeScreen() {
           <Pressable
             onPress={() => navigation.navigate("Settings")}
             accessibilityRole="button"
-            accessibilityLabel="Settings"
+            accessibilityLabel={t("home.settingsAccessibilityLabel")}
             style={styles.settingsButton}
           >
             <Ionicons
@@ -91,14 +93,14 @@ export function HomeScreen() {
 
       {sections.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyTitle}>Nothing here yet</Text>
+          <Text style={styles.emptyTitle}>{t("home.emptyTitle")}</Text>
           <Text style={styles.emptyBody}>
-            Photograph the next{" "}
+            {t("home.emptyBodyBefore")}{" "}
             <DevMenuWord
-              word="thing"
+              word={t("home.emptyBodyWord")}
               onDataChanged={() => setActiveTagId(null)}
             />{" "}
-            you eat.
+            {t("home.emptyBodyAfter")}
           </Text>
         </View>
       ) : timelineView === "line" ? (
@@ -132,7 +134,7 @@ export function HomeScreen() {
             size={17}
             color={theme.colors.daylight}
           />
-          <Text style={styles.captureLabel}>Add a new one</Text>
+          <Text style={styles.captureLabel}>{t("home.addNewOne")}</Text>
         </Pressable>
         <Pressable
           onPress={() =>
@@ -141,7 +143,7 @@ export function HomeScreen() {
             )
           }
           accessibilityRole="button"
-          accessibilityLabel="Take a photo now"
+          accessibilityLabel={t("home.takePhotoNowAccessibilityLabel")}
           style={styles.cameraButton}
         >
           <Ionicons name="camera" size={20} color={theme.colors.daylight} />

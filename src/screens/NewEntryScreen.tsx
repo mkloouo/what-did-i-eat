@@ -11,6 +11,7 @@ import {
   Modal,
   KeyboardAvoidingView,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -46,6 +47,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList, "NewEntry">;
 type Route = RouteProp<RootStackParamList, "NewEntry">;
 
 export function NewEntryScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
 
@@ -132,14 +134,14 @@ export function NewEntryScreen() {
 
       if (results.some((result) => result.status === "rejected")) {
         Alert.alert(
-          "Some photos could not be saved",
-          "Some photos failed to save, but the successful ones have been added.",
+          t("newEntry.alerts.somePhotosFailedTitle"),
+          t("newEntry.alerts.somePhotosFailedBody"),
         );
       }
     } catch {
       Alert.alert(
-        "Could not save photo",
-        "Something went wrong saving that photo. Please try again.",
+        t("newEntry.alerts.saveFailedTitle"),
+        t("newEntry.alerts.saveFailedBody"),
       );
     }
   }
@@ -159,8 +161,8 @@ export function NewEntryScreen() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
       Alert.alert(
-        "Photo library unavailable",
-        "Photo library permission was denied.",
+        t("newEntry.alerts.libraryUnavailableTitle"),
+        t("newEntry.alerts.libraryUnavailableBody"),
       );
       return;
     }
@@ -251,7 +253,10 @@ export function NewEntryScreen() {
         // Best-effort cleanup of the uncropped file; nothing to do if it fails.
       });
     } catch {
-      Alert.alert("Could not crop photo", "Please try again.");
+      Alert.alert(
+        t("newEntry.alerts.cropFailedTitle"),
+        t("newEntry.alerts.cropFailedBody"),
+      );
     }
   }
 
@@ -296,12 +301,12 @@ export function NewEntryScreen() {
       >
         <View style={styles.pickerRow}>
           <Button
-            label="Take photo"
+            label={t("newEntry.takePhoto")}
             onPress={handleTakePhoto}
             style={styles.pickerButton}
           />
           <Button
-            label="Choose from library"
+            label={t("newEntry.chooseFromLibrary")}
             onPress={handlePickFromLibrary}
             style={styles.pickerButton}
           />
@@ -321,10 +326,7 @@ export function NewEntryScreen() {
             ))}
           </View>
         ) : (
-          <Text style={styles.hint}>
-            Add at least one photo. Tap a thumbnail to preview it, long-press to
-            remove it.
-          </Text>
+          <Text style={styles.hint}>{t("newEntry.addPhotoHint")}</Text>
         )}
 
         <Pressable
@@ -377,7 +379,7 @@ export function NewEntryScreen() {
 
         <TextInput
           style={styles.commentInput}
-          placeholder="What did you eat?"
+          placeholder={t("newEntry.commentPlaceholder")}
           placeholderTextColor={theme.colors.graphite}
           value={comment}
           onChangeText={setComment}
@@ -386,7 +388,7 @@ export function NewEntryScreen() {
         />
 
         <Button
-          label="Add"
+          label={t("newEntry.addButton")}
           onPress={handleAdd}
           disabled={photos.length === 0 || saving}
           loading={saving}
@@ -417,7 +419,9 @@ export function NewEntryScreen() {
                     onPress={closeViewer}
                     style={styles.viewerTopBarButton}
                   >
-                    <Text style={styles.viewerTopBarButtonText}>Close</Text>
+                    <Text style={styles.viewerTopBarButtonText}>
+                      {t("common.close")}
+                    </Text>
                   </Pressable>
                   {photo ? (
                     <View style={styles.viewerTopBarActions}>
@@ -425,7 +429,9 @@ export function NewEntryScreen() {
                         onPress={() => handleCropPhoto(photo)}
                         style={styles.viewerTopBarButton}
                       >
-                        <Text style={styles.viewerTopBarButtonText}>Crop</Text>
+                        <Text style={styles.viewerTopBarButtonText}>
+                          {t("common.crop")}
+                        </Text>
                       </Pressable>
                       <Pressable
                         onPress={() => {
@@ -440,7 +446,7 @@ export function NewEntryScreen() {
                             styles.viewerRemoveText,
                           ]}
                         >
-                          Remove
+                          {t("newEntry.viewerRemove")}
                         </Text>
                       </Pressable>
                     </View>
@@ -476,7 +482,7 @@ export function NewEntryScreen() {
                 ) : null}
                 <TextInput
                   style={styles.viewerCommentInput}
-                  placeholder="What did you eat?"
+                  placeholder={t("newEntry.commentPlaceholder")}
                   placeholderTextColor={theme.colors.graphite}
                   value={comment}
                   onChangeText={setComment}

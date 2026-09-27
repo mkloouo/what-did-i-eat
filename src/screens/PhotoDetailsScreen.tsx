@@ -1,4 +1,5 @@
 import { View, Text, Pressable, StyleSheet, Alert } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -18,6 +19,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList, "PhotoDetails">;
 type Route = RouteProp<RootStackParamList, "PhotoDetails">;
 
 export function PhotoDetailsScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { entryId, photoIndex } = route.params;
@@ -37,7 +39,10 @@ export function PhotoDetailsScreen() {
         // Best-effort cleanup of the uncropped file; nothing to do if it fails.
       });
     } catch {
-      Alert.alert("Could not crop photo", "Please try again.");
+      Alert.alert(
+        t("newEntry.alerts.cropFailedTitle"),
+        t("newEntry.alerts.cropFailedBody"),
+      );
     }
   }
 
@@ -49,8 +54,8 @@ export function PhotoDetailsScreen() {
           { paddingTop: insets.top, paddingBottom: insets.bottom },
         ]}
       >
-        <Text style={styles.missingText}>This entry no longer exists.</Text>
-        <Button label="Back" onPress={() => navigation.navigate("Home")} />
+        <Text style={styles.missingText}>{t("photoDetails.missingText")}</Text>
+        <Button label={t("common.back")} onPress={() => navigation.navigate("Home")} />
       </View>
     );
   }
@@ -70,14 +75,14 @@ export function PhotoDetailsScreen() {
               onPress={() => navigation.goBack()}
               style={styles.topBarButton}
             >
-              <Text style={styles.topBarButtonText}>Close</Text>
+              <Text style={styles.topBarButtonText}>{t("common.close")}</Text>
             </Pressable>
             {photo ? (
               <Pressable
                 onPress={() => handleCropPhoto(photo)}
                 style={styles.topBarButton}
               >
-                <Text style={styles.topBarButtonText}>Crop</Text>
+                <Text style={styles.topBarButtonText}>{t("common.crop")}</Text>
               </Pressable>
             ) : null}
           </View>

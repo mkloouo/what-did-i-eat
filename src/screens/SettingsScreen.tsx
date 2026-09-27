@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "react-native";
 import Slider from "@react-native-community/slider";
+import { useTranslation } from "react-i18next";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -22,6 +23,7 @@ import { theme } from "../theme/theme";
 type Nav = NativeStackNavigationProp<RootStackParamList, "Settings">;
 
 export function SettingsScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
   const wallColumns = useAppSelector((state) => state.settings.wallColumns);
@@ -34,7 +36,9 @@ export function SettingsScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.label}>Photos per row: {wallColumns}</Text>
+      <Text style={styles.label}>
+        {t("settings.photosPerRow", { count: wallColumns })}
+      </Text>
       <Slider
         minimumValue={3}
         maximumValue={10}
@@ -47,11 +51,8 @@ export function SettingsScreen() {
 
       <View style={styles.toggleRow}>
         <View style={styles.toggleTextGroup}>
-          <Text style={styles.label}>Use the photo's own date</Text>
-          <Text style={styles.toggleHint}>
-            When importing from the gallery, set the entry's date from the first
-            photo you pick — handy for backfilling old meals.
-          </Text>
+          <Text style={styles.label}>{t("settings.useOwnDateLabel")}</Text>
+          <Text style={styles.toggleHint}>{t("settings.useOwnDateHint")}</Text>
         </View>
         <Switch
           value={inferDateFromFirstImportedPhoto}
@@ -64,11 +65,8 @@ export function SettingsScreen() {
 
       <View style={styles.toggleRow}>
         <View style={styles.toggleTextGroup}>
-          <Text style={styles.label}>Save where you were</Text>
-          <Text style={styles.toggleHint}>
-            When off, new entries are saved without capturing your current
-            location.
-          </Text>
+          <Text style={styles.label}>{t("settings.saveLocationLabel")}</Text>
+          <Text style={styles.toggleHint}>{t("settings.saveLocationHint")}</Text>
         </View>
         <Switch
           value={captureLocation}
@@ -83,9 +81,9 @@ export function SettingsScreen() {
         style={styles.navRow}
         onPress={() => navigation.navigate("Tags")}
         accessibilityRole="button"
-        accessibilityLabel="Edit tags"
+        accessibilityLabel={t("settings.editTagsAccessibilityLabel")}
       >
-        <Text style={styles.navLabel}>Edit tags</Text>
+        <Text style={styles.navLabel}>{t("settings.editTags")}</Text>
         <Ionicons
           name="chevron-forward-outline"
           size={18}

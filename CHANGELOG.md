@@ -5,6 +5,11 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Added
+
+- Added infrastructure for translating the app into other languages (via Tolgee),
+  starting with Ukrainian.
+
 ### Changed
 
 - Explained why we have motion data request (Apple)

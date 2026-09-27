@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types";
 import { theme } from "../theme/theme";
@@ -32,6 +33,7 @@ function useSeedDefaultTags() {
 }
 
 export function RootNavigator() {
+  const { t } = useTranslation();
   useSeedDefaultTags();
 
   return (
@@ -50,7 +52,7 @@ export function RootNavigator() {
       <Stack.Screen
         name="NewEntry"
         component={NewEntryScreen}
-        options={{ title: "New Entry" }}
+        options={{ title: t("navigation.newEntryTitle") }}
       />
       <Stack.Screen
         name="EntryDetails"
@@ -65,12 +67,12 @@ export function RootNavigator() {
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ title: "Settings" }}
+        options={{ title: t("navigation.settingsTitle") }}
       />
       <Stack.Screen
         name="Tags"
         component={TagsScreen}
-        options={{ title: "Tags" }}
+        options={{ title: t("navigation.tagsTitle") }}
       />
     </Stack.Navigator>
   );
