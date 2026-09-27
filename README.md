@@ -66,6 +66,13 @@ soon. Until then, download it from
 
 See the [changelog](CHANGELOG.md) for what's new in each version.
 
+## Translations
+
+UI strings live in [`src/i18n/locales/en.json`](src/i18n/locales/en.json), the source of
+truth for translation. Translations (starting with Ukrainian) are managed via
+[Tolgee](https://tolgee.io); see [`docs/LOCALIZATION.md`](docs/LOCALIZATION.md) for how
+strings are synced.
+
 ## Feedback
 
 Found a bug or have an idea? [Open an issue](https://github.com/mkloouo/what-did-i-eat/issues)

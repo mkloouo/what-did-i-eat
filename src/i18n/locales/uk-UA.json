@@ -1,0 +1,105 @@
+{
+  "common": {
+    "add": "Додати",
+    "back": "Назад",
+    "cancel": "Відмінити",
+    "close": "Закрити",
+    "crop": "Обрізати",
+    "delete": "Видалити",
+    "edit": "Редагувати",
+    "save": "Зберегти"
+  },
+  "days": {
+    "cellEmptyAccessibilityLabel": "У цьому слоті нічого немає",
+    "cellHasEntriesAccessibilityLabel": "Показати цей час на Полосі"
+  },
+  "entryDetails": {
+    "addTag": "Додати тег",
+    "backAccessibilityLabel": "Назад",
+    "commentPlaceholder": "Коментар",
+    "confirmDeleteBody": "Це видалить фотографії та коментарі назавжди.",
+    "confirmDeleteTitle": "Видалити запис?",
+    "deleteEntry": "Видалити запис",
+    "detailPhotos_one": "{{count, number}} фото",
+    "detailPhotos_few": "{{count, number}} фотографії",
+    "detailPhotos_many": "{{count, number}} фотографій",
+    "detailPhotos_other": "{{count, number}} фотографій",
+    "detailPhotosLabel": "Фотографії",
+    "detailPlace": "Місце",
+    "detailTaken": "Зайнято",
+    "missingText": "Цього запису більше не існує.",
+    "noComment": "Коментар відсутній",
+    "photoCount": "{{current}} з {{total}}"
+  },
+  "home": {
+    "addNewOne": "Додати новий",
+    "emptyBodyAfter": "ти їси.",
+    "emptyBodyBefore": "Сфотографуйте наступну",
+    "emptyBodyWord": "річ",
+    "emptyTitle": "Тут ще нічого немає",
+    "segmentedDays": "Дні",
+    "segmentedLine": "Полоса",
+    "settingsAccessibilityLabel": "Налаштування",
+    "takePhotoNowAccessibilityLabel": "Зробіть фото зараз",
+    "title": "Що я їв/їла"
+  },
+  "lineFeed": {
+    "entryAccessibilityLabel": "Запис о {{time}}"
+  },
+  "navigation": {
+    "newEntryTitle": "Новий запис",
+    "settingsTitle": "Налаштування",
+    "tagsTitle": "Теги"
+  },
+  "newEntry": {
+    "addButton": "Додати",
+    "addPhotoHint": "Потрібно додати принаймні одну фотографію. Натисніть на мініатюру, щоб переглянути, натисніть і утримуйте, щоб видалити.",
+    "alerts": {
+      "cropFailedBody": "Будь ласка, спробуйте ще раз.",
+      "cropFailedTitle": "Не вдалося обрізати фото",
+      "libraryUnavailableBody": "У доступі до фотобібліотеки відмовлено.",
+      "libraryUnavailableTitle": "Бібліотека фотографій недоступна",
+      "saveFailedBody": "Сталася помилка під час збереження цього фото. Спробуйте ще раз.",
+      "saveFailedTitle": "Не вдалося зберегти фото",
+      "somePhotosFailedBody": "Деякі фотографії не вдалося зберегти, але ті, що вдалося, вже додано.",
+      "somePhotosFailedTitle": "Деякі фотографії не вдалося зберегти"
+    },
+    "chooseFromLibrary": "Виберіть з бібліотеки",
+    "commentPlaceholder": "Що ти їв/їла?",
+    "takePhoto": "Зробити фото",
+    "viewerRemove": "Видалити"
+  },
+  "photoDetails": {
+    "missingText": "Цього запису більше не існує."
+  },
+  "settings": {
+    "editTags": "Редагувати теги",
+    "editTagsAccessibilityLabel": "Редагувати теги",
+    "photosPerRow": "Фотографій у рядку: {{count}}",
+    "saveLocationHint": "Коли цю функцію вимкнено, нові записи зберігаються без фіксації вашого поточного місцезнаходження.",
+    "saveLocationLabel": "Збережіть, де ви були",
+    "useOwnDateHint": "Під час імпорту з галереї встановіть дату запису з першої вибраної фотографії — зручно для заповнення старих страв.",
+    "useOwnDateLabel": "Використовуйте дату фотографії"
+  },
+  "tagFilterRail": {
+    "editTagsAccessibilityLabel": "Редагувати теги"
+  },
+  "tags": {
+    "addTagButton": "Додати тег",
+    "addTagHeading": "Додати тег",
+    "confirmDeleteBody_one": "Тег {{count, number}} буде видалено.",
+    "confirmDeleteBody_few": "Теги {{count, number}} буде видалено.",
+    "confirmDeleteBody_many": "{{count, number}} тегів буде видалено.",
+    "confirmDeleteBody_other": "Теги {{count, number}} будуть видалені.",
+    "confirmDeleteTitle": "Видалити теги?",
+    "deleteCount_one": "Видалити",
+    "deleteCount_few": "Видалити ({{count, number}})",
+    "deleteCount_many": "Видалити ({{count, number}})",
+    "deleteCount_other": "Видалити ({{count, number}})",
+    "editTagHeading": "Редагувати тег",
+    "emptyList": "Тегів поки що немає — додайте перший вище.",
+    "labelPlaceholder": "наприклад, домашнього приготування",
+    "select": "Виберіть",
+    "tagsHeading": "Теги"
+  }
+}

@@ -1,4 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
 import { PhotoStack } from "../PhotoStack";
 import { resolvePhotoUri } from "../../storage/photoStorage";
 import { formatTime } from "../../utils/dateFormat";
@@ -38,6 +39,7 @@ export function LineEntryRow({
   wallColumns,
   onPressEntry,
 }: Props) {
+  const { t } = useTranslation();
   const tagLabels = (entry.tagIds ?? [])
     .map((id) => tagsById[id]?.label)
     .filter((label): label is string => Boolean(label));
@@ -49,7 +51,9 @@ export function LineEntryRow({
       style={styles.row}
       onPress={open}
       accessibilityRole="button"
-      accessibilityLabel={`Entry at ${formatTime(entry.createdAt)}`}
+      accessibilityLabel={t("lineFeed.entryAccessibilityLabel", {
+        time: formatTime(entry.createdAt),
+      })}
     >
       <Text style={styles.time} numberOfLines={1} adjustsFontSizeToFit>
         {formatTime(entry.createdAt)}
