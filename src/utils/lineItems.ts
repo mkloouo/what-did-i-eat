@@ -1,5 +1,6 @@
 import { DaySection } from "../store/selectors/feedSelectors";
 import { Entry } from "../types/models";
+import i18n from "../i18n";
 import { dayLabel, formatDuration } from "./dateFormat";
 
 // Entries further apart than this break the Line's spine and get a
@@ -51,7 +52,9 @@ export function buildLineItems(sections: DaySection[]): LineItem[] {
         items.push({
           type: "gap",
           key: `gap-${entries[i].id}`,
-          label: `${formatDuration(minutesBetween(newer, entries[i]))} earlier`,
+          label: i18n.t("dates.earlier", {
+            duration: formatDuration(minutesBetween(newer, entries[i])),
+          }),
         });
       }
       items.push({ type: "entry", entry: entries[i], joinsNewer, joinsOlder });

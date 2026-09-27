@@ -1,3 +1,5 @@
+import i18n from "../i18n";
+
 // The Days grid's "Late" slot (see timeSlots.ts) spans 21:30-05:00,
 // wrapping past midnight as one continuous late-night stretch. Without a
 // matching shift here, an entry logged just after midnight would start a
@@ -5,6 +7,12 @@
 // lone, misleadingly "last" entry of an almost-empty new day. So a day, for
 // grouping purposes, runs 05:00-05:00 rather than midnight-to-midnight.
 const DAY_START_HOUR = 5;
+
+// Dates and times follow the app's language (which may differ from the
+// device's when picked manually in Settings), not the device locale.
+function locale(): string {
+  return i18n.language || "en";
+}
 
 export function dayKeyOf(iso: string): string {
   const d = new Date(iso);
@@ -22,12 +30,12 @@ export function dayLabel(dayKey: string, now: Date = new Date()): string {
   yesterday.setDate(now.getDate() - 1);
   const yesterdayKey = dayKeyOf(yesterday.toISOString());
 
-  if (dayKey === todayKey) return "Today";
-  if (dayKey === yesterdayKey) return "Yesterday";
+  if (dayKey === todayKey) return i18n.t("dates.today");
+  if (dayKey === yesterdayKey) return i18n.t("dates.yesterday");
 
   const [year, month, day] = dayKey.split("-").map(Number);
   const date = new Date(year, month - 1, day);
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(locale(), {
     month: "long",
     day: "numeric",
     year: date.getFullYear() === now.getFullYear() ? undefined : "numeric",
@@ -45,12 +53,12 @@ export function dayLabelShort(dayKey: string, now: Date = new Date()): string {
   yesterday.setDate(now.getDate() - 1);
   const yesterdayKey = dayKeyOf(yesterday.toISOString());
 
-  if (dayKey === todayKey) return "Today";
-  if (dayKey === yesterdayKey) return "Yesterday";
+  if (dayKey === todayKey) return i18n.t("dates.today");
+  if (dayKey === yesterdayKey) return i18n.t("dates.yesterday");
 
   const [year, month, day] = dayKey.split("-").map(Number);
   const date = new Date(year, month - 1, day);
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(locale(), {
     month: "short",
     day: "numeric",
     year: date.getFullYear() === now.getFullYear() ? undefined : "numeric",
@@ -58,14 +66,14 @@ export function dayLabelShort(dayKey: string, now: Date = new Date()): string {
 }
 
 export function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString(undefined, {
+  return new Date(iso).toLocaleTimeString(locale(), {
     hour: "numeric",
     minute: "2-digit",
   });
 }
 
 export function formatFullDateTime(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
+  return new Date(iso).toLocaleString(locale(), {
     month: "long",
     day: "numeric",
     hour: "numeric",
@@ -76,9 +84,9 @@ export function formatFullDateTime(iso: string): string {
 export function formatDuration(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  if (hours === 0) return `${mins} m`;
-  if (mins === 0) return `${hours} h`;
-  return `${hours} h ${mins} m`;
+  if (hours === 0) return i18n.t("dates.durationMinutes", { mins });
+  if (mins === 0) return i18n.t("dates.durationHours", { hours });
+  return i18n.t("dates.durationHoursMinutes", { hours, mins });
 }
 
 export function minuteOfDay(iso: string): number {

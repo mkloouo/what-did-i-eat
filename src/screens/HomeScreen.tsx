@@ -22,7 +22,7 @@ import { DevMenuWord } from "../dev/DevMenuWord";
 type Nav = NativeStackNavigationProp<RootStackParamList, "Home">;
 
 export function HomeScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigation = useNavigation<Nav>();
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
@@ -42,7 +42,13 @@ export function HomeScreen() {
     state.appMeta.timelineView === "days" ? "days" : "line",
   );
 
-  const items = useMemo(() => buildLineItems(sections), [sections]);
+  // The Line's day/gap labels are localized strings baked into the items,
+  // so rebuild them when the language changes too.
+  const items = useMemo(
+    () => buildLineItems(sections),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sections, i18n.language],
+  );
   const dayKeys = useMemo(
     () => sections.map((section) => section.dayKey),
     [sections],
@@ -66,8 +72,16 @@ export function HomeScreen() {
             <SegmentedControl
               value={timelineView}
               options={[
-                { value: "line", label: t("home.segmentedLine") },
-                { value: "days", label: t("home.segmentedDays") },
+                {
+                  value: "line",
+                  label: "🧵",
+                  accessibilityLabel: t("home.segmentedLine"),
+                },
+                {
+                  value: "days",
+                  label: "📅",
+                  accessibilityLabel: t("home.segmentedDays"),
+                },
               ]}
               onChange={(value) =>
                 dispatch(setTimelineView(value as TimelineView))
@@ -176,7 +190,7 @@ const styles = StyleSheet.create({
     gap: theme.spacing.sm,
   },
   toggleWrap: {
-    width: 140,
+    width: 112,
   },
   settingsButton: {
     padding: theme.spacing.xs,

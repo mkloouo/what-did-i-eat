@@ -100,5 +100,13 @@
   },
   "tagFilterRail": {
     "editTagsAccessibilityLabel": "Edit tags"
+  },
+  "dates": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "earlier": "{{duration}} earlier",
+    "durationMinutes": "{{mins}} m",
+    "durationHours": "{{hours}} h",
+    "durationHoursMinutes": "{{hours}} h {{mins}} m"
   }
 }

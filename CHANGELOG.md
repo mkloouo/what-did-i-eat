@@ -5,6 +5,17 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Changed
+
+- The Line / Days switch on the home screen is now two emoji buttons (🧵 / 📅).
+- The language setting is now a dropdown picker instead of a three-way switch.
+
+### Fixed
+
+- "Today", "Yesterday", dates, times and "… earlier" gaps now follow the app's
+  chosen language — picking Українська no longer leaves them in English.
+- Filled in the missing Ukrainian strings on the Settings screen.
+
 ### Developer
 
 - Fixed the iOS build rejection (ITMS-90683): expo-location's

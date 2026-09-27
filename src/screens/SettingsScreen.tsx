@@ -20,7 +20,7 @@ import {
   setCaptureLocation,
   setLocale,
 } from "../store/settingsSlice";
-import { SegmentedControl } from "../components/SegmentedControl";
+import { OptionPicker } from "../components/OptionPicker";
 import { theme } from "../theme/theme";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "Settings">;
@@ -85,8 +85,9 @@ export function SettingsScreen() {
         <Text style={styles.label}>{t("settings.languageLabel")}</Text>
         <Text style={styles.toggleHint}>{t("settings.languageHint")}</Text>
         <View style={styles.languageControl}>
-          <SegmentedControl<AppLocale>
+          <OptionPicker<AppLocale>
             value={locale}
+            accessibilityLabel={t("settings.languageLabel")}
             onChange={(value) => dispatch(setLocale(value))}
             options={[
               { value: "system", label: t("settings.languageSystem") },

@@ -11,7 +11,7 @@
   },
   "days": {
     "cellEmptyAccessibilityLabel": "У цьому слоті нічого немає",
-    "cellHasEntriesAccessibilityLabel": "Показати цей час на Полосі"
+    "cellHasEntriesAccessibilityLabel": "Показати цей час у Стрічці"
   },
   "entryDetails": {
     "addTag": "Додати тег",
@@ -26,7 +26,7 @@
     "detailPhotos_other": "{{count, number}} фотографій",
     "detailPhotosLabel": "Фотографії",
     "detailPlace": "Місце",
-    "detailTaken": "Зайнято",
+    "detailTaken": "Знято",
     "missingText": "Цього запису більше не існує.",
     "noComment": "Коментар відсутній",
     "photoCount": "{{current}} з {{total}}"
@@ -38,7 +38,7 @@
     "emptyBodyWord": "річ",
     "emptyTitle": "Тут ще нічого немає",
     "segmentedDays": "Дні",
-    "segmentedLine": "Полоса",
+    "segmentedLine": "Стрічка",
     "settingsAccessibilityLabel": "Налаштування",
     "takePhotoNowAccessibilityLabel": "Зробіть фото зараз",
     "title": "Що я їв/їла"
@@ -76,9 +76,9 @@
     "editTags": "Редагувати теги",
     "editTagsAccessibilityLabel": "Редагувати теги",
     "languageEnglish": "English",
-    "languageHint": "",
-    "languageLabel": "",
-    "languageSystem": "",
+    "languageHint": "Виберіть мову застосунку або використовуйте мову пристрою.",
+    "languageLabel": "Мова",
+    "languageSystem": "Системна",
     "languageUkrainian": "Українська",
     "photosPerRow": "Фотографій у рядку: {{count}}",
     "saveLocationHint": "Коли цю функцію вимкнено, нові записи зберігаються без фіксації вашого поточного місцезнаходження.",
@@ -106,5 +106,13 @@
     "labelPlaceholder": "наприклад, домашнього приготування",
     "select": "Виберіть",
     "tagsHeading": "Теги"
+  },
+  "dates": {
+    "today": "Сьогодні",
+    "yesterday": "Вчора",
+    "earlier": "{{duration}} раніше",
+    "durationMinutes": "{{mins}} хв",
+    "durationHours": "{{hours}} год",
+    "durationHoursMinutes": "{{hours}} год {{mins}} хв"
   }
 }

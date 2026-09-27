@@ -133,3 +133,18 @@ describe("minuteOfDay / dayFraction", () => {
     expect(dayFraction(lastMinute)).toBeCloseTo(1439 / 1440);
   });
 });
+
+describe("localization", () => {
+  const i18n = require("../i18n").default;
+  const now = new Date(2026, 2, 5, 12, 0, 0);
+
+  afterEach(() => i18n.changeLanguage("en"));
+
+  it("follows the app language for Today/Yesterday and durations", async () => {
+    await i18n.changeLanguage("uk-UA");
+    expect(dayLabel(dayKeyOf(now.toISOString()), now)).toBe("Сьогодні");
+    const yesterday = new Date(2026, 2, 4, 12, 0, 0);
+    expect(dayLabelShort(dayKeyOf(yesterday.toISOString()), now)).toBe("Вчора");
+    expect(formatDuration(113)).toBe("1 год 53 хв");
+  });
+});

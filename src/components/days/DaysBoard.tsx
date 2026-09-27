@@ -1,4 +1,5 @@
 import { FlatList, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
 import { DaySection } from "../../store/selectors/feedSelectors";
 import { dayLabelShort } from "../../utils/dateFormat";
 import { DayGridRow } from "./DayGridRow";
@@ -14,9 +15,13 @@ type Props = {
 // fixed-height DayGridRow per day, newest first (sections already arrive
 // sorted that way from selectFeedSections).
 export function DaysBoard({ sections, onPressCell }: Props) {
+  // Day labels are localized; extraData re-renders the rows on a language
+  // change even though `sections` itself hasn't changed.
+  const { i18n } = useTranslation();
   return (
     <FlatList
       data={sections}
+      extraData={i18n.language}
       keyExtractor={(section) => section.dayKey}
       ListHeaderComponent={SlotHeaderRow}
       stickyHeaderIndices={[0]}

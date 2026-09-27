@@ -7,7 +7,7 @@ export function SegmentedControl<T>({
   onChange,
 }: {
   value: T;
-  options: { value: T; label: string }[];
+  options: { value: T; label: string; accessibilityLabel?: string }[];
   onChange: (value: T) => void;
 }) {
   return (
@@ -16,6 +16,9 @@ export function SegmentedControl<T>({
         <Pressable
           key={option.label}
           onPress={() => onChange(option.value)}
+          accessibilityRole="button"
+          accessibilityLabel={option.accessibilityLabel}
+          accessibilityState={{ selected: value === option.value }}
           style={[
             styles.segment,
             value === option.value && styles.segmentActive,
