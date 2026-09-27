@@ -8,10 +8,11 @@ const baseState = {
   wallColumns: 4,
   inferDateFromFirstImportedPhoto: false,
   captureLocation: true,
+  locale: "system" as const,
 };
 
 describe("settingsSlice", () => {
-  it("defaults to 4 photos per row, inferred-date off and location on", () => {
+  it("defaults to 4 photos per row, inferred-date off, location on and system locale", () => {
     expect(reducer(undefined, { type: "@@INIT" })).toEqual(baseState);
   });
 

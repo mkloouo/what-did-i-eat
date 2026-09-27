@@ -22,12 +22,16 @@ export type Entry = {
 // treat anything other than "days" as "line", so no migration is needed.
 export type TimelineView = "line" | "days";
 
+// Keep in sync with the resource keys in src/i18n/index.ts.
+export type AppLocale = "system" | "en" | "uk-UA";
+
 export type Settings = {
   // Photos per row on the Line. Keeps its Wall-era key so the value people
   // already chose survives the rename.
   wallColumns: number;
   inferDateFromFirstImportedPhoto: boolean;
   captureLocation: boolean;
+  locale: AppLocale;
 };
 
 export const TAG_ICON_OPTIONS = [

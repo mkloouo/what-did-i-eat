@@ -10,22 +10,28 @@ const resources = {
   ["uk-UA"]: { translation: ukUA },
 } as const;
 
+export const SUPPORTED_LANGUAGES = Object.keys(resources);
+
 // expo-localization returns the device's preferred locales, most-preferred
 // first. Resource keys may be a bare language code ("en") or a full tag
 // ("uk-UA"), so match each device locale against both its languageTag and
 // languageCode before falling back to "en".
 const supportedByLowerCase = new Map(
-  Object.keys(resources).map((lang) => [lang.toLowerCase(), lang]),
+  SUPPORTED_LANGUAGES.map((lang) => [lang.toLowerCase(), lang]),
 );
-const initialLanguage =
-  Localization.getLocales()
-    .flatMap((locale) => [locale.languageTag, locale.languageCode])
-    .map((tag) => tag && supportedByLowerCase.get(tag.toLowerCase()))
-    .find((lang): lang is string => lang != null) ?? "en";
+
+export function resolveDeviceLanguage(): string {
+  return (
+    Localization.getLocales()
+      .flatMap((locale) => [locale.languageTag, locale.languageCode])
+      .map((tag) => tag && supportedByLowerCase.get(tag.toLowerCase()))
+      .find((lang): lang is string => lang != null) ?? "en"
+  );
+}
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: initialLanguage,
+  lng: resolveDeviceLanguage(),
   fallbackLng: "en",
   // Locale files (like uk-UA.json, filled in by the translation-management service) start out with empty
   // string values as placeholders for missing translations. Without this,

@@ -5,6 +5,11 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Added
+
+- Added a language setting (System / English / Українська) so you can pick the app's
+  language yourself instead of only following the device's.
+
 ## [3.4.0] - 2026-09-27
 
 ### Added

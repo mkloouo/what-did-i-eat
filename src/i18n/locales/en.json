@@ -84,7 +84,12 @@
     "saveLocationLabel": "Save where you were",
     "saveLocationHint": "When off, new entries are saved without capturing your current location.",
     "editTags": "Edit tags",
-    "editTagsAccessibilityLabel": "Edit tags"
+    "editTagsAccessibilityLabel": "Edit tags",
+    "languageLabel": "Language",
+    "languageHint": "Choose the app's language, or follow your device's setting.",
+    "languageSystem": "System",
+    "languageEnglish": "English",
+    "languageUkrainian": "Українська"
   },
   "lineFeed": {
     "entryAccessibilityLabel": "Entry at {{time}}"

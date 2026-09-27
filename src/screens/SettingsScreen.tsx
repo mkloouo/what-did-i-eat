@@ -12,12 +12,15 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/types";
+import { AppLocale } from "../types/models";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import {
   setWallColumns,
   setInferDateFromFirstImportedPhoto,
   setCaptureLocation,
+  setLocale,
 } from "../store/settingsSlice";
+import { SegmentedControl } from "../components/SegmentedControl";
 import { theme } from "../theme/theme";
 
 type Nav = NativeStackNavigationProp<RootStackParamList, "Settings">;
@@ -33,6 +36,7 @@ export function SettingsScreen() {
   const captureLocation = useAppSelector(
     (state) => state.settings.captureLocation,
   );
+  const locale = useAppSelector((state) => state.settings.locale ?? "system");
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -75,6 +79,22 @@ export function SettingsScreen() {
           }}
           trackColor={{ true: theme.colors.accent }}
         />
+      </View>
+
+      <View style={styles.languageSection}>
+        <Text style={styles.label}>{t("settings.languageLabel")}</Text>
+        <Text style={styles.toggleHint}>{t("settings.languageHint")}</Text>
+        <View style={styles.languageControl}>
+          <SegmentedControl<AppLocale>
+            value={locale}
+            onChange={(value) => dispatch(setLocale(value))}
+            options={[
+              { value: "system", label: t("settings.languageSystem") },
+              { value: "en", label: t("settings.languageEnglish") },
+              { value: "uk-UA", label: t("settings.languageUkrainian") },
+            ]}
+          />
+        </View>
       </View>
 
       <Pressable
@@ -120,6 +140,12 @@ const styles = StyleSheet.create({
     ...theme.typography.caption,
     color: theme.colors.graphite,
     marginTop: theme.spacing.xs,
+  },
+  languageSection: {
+    marginTop: theme.spacing.lg,
+  },
+  languageControl: {
+    marginTop: theme.spacing.sm,
   },
   navRow: {
     flexDirection: "row",

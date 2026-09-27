@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { store, persistor } from './src/store/store';
+import { LocaleSync } from './src/i18n/LocaleSync';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { navigationTheme } from './src/theme/navigationTheme';
 import { useAppFonts } from './src/theme/useAppFonts';
@@ -29,6 +30,7 @@ export default function App() {
       <SafeAreaProvider>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
+            <LocaleSync />
             <NavigationContainer theme={navigationTheme}>
               <StatusBar style="dark" />
               <RootNavigator />

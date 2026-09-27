@@ -45,6 +45,17 @@ npm run i18n:pull   # download translated strings back into src/i18n/locales/
 2. Create `src/i18n/locales/<code>.json` with the same keys as `en.json`, values empty.
 3. Add the locale to Tolgee (project settings) and to `pull.languages` in
    `tolgee.config.js`, then `npm run i18n:pull`.
+4. Add the locale to the `AppLocale` type in `src/types/models.ts` and to the language
+   options on the Settings screen (`src/screens/SettingsScreen.tsx`) so people can pick it
+   manually.
 
 Optionally, install [Tolgee's GitHub integration](https://docs.tolgee.io/platform/integrations/version_control_systems/github_actions)
 to open a pull request automatically when translations change.
+
+## Manual language switch
+
+People aren't limited to their device's language: Settings has a language picker
+(System / English / Українська) backed by `settings.locale` in Redux (persisted, default
+`"system"`). `src/i18n/LocaleSync.tsx` watches that value and calls `i18n.changeLanguage()`
+— resolving the device's language itself when the setting is `"system"`, via the same
+matching logic `src/i18n/index.ts` uses at startup.

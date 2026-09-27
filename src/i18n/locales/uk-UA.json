@@ -75,6 +75,11 @@
   "settings": {
     "editTags": "Редагувати теги",
     "editTagsAccessibilityLabel": "Редагувати теги",
+    "languageEnglish": "English",
+    "languageHint": "",
+    "languageLabel": "",
+    "languageSystem": "",
+    "languageUkrainian": "Українська",
     "photosPerRow": "Фотографій у рядку: {{count}}",
     "saveLocationHint": "Коли цю функцію вимкнено, нові записи зберігаються без фіксації вашого поточного місцезнаходження.",
     "saveLocationLabel": "Збережіть, де ви були",

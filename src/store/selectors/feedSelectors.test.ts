@@ -20,6 +20,7 @@ function stateFrom(entries: Entry[]): RootState {
       wallColumns: 4,
       inferDateFromFirstImportedPhoto: false,
       captureLocation: true,
+      locale: "system",
     },
     tags: {},
     appMeta: {

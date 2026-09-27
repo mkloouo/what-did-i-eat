@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Settings } from "../types/models";
+import { AppLocale, Settings } from "../types/models";
 
 const MIN_WALL_COLUMNS = 3;
 const MAX_WALL_COLUMNS = 10;
@@ -12,6 +12,7 @@ const initialState: Settings = {
   wallColumns: 4,
   inferDateFromFirstImportedPhoto: false,
   captureLocation: true,
+  locale: "system",
 };
 
 const settingsSlice = createSlice({
@@ -27,6 +28,9 @@ const settingsSlice = createSlice({
     setCaptureLocation(state, action: PayloadAction<boolean>) {
       state.captureLocation = action.payload;
     },
+    setLocale(state, action: PayloadAction<AppLocale>) {
+      state.locale = action.payload;
+    },
   },
 });
 
@@ -34,5 +38,6 @@ export const {
   setWallColumns,
   setInferDateFromFirstImportedPhoto,
   setCaptureLocation,
+  setLocale,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;
