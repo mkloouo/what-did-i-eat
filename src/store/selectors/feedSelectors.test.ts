@@ -57,15 +57,6 @@ describe("selectFeedSections", () => {
     expect(ids(sections[1].entries)).toEqual(["a"]);
   });
 
-  it("keeps a just-after-midnight entry in the previous day's late-night section", () => {
-    const evening = entry("a", "2026-03-05T21:30:00");
-    const pastMidnight = entry("b", "2026-03-06T00:03:00");
-    const sections = selectFeedSections(stateFrom([evening, pastMidnight]));
-
-    expect(sections).toHaveLength(1);
-    expect(sections[0].dayKey).toBe("2026-03-05");
-    expect(ids(sections[0].entries)).toEqual(["b", "a"]);
-  });
 });
 
 describe("selectFeedSections with a tag filter", () => {

@@ -22,22 +22,8 @@ describe("dayKeyOf", () => {
 
   it("gives different keys for different local days", () => {
     const day1 = new Date(2026, 2, 5, 23, 59, 0).toISOString();
-    const day2 = new Date(2026, 2, 6, 6, 0, 0).toISOString();
+    const day2 = new Date(2026, 2, 6, 0, 1, 0).toISOString();
     expect(dayKeyOf(day1)).not.toBe(dayKeyOf(day2));
-  });
-
-  it("treats the small hours as still part of the previous day", () => {
-    const lateNight = new Date(2026, 2, 5, 23, 59, 0).toISOString();
-    const pastMidnight = new Date(2026, 2, 6, 0, 1, 0).toISOString();
-    const justBeforeDayStart = new Date(2026, 2, 6, 4, 59, 0).toISOString();
-    expect(dayKeyOf(pastMidnight)).toBe(dayKeyOf(lateNight));
-    expect(dayKeyOf(justBeforeDayStart)).toBe(dayKeyOf(lateNight));
-  });
-
-  it("starts a new day at 05:00", () => {
-    const justBeforeDayStart = new Date(2026, 2, 6, 4, 59, 0).toISOString();
-    const dayStart = new Date(2026, 2, 6, 5, 0, 0).toISOString();
-    expect(dayKeyOf(dayStart)).not.toBe(dayKeyOf(justBeforeDayStart));
   });
 });
 

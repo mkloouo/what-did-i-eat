@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [3.4.2] - 2026-09-28
+
 ### Changed
 
 - The Line / Days switch on the home screen is now two emoji buttons (🧵 / 📅).
@@ -15,6 +17,8 @@ All notable changes to this project are documented here. Format loosely follows
 - "Today", "Yesterday", dates, times and "… earlier" gaps now follow the app's
   chosen language — picking Українська no longer leaves them in English.
 - Filled in the missing Ukrainian strings on the Settings screen.
+- Days are calendar days again: 3.4.1 counted anything before 05:00 as the
+  previous day, which left "Today" showing yesterday's meals after midnight.
 
 ### Developer
 
