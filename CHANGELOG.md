@@ -7,8 +7,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ### Added
 
-- Added infrastructure for translating the app into other languages (via Tolgee),
-  starting with Ukrainian.
+- Added Ukrainian language support. More languages can follow — translations
+  are now managed through Tolgee.
 
 ### Changed
 
