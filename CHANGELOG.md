@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [3.4.1] - 2026-09-28
+
 ### Added
 
 - Added a language setting (System / English / Українська) so you can pick the app's
