@@ -5,6 +5,14 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+### Developer
+
+- Fixed the iOS build rejection (ITMS-90683): expo-location's
+  `motionUsagePermission: false` was silently deleting the
+  `NSMotionUsageDescription` Info.plist key that had been set separately,
+  even though the string was present in `app.config.js` — the plugin now
+  owns that key directly with the real purpose string instead.
+
 ## [3.4.1] - 2026-09-28
 
 ### Added

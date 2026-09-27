@@ -19,8 +19,6 @@ module.exports = {
       bundleIdentifier: IS_DEV ? `${BASE_BUNDLE_ID}.dev` : BASE_BUNDLE_ID,
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
-        NSMotionUsageDescription:
-          'This app does not use motion data. This permission is required by a library dependency and is never accessed.',
       },
     },
     android: {
@@ -69,7 +67,18 @@ module.exports = {
           locationWhenInUsePermission: 'What Did I Eat uses your location to note where each food photo was taken.',
           locationAlwaysAndWhenInUsePermission: false,
           locationAlwaysPermission: false,
-          motionUsagePermission: false,
+          // NOT `false`: expo-location's plugin doesn't just skip adding
+          // NSMotionUsageDescription when this is `false`, it actively
+          // deletes the key from Info.plist (@expo/config-plugins'
+          // applyPermissions), which silently stripped the purpose string
+          // this used to set directly under ios.infoPlist and got the app
+          // rejected (ITMS-90683) even though the string was right there in
+          // this file. This app doesn't use motion data itself — the
+          // permission is required by a library dependency (image cropping)
+          // and never actually accessed — but Apple requires the string
+          // regardless of who calls the API.
+          motionUsagePermission:
+            'This app does not use motion data. This permission is required by a library dependency and is never accessed.',
         },
       ],
       '@react-native-community/datetimepicker',
