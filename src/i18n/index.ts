@@ -11,13 +11,17 @@ const resources = {
 } as const;
 
 // expo-localization returns the device's preferred locales, most-preferred
-// first. We only ship "en" and "ua-UA" so far, so pick the first one we
-// actually have a resource bundle for and fall back to "en" otherwise.
-const supportedLanguages = Object.keys(resources);
-const deviceLanguageTag = Localization.getLocales()[0]?.languageCode ?? "en";
-const initialLanguage = supportedLanguages.includes(deviceLanguageTag)
-  ? deviceLanguageTag
-  : "en";
+// first. Resource keys may be a bare language code ("en") or a full tag
+// ("uk-UA"), so match each device locale against both its languageTag and
+// languageCode before falling back to "en".
+const supportedByLowerCase = new Map(
+  Object.keys(resources).map((lang) => [lang.toLowerCase(), lang]),
+);
+const initialLanguage =
+  Localization.getLocales()
+    .flatMap((locale) => [locale.languageTag, locale.languageCode])
+    .map((tag) => tag && supportedByLowerCase.get(tag.toLowerCase()))
+    .find((lang): lang is string => lang != null) ?? "en";
 
 i18n.use(initReactI18next).init({
   resources,
