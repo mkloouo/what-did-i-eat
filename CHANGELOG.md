@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [3.4.0] - 2026-09-27
+
 ### Added
 
 - Added Ukrainian language support. More languages can follow — translations
