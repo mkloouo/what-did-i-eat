@@ -1,7 +1,7 @@
 # Localization
 
 UI strings live in [`src/i18n/locales/en.json`](../src/i18n/locales/en.json), which is
-the source of truth. Other locale files (e.g. `uk.json`) start out with empty string
+the source of truth. Other locale files (e.g. `uk-UA.json`) start out with empty string
 values; [`src/i18n/index.ts`](../src/i18n/index.ts) treats an empty value as "not yet
 translated" and falls back to English for it, so a partially-translated locale never
 shows blank text.
