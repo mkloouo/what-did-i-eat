@@ -1,5 +1,14 @@
+// The Days grid's "Late" slot (see timeSlots.ts) spans 21:30-05:00,
+// wrapping past midnight as one continuous late-night stretch. Without a
+// matching shift here, an entry logged just after midnight would start a
+// new day of its own instead of joining that stretch, showing up as the
+// lone, misleadingly "last" entry of an almost-empty new day. So a day, for
+// grouping purposes, runs 05:00-05:00 rather than midnight-to-midnight.
+const DAY_START_HOUR = 5;
+
 export function dayKeyOf(iso: string): string {
   const d = new Date(iso);
+  if (d.getHours() < DAY_START_HOUR) d.setDate(d.getDate() - 1);
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");

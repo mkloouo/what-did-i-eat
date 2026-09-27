@@ -10,6 +10,12 @@ All notable changes to this project are documented here. Format loosely follows
 - Added a language setting (System / English / Українська) so you can pick the app's
   language yourself instead of only following the device's.
 
+### Fixed
+
+- An entry logged just after midnight no longer shows up as its own day's
+  lonely "last" entry on the Days grid — it now stays part of the previous
+  day's late night, where it belongs.
+
 ## [3.4.0] - 2026-09-27
 
 ### Added
