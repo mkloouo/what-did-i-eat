@@ -9,9 +9,17 @@
     "edit": "Редагувати",
     "save": "Зберегти"
   },
+  "dates": {
+    "durationHours": "{{hours}} год",
+    "durationHoursMinutes": "{{hours}} год {{mins}} хв",
+    "durationMinutes": "{{mins}} хв",
+    "earlier": "{{duration}} раніше",
+    "today": "Сьогодні",
+    "yesterday": "Вчора"
+  },
   "days": {
     "cellEmptyAccessibilityLabel": "У цьому слоті нічого немає",
-    "cellHasEntriesAccessibilityLabel": "Показати цей час у Стрічці"
+    "cellHasEntriesAccessibilityLabel": "Показати цей час на Полосі"
   },
   "entryDetails": {
     "addTag": "Додати тег",
@@ -26,22 +34,22 @@
     "detailPhotos_other": "{{count, number}} фотографій",
     "detailPhotosLabel": "Фотографії",
     "detailPlace": "Місце",
-    "detailTaken": "Знято",
+    "detailTaken": "Зайнято",
     "missingText": "Цього запису більше не існує.",
     "noComment": "Коментар відсутній",
     "photoCount": "{{current}} з {{total}}"
   },
   "home": {
-    "addNewOne": "Додати новий",
+    "addNewOne": "Додати ще",
     "emptyBodyAfter": "ти їси.",
     "emptyBodyBefore": "Сфотографуйте наступну",
     "emptyBodyWord": "річ",
     "emptyTitle": "Тут ще нічого немає",
     "segmentedDays": "Дні",
-    "segmentedLine": "Стрічка",
+    "segmentedLine": "Полоса",
     "settingsAccessibilityLabel": "Налаштування",
     "takePhotoNowAccessibilityLabel": "Зробіть фото зараз",
-    "title": "Що я їв/їла"
+    "title": "Що ж там було..."
   },
   "lineFeed": {
     "entryAccessibilityLabel": "Запис о {{time}}"
@@ -76,15 +84,15 @@
     "editTags": "Редагувати теги",
     "editTagsAccessibilityLabel": "Редагувати теги",
     "languageEnglish": "English",
-    "languageHint": "Виберіть мову застосунку або використовуйте мову пристрою.",
+    "languageHint": "Виберіть мову або дотримуйтесь налаштувань вашого пристрою.",
     "languageLabel": "Мова",
-    "languageSystem": "Системна",
+    "languageSystem": "Мова пристрою",
     "languageUkrainian": "Українська",
     "photosPerRow": "Фотографій у рядку: {{count}}",
     "saveLocationHint": "Коли цю функцію вимкнено, нові записи зберігаються без фіксації вашого поточного місцезнаходження.",
-    "saveLocationLabel": "Збережіть, де ви були",
+    "saveLocationLabel": "Зберігати локацію",
     "useOwnDateHint": "Під час імпорту з галереї встановіть дату запису з першої вибраної фотографії — зручно для заповнення старих страв.",
-    "useOwnDateLabel": "Використовуйте дату фотографії"
+    "useOwnDateLabel": "Взяти дату з фотографії"
   },
   "tagFilterRail": {
     "editTagsAccessibilityLabel": "Редагувати теги"
@@ -103,16 +111,8 @@
     "deleteCount_other": "Видалити ({{count, number}})",
     "editTagHeading": "Редагувати тег",
     "emptyList": "Тегів поки що немає — додайте перший вище.",
-    "labelPlaceholder": "наприклад, домашнього приготування",
+    "labelPlaceholder": "Наприклад, Готовка вдома, Нічний дожор, Солоненьке...",
     "select": "Виберіть",
     "tagsHeading": "Теги"
-  },
-  "dates": {
-    "today": "Сьогодні",
-    "yesterday": "Вчора",
-    "earlier": "{{duration}} раніше",
-    "durationMinutes": "{{mins}} хв",
-    "durationHours": "{{hours}} год",
-    "durationHoursMinutes": "{{hours}} год {{mins}} хв"
   }
 }

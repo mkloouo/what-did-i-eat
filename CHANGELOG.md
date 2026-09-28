@@ -5,6 +5,10 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## Added
+
+- missing Ukrainian strings on the Settings screen and adaptations for others.
+
 ## [3.4.4] - 2026-09-28
 
 ## Changed
