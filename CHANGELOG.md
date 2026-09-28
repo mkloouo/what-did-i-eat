@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## [3.4.3] - 2026-09-28
+
 ### Changed
 
 - The Line / Days switch on the home screen is now two emoji buttons (🧵 / 📅).
