@@ -6,9 +6,9 @@ Snap what you eat. The app files each photo by meal and by day, so you can look 
 see what you actually ate. There are no calories, no macros and no daily targets.
 
 <p align="center">
-  <img src="docs/screenshots/wall.jpg" alt="The Wall: a scrolling grid of meal photos grouped by time, with tags underneath" width="220">
+  <img src="docs/screenshots/line.jpg" alt="The Line: a timeline of meals, each with its photos, note and tags" width="220">
   <img src="docs/screenshots/days.jpg" alt="Days view: one row per day, photos placed into Morning, Midday, Afternoon, Evening and Late columns" width="220">
-  <img src="docs/screenshots/new-entry.jpg" alt="New entry screen: take a photo or choose from the library, pick tags, write what you ate" width="220">
+  <img src="docs/screenshots/entry.jpg" alt="An entry: full-size photo, thumbnails, note, tags, time and place" width="220">
 </p>
 
 ## Why I built it
@@ -41,7 +41,10 @@ does three things:
   from the photo itself.
 
 <p align="center">
-  <img src="docs/screenshots/settings.jpg" alt="Settings: what counts as one meal, merge window slider, photos per row, use the photo's own date, save location" width="220">
+  <img src="docs/screenshots/entry-edit.jpg" alt="Editing an entry: note, tags, date, place and photos" width="220">
+  <img src="docs/screenshots/tags.jpg" alt="Tags screen: the editable list of tags with an Add tag button" width="220">
+  <img src="docs/screenshots/settings.jpg" alt="Settings: photos per row, use the photo's own date, save location, language" width="220">
+  <img src="docs/screenshots/language.jpg" alt="Language picker in Settings: System, English or Ukrainian" width="220">
 </p>
 
 ## Private by design
