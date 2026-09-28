@@ -24,7 +24,7 @@ module.exports = {
     android: {
       package: IS_DEV ? `${BASE_BUNDLE_ID}.dev` : BASE_BUNDLE_ID,
       adaptiveIcon: {
-        backgroundColor: '#FCF5E4',
+        backgroundColor: '#FBF0D0',
         foregroundImage: './assets/android-icon-foreground.png',
         monochromeImage: './assets/android-icon-monochrome.png',
       },

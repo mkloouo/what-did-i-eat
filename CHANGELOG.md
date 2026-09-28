@@ -5,6 +5,10 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+## Changed
+
+- The app graphics (icon)
+
 ## [3.4.3] - 2026-09-28
 
 ### Changed
