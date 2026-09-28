@@ -16,13 +16,20 @@ sync strings, it's just what this project runs.
 ## Syncing strings
 
 The CLI is configured in [`tolgee.config.js`](../tolgee.config.js) at the repo root, and
-reads its instance URL and credentials from the environment rather than the file:
+reads its instance URL and credentials only from a gitignored `.env.local` at the repo
+root (not from the shell environment):
 
-- `TOLGEE_API_URL` — base URL of your Tolgee instance (defaults to the Tolgee Cloud URL
-  if unset, but point this at your self-hosted instance instead)
-- `TOLGEE_API_KEY` — a project API key or personal access token
-- `TOLGEE_PROJECT_ID` — the numeric project ID (only needed with a personal access
-  token; a project API key already scopes to one project)
+```sh
+# .env.local
+TOLGEE_URL=https://tolgee.example.com
+TOLGEE_API_KEY=tgpak_xxxxxxxxxxxxxxxxxxxxxxxx
+TOLGEE_PROJECT_ID=1
+```
+
+- `TOLGEE_URL` — base URL of your Tolgee instance
+- `TOLGEE_API_KEY` — a project API key (`tgpak_…`) or personal access token (`tgpat_…`)
+- `TOLGEE_PROJECT_ID` — the numeric project ID (required with a personal access token; a
+  project API key already implies it)
 
 With those set:
 
