@@ -2,6 +2,7 @@ import reducer, {
   addEntry,
   updateEntryComment,
   updateEntryTags,
+  setEntryLocation,
   deleteEntry,
   replaceEntryPhoto,
   clearEntries,
@@ -62,6 +63,26 @@ describe("entriesSlice", () => {
       updateEntryTags({ id: "missing", tagIds: ["t1"] }),
     );
     expect(state).toEqual(initial);
+  });
+
+  it("setEntryLocation attaches a location to an existing entry", () => {
+    const location = { latitude: 1, longitude: 2, placeName: "Main St" };
+    const state = reducer(
+      { e1: sampleEntry },
+      setEntryLocation({ id: "e1", location }),
+    );
+    expect(state.e1.location).toEqual(location);
+  });
+
+  it("setEntryLocation is a no-op for an entry deleted before the fix landed", () => {
+    const state = reducer(
+      {},
+      setEntryLocation({
+        id: "e1",
+        location: { latitude: 1, longitude: 2, placeName: null },
+      }),
+    );
+    expect(state).toEqual({});
   });
 
   it("deleteEntry removes the entry by id", () => {

@@ -24,7 +24,7 @@ import { RootStackParamList } from "../navigation/types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { selectAllTags } from "../store/selectors/tagSelectors";
 import { TagChip } from "../components/TagChip";
-import { addEntry } from "../store/entriesSlice";
+import { addEntry, setEntryLocation } from "../store/entriesSlice";
 import { generateId } from "../utils/id";
 import {
   savePickedPhoto,
@@ -34,7 +34,7 @@ import {
 import { captureCurrentLocation } from "../location/locationService";
 import { takePhoto } from "../camera/cameraService";
 import { cropPhotoSquare } from "../camera/cropService";
-import { Photo } from "../types/models";
+import { EntryLocation, Photo } from "../types/models";
 import { Button } from "../components/photoLayouts/Button";
 import { PhotoThumbnail } from "../components/PhotoThumbnail";
 import { PaginationDots } from "../components/PaginationDots";
@@ -65,7 +65,6 @@ export function NewEntryScreen() {
 
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [comment, setComment] = useState("");
-  const [saving, setSaving] = useState(false);
   const [createdAt, setCreatedAt] = useState(() => new Date());
   const [showIOSPicker, setShowIOSPicker] = useState(false);
   const [androidStep, setAndroidStep] = useState<"date" | "time" | null>(null);
@@ -79,6 +78,14 @@ export function NewEntryScreen() {
   const captureLocation = useAppSelector(
     (state) => state.settings.captureLocation,
   );
+
+  // Capturing a location means a permission prompt, a GPS fix (up to 8s) and a
+  // reverse geocode, so it starts as soon as the screen opens and is attached
+  // to the entry whenever it lands. Saving never waits for it.
+  const locationRef = useRef<Promise<EntryLocation | null> | null>(null);
+  useEffect(() => {
+    locationRef.current = captureLocation ? captureCurrentLocation() : null;
+  }, [captureLocation]);
 
   function toggleTag(id: string) {
     setSelectedTagIds((current) =>
@@ -263,26 +270,26 @@ export function NewEntryScreen() {
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const closeViewer = () => setViewerIndex(null);
 
-  async function handleAdd() {
+  function handleAdd() {
     if (photos.length === 0) return;
-    setSaving(true);
-    try {
-      const location = captureLocation ? await captureCurrentLocation() : null;
-      dispatch(
-        addEntry({
-          id: generateId(),
-          createdAt: createdAt.toISOString(),
-          comment,
-          location,
-          photos,
-          tagIds: selectedTagIds,
-        }),
-      );
-      savedRef.current = true;
-      navigation.goBack();
-    } finally {
-      setSaving(false);
-    }
+    const id = generateId();
+    dispatch(
+      addEntry({
+        id,
+        createdAt: createdAt.toISOString(),
+        comment,
+        location: null,
+        photos,
+        tagIds: selectedTagIds,
+      }),
+    );
+    savedRef.current = true;
+    locationRef.current?.then((location) => {
+      if (location) {
+        dispatch(setEntryLocation({ id, location }));
+      }
+    });
+    navigation.goBack();
   }
 
   // KeyboardAvoidingView compares its parent-relative frame against the
@@ -390,10 +397,8 @@ export function NewEntryScreen() {
         <Button
           label={t("newEntry.addButton")}
           onPress={handleAdd}
-          disabled={photos.length === 0 || saving}
-          loading={saving}
+          disabled={photos.length === 0}
         />
-
       </ScrollView>
       {viewerIndex !== null ? (
         <Modal
@@ -412,9 +417,7 @@ export function NewEntryScreen() {
             renderHeader={(imageIndex) => {
               const photo = photos[imageIndex];
               return (
-                <View
-                  style={[styles.viewerTopBar, { paddingTop: insets.top }]}
-                >
+                <View style={[styles.viewerTopBar, { paddingTop: insets.top }]}>
                   <Pressable
                     onPress={closeViewer}
                     style={styles.viewerTopBarButton}
