@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format loosely follows
 
 ## [Unreleased]
 
+- Fix 5-8s entry saving delay with feocoding starting at the opening entry time
+
 ## [3.4.5] - 2026-09-28
 
 ## Added
